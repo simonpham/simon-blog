@@ -7,3 +7,5 @@ date: 2020-01-29 15:24:39
 ### [DevTiles: Developer Quick Settings](https://github.com/simonpham/Tiles-For-Developers)
 
 ### [Devetter](https://github.com/simonpham/Devetter-Plugin)
+
+### [fluda](https://pub.dev/packages/fluda)

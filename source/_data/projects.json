@@ -1,0 +1,22 @@
+[
+  {
+    "name": "PetPaw",
+    "url": "https://petpaw.app",
+    "desc": "Social network platform for pet lovers"
+  },
+  {
+    "name": "DevTiles: Developer Quick Settings",
+    "url": "https://github.com/simonpham/Tiles-For-Developers",
+    "desc": "A quick shortcut to your favorite developer settings"
+  },
+  {
+    "name": "Devetter Plugin",
+    "url": "https://github.com/simonpham/Devetter-Plugin",
+    "desc": "Editing System Settings has never been easier"
+  },
+  {
+    "name": "fluda",
+    "url": "https://pub.dev/packages/fluda",
+    "desc": "Fluda is a library which makes Flutter application development faster and easier. It makes your code clean and easy to read."
+  }
+]
