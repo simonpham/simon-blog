@@ -15,7 +15,7 @@ Hi. My name is Simon Pham (Cường - in Vietnamese). I have been working with F
 
 We all know that SharedPreferences is a key/value store where you can read and store data very easily. It’s being used in most apps nowadays.
 
-In Flutter, there’s a package named [shared_preferences] https://pub.dev/packages/shared_preferences) that helps us
+In Flutter, there’s a package named [shared_preferences](https://pub.dev/packages/shared_preferences) that helps us
 deal with key/value data. Its documentation gives us something like this:
 
 ```dart
@@ -31,7 +31,7 @@ It is really inconvenient to get the SharedPreferences instance asynchronously e
 
 > “Talk is cheap**. **Show me the code.” ~ Linus Torvalds
 
-I will assume that you have already [added the shared_preferences] https://pub.dev/packages/shared_preferences#-installing-tab-) package.
+I will assume that you have already [added the shared_preferences](https://pub.dev/packages/shared_preferences#-installing-tab-) package.
 
 First, we need to define a class to store the SharedPreferences instance. Let’s name it **SharedPrefs**.
 
