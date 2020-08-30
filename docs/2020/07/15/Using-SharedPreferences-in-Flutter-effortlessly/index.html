@@ -1,173 +1,23 @@
-<!DOCTYPE html>
-<html lang=en>
-<head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="We all know that SharedPreferences is a key&#x2F;value store where you can read and store data very easily. It’s being used in most apps nowadays.In Flutter, there’s a package named shared_preferences tha">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Using SharedPreferences in Flutter effortlessly">
-<meta property="og:url" content="http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/index.html">
-<meta property="og:site_name" content="Simon Pham">
-<meta property="og:description" content="We all know that SharedPreferences is a key&#x2F;value store where you can read and store data very easily. It’s being used in most apps nowadays.In Flutter, there’s a package named shared_preferences tha">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*xBgJiDzRHBETnWxE6x-5qw.png">
-<meta property="article:published_time" content="2020-07-15T13:18:47.000Z">
-<meta property="article:modified_time" content="2020-08-30T00:07:39.292Z">
-<meta property="article:author" content="Simon Pham">
-<meta property="article:tag" content="SharedPreferences, flutter, shared_preferences">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/1600/1*xBgJiDzRHBETnWxE6x-5qw.png">
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Using SharedPreferences in Flutter effortlessly - Simon Pham</title><meta description="We all know that SharedPreferences is a key&amp;#x2F;value store where you can read and store data very easily. It’s being used in most apps nowadays.In Flutter, there’s a package named shared_preferences tha"><meta property="og:type" content="blog"><meta property="og:title" content="Using SharedPreferences in Flutter effortlessly"><meta property="og:url" content="http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/"><meta property="og:site_name" content="Simon Pham"><meta property="og:description" content="We all know that SharedPreferences is a key&amp;#x2F;value store where you can read and store data very easily. It’s being used in most apps nowadays.In Flutter, there’s a package named shared_preferences tha"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*xBgJiDzRHBETnWxE6x-5qw.png"><meta property="article:published_time" content="2020-07-15T13:18:47.000Z"><meta property="article:modified_time" content="2020-08-30T00:07:39.292Z"><meta property="article:author" content="Simon Pham"><meta property="article:tag" content="SharedPreferences, flutter, shared_preferences"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://cdn-images-1.medium.com/max/1600/1*xBgJiDzRHBETnWxE6x-5qw.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/"},"headline":"Simon Pham","image":["https://cdn-images-1.medium.com/max/1600/1*xBgJiDzRHBETnWxE6x-5qw.png"],"datePublished":"2020-07-15T13:18:47.000Z","dateModified":"2020-08-30T00:07:39.292Z","author":{"@type":"Person","name":"Simon Pham"},"description":"We all know that SharedPreferences is a key&#x2F;value store where you can read and store data very easily. It’s being used in most apps nowadays.In Flutter, there’s a package named shared_preferences tha"}</script><link rel="canonical" href="http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/"><link rel="alternative" href="/atom.xml" title="Simon Pham" type="application/atom+xml"><link rel="icon" href="/img/favicon.ico"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/darcula.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=G-7FXK4ZT7MM" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
     
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>Using SharedPreferences in Flutter effortlessly</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
-
-    <!-- persian styles -->
-    
-      
-<link rel="stylesheet" href="/css/rtl.css">
-
-    
-    <!-- rss -->
-    
-    
-<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="Simon Pham" type="application/atom+xml">
-</head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
-         
-          <li><a href="/projects">Projects</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        
-        <li><a class="icon" href="/2018/07/14/My-journey-to-become-a-programmer/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&text=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&is_video=false&description=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Using SharedPreferences in Flutter effortlessly&body=Check out this article: http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&name=Using SharedPreferences in Flutter effortlessly&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&t=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        Using SharedPreferences in Flutter effortlessly
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">Simon Pham</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2020-07-15T13:18:47.000Z" itemprop="datePublished">Jul 15, 2020</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/SharedPreferences-flutter-shared-preferences/" rel="tag">SharedPreferences, flutter, shared_preferences</a>
-    </div>
-
-
-    </div>
-  </header>
-  
-
-  <div class="content" itemprop="articleBody">
-    <blockquote>
+        gtag('config', 'G-7FXK4ZT7MM');</script><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><script data-ad-client="ca-pub-8469309022192575" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" async></script><meta name="generator" content="Hexo 5.1.1"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/favicon-192x192.png" alt="Simon Pham" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Writings</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2020-07-15T13:18:47.000Z" title="2020-07-15T13:18:47.000Z">Jul 15, 2020</time></span><span class="level-item">Updated&nbsp;<time dateTime="2020-08-30T00:07:39.292Z" title="2020-08-30T00:07:39.292Z">Aug 30, 2020</time></span><span class="level-item">4 minutes read (About 566 words)</span></div></div><h1 class="title is-3 is-size-4-mobile">Using SharedPreferences in Flutter effortlessly</h1><div class="content"><blockquote>
 <p>We all know that SharedPreferences is a key/value store where you can read and store data very easily. It’s being used in most apps nowadays.<br>In Flutter, there’s a package named shared_preferences that helps us deal with key/value data…</p>
 </blockquote>
 <p>Hi. My name is Simon Pham (Cường - in Vietnamese). I have been working with Flutter since January 2019. I decided to write this blog post to share my experience in handling SharedPreferences in Flutter.</p>
 <p><img src="https://cdn-images-1.medium.com/max/1600/1*xBgJiDzRHBETnWxE6x-5qw.png" alt=""></p>
 <hr>
 <p>We all know that SharedPreferences is a key/value store where you can read and store data very easily. It’s being used in most apps nowadays.</p>
-<p>In Flutter, there’s a package named <a href="https://pub.dev/packages/shared_preferences" target="_blank" rel="noopener">shared_preferences</a> that helps us<br>deal with key/value data. Its documentation gives us something like this:</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_incrementCounter() <span class="keyword">async</span> &#123;</span><br><span class="line">  SharedPreferences prefs = <span class="keyword">await</span> SharedPreferences.getInstance();</span><br><span class="line">  <span class="built_in">int</span> counter = (prefs.getInt(<span class="string">'counter'</span>) ?? <span class="number">0</span>) + <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">'Pressed <span class="subst">$counter</span> times.'</span>);</span><br><span class="line">  <span class="keyword">await</span> prefs.setInt(<span class="string">'counter'</span>, counter);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In Flutter, there’s a package named <a target="_blank" rel="noopener" href="https://pub.dev/packages/shared_preferences">shared_preferences</a> that helps us<br>deal with key/value data. Its documentation gives us something like this:</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_incrementCounter() <span class="keyword">async</span> &#123;</span><br><span class="line">  SharedPreferences prefs = <span class="keyword">await</span> SharedPreferences.getInstance();</span><br><span class="line">  <span class="built_in">int</span> counter = (prefs.getInt(<span class="string">&#x27;counter&#x27;</span>) ?? <span class="number">0</span>) + <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;Pressed <span class="subst">$counter</span> times.&#x27;</span>);</span><br><span class="line">  <span class="keyword">await</span> prefs.setInt(<span class="string">&#x27;counter&#x27;</span>, counter);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>It is really inconvenient to get the SharedPreferences instance asynchronously every time we need it. To increase reusability and reduce boilerplate code, I have an approach to save the instance of SharedPreferences and create getters/setters for the preference keys to use them anywhere in the app.</p>
 <blockquote>
 <p>“Talk is cheap*<em>. *</em>Show me the code.” ~ Linus Torvalds</p>
 </blockquote>
-<p>I will assume that you have already <a href="https://pub.dev/packages/shared_preferences#-installing-tab-" target="_blank" rel="noopener">added the shared_preferences</a> package.</p>
+<p>I will assume that you have already <a target="_blank" rel="noopener" href="https://pub.dev/packages/shared_preferences#-installing-tab-">added the shared_preferences</a> package.</p>
 <p>First, we need to define a class to store the SharedPreferences instance. Let’s name it <strong>SharedPrefs</strong>.</p>
 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// utils/shared_prefs.dart</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SharedPrefs</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> SharedPreferences _sharedPrefs;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> sharedPrefs = SharedPrefs();</span><br></pre></td></tr></table></figure>
 
@@ -180,162 +30,45 @@
 
 <p>Why called <strong>SharedPrefs.init()</strong> in the main() function? Because before runApp() is called, the app will show the splash screen. It’s a perfect moment for us to do some essential initialization for the app.</p>
 <p>The next step is to define getters &amp; setters for your preference keys. For example, I defined a getter and setter for getting &amp; updating <strong>username</strong> in SharedPreferences.</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// utils/shared_prefs.dart</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SharedPrefs</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> SharedPreferences _sharedPrefs;</span><br><span class="line"></span><br><span class="line">  init() <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (_sharedPrefs == <span class="keyword">null</span>) &#123;</span><br><span class="line">      _sharedPrefs = <span class="keyword">await</span> SharedPreferences.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> username =&gt; _sharedPrefs.getString(keyUsername) ?? <span class="string">""</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">set</span> username(<span class="built_in">String</span> value) &#123;</span><br><span class="line">    _sharedPrefs.setString(keyUsername, value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> sharedPrefs = SharedPrefs();</span><br><span class="line"></span><br><span class="line"><span class="comment">// constants/strings.dart</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="built_in">String</span> keyUsername = <span class="string">"key_username"</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// utils/shared_prefs.dart</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SharedPrefs</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> SharedPreferences _sharedPrefs;</span><br><span class="line"></span><br><span class="line">  init() <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (_sharedPrefs == <span class="keyword">null</span>) &#123;</span><br><span class="line">      _sharedPrefs = <span class="keyword">await</span> SharedPreferences.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> username =&gt; _sharedPrefs.getString(keyUsername) ?? <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">set</span> username(<span class="built_in">String</span> value) &#123;</span><br><span class="line">    _sharedPrefs.setString(keyUsername, value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> sharedPrefs = SharedPrefs();</span><br><span class="line"></span><br><span class="line"><span class="comment">// constants/strings.dart</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="built_in">String</span> keyUsername = <span class="string">&quot;key_username&quot;</span>;</span><br></pre></td></tr></table></figure>
 
 
 <p>I also create a <strong>keyUsername</strong> constant for consistency. You will not want to use a String directly like <em>_sharedPrefs</em>.getString(<strong>“key_username”</strong>) and in another place use <em>_sharedPrefs</em>.setString(<strong>“key_user_name”</strong>, value) by mistake.</p>
 <p>That’s it. Now you can access <strong>username</strong> ANYWHERE in the app.</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApp</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> MaterialApp(</span><br><span class="line">      home: Scaffold(</span><br><span class="line">        body: Text(<span class="string">"Hi <span class="subst">$&#123;sharedPrefs.username&#125;</span>"</span>),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApp</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    <span class="keyword">return</span> MaterialApp(</span><br><span class="line">      home: Scaffold(</span><br><span class="line">        body: Text(<span class="string">&quot;Hi <span class="subst">$&#123;sharedPrefs.username&#125;</span>&quot;</span>),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>Thank you for reading my blog. You can check out <a href="https://gist.github.com/simonpham/4aaab5a8ddfcae06fdb0057aeb6230b8" target="_blank" rel="noopener">this gist</a> for the full code.</p>
+<p>Thank you for reading my blog. You can check out <a target="_blank" rel="noopener" href="https://gist.github.com/simonpham/4aaab5a8ddfcae06fdb0057aeb6230b8">this gist</a> for the full code.</p>
 <p>Have questions? Find me at <a href="https://blog.simonit.dev/">https://blog.simonit.dev</a></p>
-
-  </div>
-</article>
-
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-            <noscript>Please enable JavaScript to view the comments.</noscript>
-        </div>
-    </div>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
-         
-          <li><a href="/projects">Projects</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&text=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&is_video=false&description=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Using SharedPreferences in Flutter effortlessly&body=Check out this article: http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&title=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&name=Using SharedPreferences in Flutter effortlessly&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/&t=Using SharedPreferences in Flutter effortlessly" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
-</div>
-
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy; 2020 Simon Pham
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
-         
-          <li><a href="/projects">Projects</a></li>
-        
-      </ul>
-    </nav>
-  </div>
-</footer>
-
-    </div>
-    <!-- styles -->
-
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
-
-  
-<script src="/lib/clipboard/clipboard.min.js"></script>
-
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "Copied!");
-      e.clearSelection();
-    })
-  })
-  </script>
-
-
-<script src="/js/main.js"></script>
-
-<!-- search -->
-
-<!-- Google Analytics -->
-
-<!-- Baidu Analytics -->
-
-<!-- Disqus Comments -->
-
-    <script type="text/javascript">
-        var disqus_shortname = 'simon-8';
-
-        (function(){
-            var dsq = document.createElement('script');
-            dsq.type = 'text/javascript';
-            dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        }());
-    </script>
-
-
-</body>
-</html>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Using SharedPreferences in Flutter effortlessly</p><p><a href="http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/">http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>Author</h6><p>Simon Pham</p></div></div><div class="level-item is-narrow"><div><h6>Posted on</h6><p>Jul 15, 2020</p></div></div><div class="level-item is-narrow"><div><h6>Updated on</h6><p>Aug 30, 2020</p></div></div><div class="level-item is-narrow"><div><h6>Licensed under</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags size-small mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/SharedPreferences-flutter-shared-preferences/">SharedPreferences, flutter, shared_preferences</a></div><div class="sharethis-inline-share-buttons"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5f4bf004df8d1480" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">Like this article? Support the author with</h3><div class="buttons is-centered"><a class="button donate" href="https://buymeacoff.ee/simonpham" style="background-color:rgba(255,128,62,.87);border-color:transparent;color:white;" target="_blank" rel="noopener"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>Buy me a coffee</span></a><a class="button is-warning donate" onclick="document.getElementById(&#039;paypal-donate-form&#039;).submit()"><span class="icon is-small"><i class="fab fa-paypal"></i></span><span>Paypal</span></a><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" rel="noopener" id="paypal-donate-form"><input type="hidden" name="cmd" value="_donations"><input type="hidden" name="business" value="simonpham.dn@gmail.com"><input type="hidden" name="currency_code" value="USD"></form></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2018/07/14/My-journey-to-become-a-programmer/"><span class="level-item">My journey to become a programmer</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">Comments</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'http://blog.simonit.dev/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/';
+            this.page.identifier = '2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'simon-8' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><!--!--><div class="column column-right is-4-tablet is-4-desktop is-4-widescreen  order-3"><div class="card widget"><div class="card-content"><h3 class="menu-label">Recents</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2020-07-15T13:18:47.000Z">Jul 15, 2020</time></p><p class="title is-6"><a class="link-muted" href="/2020/07/15/Using-SharedPreferences-in-Flutter-effortlessly/">Using SharedPreferences in Flutter effortlessly</a></p><p class="is-uppercase"></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2018-07-13T18:03:51.000Z">Jul 14, 2018</time></p><p class="title is-6"><a class="link-muted" href="/2018/07/14/My-journey-to-become-a-programmer/">My journey to become a programmer</a></p><p class="is-uppercase"></p></div></article></div></div><!--!--><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Advertisement</h3><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8469309022192575" data-ad-slot="6887389745" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Subscribe for updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=simonpham&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="simonpham" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="Subscribe"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Archives</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2020/07/"><span class="level-start"><span class="level-item">July 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/07/"><span class="level-start"><span class="level-item">July 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><!--!--><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Tags</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/SharedPreferences-flutter-shared-preferences/"><span class="tag">SharedPreferences, flutter, shared_preferences</span><span class="tag is-grey-lightest">1</span></a></div></div></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/favicon-192x192.png" alt="Simon Pham" height="28"></a><p class="size-small"><span>&copy; 2020 Simon Pham</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'http://blog.simonit.dev',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script></body></html>
