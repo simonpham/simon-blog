@@ -118,7 +118,14 @@ page_width: 48
 ##############################################################################
 
 # Enable or disable the RSS feed.
-rss: atom.xml
+rss:
+
+feed:
+  type: atom
+  path: atom.xml
+  limit: 10
+  order_by: -date
+  autodiscovery: true
 
 # Turn your web pages into graph objects (see http://ogp.me).
 open_graph:
