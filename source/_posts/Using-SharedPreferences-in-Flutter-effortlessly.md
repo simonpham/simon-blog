@@ -109,7 +109,7 @@ const String keyUsername = "key_username";
 ```
 
 
-I also create a **keyUsername **constant for consistency. You will not want to use a String directly like *_sharedPrefs*.getString(**“key_username”**) and in another place use *_sharedPrefs*.setString(**“key_user_name”**, value) by mistake.
+I also create a **keyUsername** constant for consistency. You will not want to use a String directly like *_sharedPrefs*.getString(**“key_username”**) and in another place use *_sharedPrefs*.setString(**“key_user_name”**, value) by mistake.
 
 That’s it. Now you can access **username** ANYWHERE in the app.
 
