@@ -74,7 +74,7 @@ navbar:
     # Naviagtion menu items
     menu:
         Home: /
-        Writings: /archives
+        Writings: /writings
         Categories: /categories
         Tags: /tags
         About: /about
