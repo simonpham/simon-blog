@@ -1,7 +1,8 @@
 ---
 title: Using SharedPreferences in Flutter effortlessly
 date: 2020-07-15 20:18:47
-tags: SharedPreferences, flutter, shared_preferences
+categories: [Coding, Flutter]
+tags: [Flutter, shared_preferences, Shared Preferences]
 ---
 > We all know that SharedPreferences is a key/value store where you can read and store data very easily. It’s being used in most apps nowadays.
 > In Flutter, there’s a package named shared_preferences that helps us deal with key/value data…

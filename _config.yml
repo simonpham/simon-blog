@@ -4,7 +4,7 @@ description: ''
 keywords: 'simon,simon blog,simonpham,simonpham blog,simon pham,simon pham blog'
 author: Simon Pham
 language: en
-timezone: ''
+timezone: 'Asia/Ho_Chi_Minh'
 url: 'http://blog.simonit.dev'
 root: /
 permalink: ':year/:month/:day/:title/'

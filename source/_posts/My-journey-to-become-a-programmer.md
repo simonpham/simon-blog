@@ -1,6 +1,7 @@
 ---
 title: My journey to become a programmer
 date: 2018-07-14 01:03:51
+categories: Life
 tags:
 ---
 It was when I was 9, after seeing my brother got some very interesting Windows applications with his name on, I asked him how can he did such fantastic things like that. At first, he demonstrated to me how to use Visual Basic 6 IDE, and how I can create a button on the screen. Then he gave me a book — Visual Basic 6.0 self-study tutorial — this is where the journey began.

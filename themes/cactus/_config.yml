@@ -19,7 +19,7 @@ direction: ltr
 nav:
   home: /
   about: /about/
-  articles: /archives/
+  articles: /writings/
   projects: projects
 
 
@@ -147,7 +147,7 @@ disqus:
 # Fill in your Google Analytics tracking ID to enable Google Analytics.
 google_analytics:
   enabled: false
-  id: google_analytics
+  id: G-7FXK4ZT7MM
 
 # Fill in your Baidu Analytics tracking ID to enable Baidu Analytics.
 baidu_analytics:
