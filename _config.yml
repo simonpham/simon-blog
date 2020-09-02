@@ -57,4 +57,7 @@ exclude: null
 ignore: null
 theme: icarus
 deploy:
-  type: ''
+  type: git
+  repo: https://github.com/simonpham/simon-blog
+  branch: [master]
+  message: [hexo deploy]
