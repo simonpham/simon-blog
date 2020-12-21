@@ -1,7 +1,7 @@
 # Version of the configuration file
 version: 4.0.0
 # Icarus theme variant, can be "default" or "cyberpunk"
-variant: default
+variant: simon
 # Path or URL to the website's logo
 logo: /img/favicon-192x192.png
 # Page metadata configurations
@@ -80,9 +80,9 @@ navbar:
         About: /about
     # Links to be shown on the right of the navigation bar
     links:
-        simonit.dev:
+        codingteemo.me:
             icon: fas fa-home
-            url: 'https://simonit.dev'
+            url: 'https://codingteemo.me'
 # Page footer configurations
 footer:
     # Links to be shown on the right of the footer section
@@ -211,19 +211,19 @@ widgets:
                 url: 'https://github.com/simonpham'
             Facebook:
                 icon: fab fa-facebook
-                url: 'https://fb.simonit.dev'
+                url: 'https://fb.codingteemo.me'
             Twitter:
                 icon: fab fa-twitter
-                url: 'https://twitter.simonit.dev'
+                url: 'https://twitter.codingteemo.me'
             LinkedIn:
                 icon: fab fa-linkedin
-                url: 'https://linkedin.simonit.dev'
-            Medium:
-                icon: fab fa-medium
-                url: 'https://medium.simonit.dev'
-            RSS:
-                icon: fas fa-rss
-                url: /atom.xml
+                url: 'https://linkedin.codingteemo.me'
+            Play Store:
+                icon: fab fa-google-play
+                url: 'https://play.google.com/store/apps/dev?id=8748015601074315583'
+            Email:
+                icon: fas fa-envelope
+                url: 'mailto:hi@codingteemo.me'
     # Table of contents widget configurations
     -
         # Where should the widget be placed, left sidebar or right sidebar

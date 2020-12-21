@@ -4,15 +4,8 @@ date: 2020-07-15 20:18:47
 categories: [Coding, Flutter]
 tags: [Flutter, shared_preferences, Shared Preferences]
 ---
-> We all know that SharedPreferences is a key/value store where you can read and store data very easily. It’s being used in most apps nowadays.
-> In Flutter, there’s a package named shared_preferences that helps us deal with key/value data…
-
-
-Hi. My name is Simon Pham (Cường - in Vietnamese). I have been working with Flutter since January 2019. I decided to write this blog post to share my experience in handling SharedPreferences in Flutter.
 
 ![](https://cdn-images-1.medium.com/max/1600/1*xBgJiDzRHBETnWxE6x-5qw.png)
-
-*****
 
 We all know that SharedPreferences is a key/value store where you can read and store data very easily. It’s being used in most apps nowadays.
 
@@ -30,7 +23,7 @@ _incrementCounter() async {
 
 It is really inconvenient to get the SharedPreferences instance asynchronously every time we need it. To increase reusability and reduce boilerplate code, I have an approach to save the instance of SharedPreferences and create getters/setters for the preference keys to use them anywhere in the app.
 
-> “Talk is cheap**. **Show me the code.” ~ Linus Torvalds
+> “Talk is cheap. Show me the code.” ~ Linus Torvalds
 
 I will assume that you have already [added the shared_preferences](https://pub.dev/packages/shared_preferences#-installing-tab-) package.
 
@@ -130,4 +123,4 @@ class MyApp extends StatelessWidget {
 
 Thank you for reading my blog. You can check out [this gist](https://gist.github.com/simonpham/4aaab5a8ddfcae06fdb0057aeb6230b8) for the full code.
 
-Have questions? Find me at [https://blog.simonit.dev](https://blog.simonit.dev/)
+Have questions? Find me at [https://blog.codingteemo.me](https://blog.codingteemo.me/)

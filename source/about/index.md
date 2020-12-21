@@ -2,14 +2,12 @@
 title: About
 date: 2020-01-29 14:37:03
 ---
-### Simon Pham (Pham Quoc Cuong)
-
 
 ![](https://avatars2.githubusercontent.com/u/8846657?s=460&v=4)
 
 ## Hi! Welcome to my blog.
 
-### My basic info
+### Some facts about me
 
 • Full name: Phạm Quốc Cường
 • Nickname: Simon
@@ -30,7 +28,7 @@ date: 2020-01-29 14:37:03
 > 
 > ![](https://miro.medium.com/max/1450/0*E4jABTcUMkxnGipf.jpg)
 > 
-> Read more at: https://blog.simonit.dev/2018/07/14/My-journey-to-become-a-programmer
+> Read more at: https://blog.codingteemo.me/2018/07/14/My-journey-to-become-a-programmer
 
 </p>
 </details>
@@ -53,7 +51,7 @@ date: 2020-01-29 14:37:03
 > 
 > ![](https://miro.medium.com/max/2880/1*knt8hWso_EZ8hLAHWCRiNQ.png)
 > 
-> Read more at: https://blog.simonit.dev/2018/07/14/My-journey-to-become-a-programmer
+> Read more at: https://blog.codingteemo.me/2018/07/14/My-journey-to-become-a-programmer
 
 Android phones with stock ROM is really good now. With the suppport of Project Treble since Android 8.0, almost any phone can upgrade to latest Android version. That is some of the reasons that I don't cook ROM anymore.
 

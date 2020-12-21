@@ -28,11 +28,11 @@ nav:
 # (see https://fontawesome.com/icons?d=gallery&s=brands);
 # only 'mail' is an exception.
 social_links:
-  github: https://github.simonit.dev
-  twitter: https://twitter.simonit.dev
-  facebook: https://fb.simonit.dev
-  linkedin: https://linkedin.simonit.dev
-  mail: mailto:hi@simonit.dev
+  github: https://github.codingteemo.me
+  twitter: https://twitter.codingteemo.me
+  facebook: https://fb.codingteemo.me
+  linkedin: https://linkedin.codingteemo.me
+  mail: mailto:hi@codingteemo.me
 
 # Customize the overview with displaying a tagcloud on the index page.
 # Options: https://hexo.io/docs/helpers.html#tagcloud

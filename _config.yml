@@ -5,7 +5,7 @@ keywords: 'simon,simon blog,simonpham,simonpham blog,simon pham,simon pham blog'
 author: Simon Pham
 language: en
 timezone: 'Asia/Ho_Chi_Minh'
-url: 'http://blog.simonit.dev'
+url: 'http://blog.codingteemo.me'
 root: /
 permalink: ':year/:month/:day/:title/'
 permalink_defaults: null
