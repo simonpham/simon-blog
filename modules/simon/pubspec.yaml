@@ -1,0 +1,24 @@
+name: simon
+
+environment:
+  sdk: ^3.9.2
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  core:
+    path: ../../packages/core
+  design_system:
+    path: ../../packages/design_system
+  l10n:
+    path: ../../packages/l10n
+  platform_utils:
+    path: ../../packages/platform_utils
+  utils:
+    path: ../../packages/utils
+
+flutter:
+  uses-material-design: true

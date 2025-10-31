@@ -1,0 +1,17 @@
+name: simon_workspace
+publish_to: "none"
+
+workspace:
+  - apps/simon_web
+  - modules/simon
+  - packages/core
+  - packages/icons
+  - packages/l10n
+  - packages/platform_utils
+  - packages/utils
+
+environment:
+  sdk: ^3.9.2
+
+dev_dependencies:
+  lints: ^6.0.0
