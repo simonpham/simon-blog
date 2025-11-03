@@ -125,14 +125,25 @@ class MockPostApis implements PostApis {
 
   @override
   FutureOr<List<Post>> list(Pagination pagination) {
-    if (pagination is OffsetLimitPagination) {
-      return _posts.sublist(
-        pagination.offset,
-        pagination.offset + pagination.limit,
-      );
+    if (pagination is! OffsetLimitPagination) {
+      return _posts.toList();
     }
 
-    return _posts.toList();
+    final currentPosition = pagination.offset;
+    final nextPosition = currentPosition + pagination.limit;
+
+    if (currentPosition >= _posts.length) {
+      return [];
+    }
+
+    if (nextPosition > _posts.length) {
+      return _posts.sublist(currentPosition);
+    }
+
+    return _posts.sublist(
+      pagination.offset,
+      pagination.offset + pagination.limit,
+    );
   }
 
   @override

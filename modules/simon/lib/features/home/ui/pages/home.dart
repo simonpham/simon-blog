@@ -20,9 +20,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final IdeLayoutController controller = IdeLayoutController.create(
+  final PostViewModel _postViewModel = PostViewModel();
+
+  late final IdeLayoutController controller = IdeLayoutController.create(
     leftPanel: (BuildContext context) {
-      return const PostBrowser();
+      return ChangeNotifierProvider.value(
+        value: _postViewModel,
+        child: const PostBrowser(),
+      );
     },
     rightPanel: (BuildContext context) {
       return const ChatPanel();
@@ -31,7 +36,10 @@ class _HomePageState extends State<HomePage> {
       return const CommentPanel();
     },
     content: (BuildContext context) {
-      return const PostContent();
+      return ChangeNotifierProvider.value(
+        value: _postViewModel,
+        child: const PostContent(),
+      );
     },
   );
 
@@ -41,11 +49,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _listenable.addListener(_handleSizeChanged);
+    _postViewModel.loadPosts();
   }
 
   @override
   void dispose() {
     _listenable.removeListener(_handleSizeChanged);
+    _postViewModel.dispose();
     super.dispose();
   }
 

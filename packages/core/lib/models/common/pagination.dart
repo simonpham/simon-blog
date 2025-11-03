@@ -10,4 +10,8 @@ final class OffsetLimitPagination extends Pagination {
     required this.offset,
     required this.limit,
   });
+
+  factory OffsetLimitPagination.initial() {
+    return const OffsetLimitPagination(offset: 0, limit: 10);
+  }
 }

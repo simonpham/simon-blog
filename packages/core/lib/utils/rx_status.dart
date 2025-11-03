@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:utils/utils.dart';
 
 @immutable
 class RxStatus<T> {
@@ -22,5 +23,17 @@ class RxStatus<T> {
 
   factory RxStatus.data(T data) {
     return RxStatus(data: data);
+  }
+
+  RxStatus<T> copyWith({
+    bool? isLoading,
+    Some<T?>? data,
+    Some<String?>? error,
+  }) {
+    return RxStatus<T>(
+      isLoading: isLoading ?? this.isLoading,
+      data: data != null ? data.value : this.data,
+      error: error != null ? error.value : this.error,
+    );
   }
 }
