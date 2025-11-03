@@ -56,7 +56,7 @@ class MockUserApis implements UserApis {
 class MockPostApis implements PostApis {
   final List<Post> _posts = [
     Post(
-      id: kUuid.v4(),
+      id: 'post-1',
       title: 'Mock Post Title',
       slug: 'mock-post-title',
       content: 'Mock Post Content',
@@ -69,7 +69,7 @@ class MockPostApis implements PostApis {
       updatedAt: DateTime.now(),
     ),
     Post(
-      id: kUuid.v4(),
+      id: 'post-2',
       title: 'Another Mock Post Title',
       slug: 'another-mock-post-title',
       content: 'Another Mock Post Content',
@@ -131,5 +131,64 @@ class MockPostApis implements PostApis {
       return null;
     }
     return const PostNotFoundFailure('Failed to update post');
+  }
+}
+
+class MockCommentApis implements CommentApis {
+  final List<Comment> _comments = [];
+
+  @override
+  FutureOr<Failure?> approveComment(String commentId) {
+    return const UnauthorizedFailure();
+  }
+
+  @override
+  FutureOr<Failure?> bulkApproveComments(List<String> commentIds) {
+    return const UnauthorizedFailure();
+  }
+
+  @override
+  FutureOr<Failure?> bulkDeleteComments(List<String> commentIds) {
+    return const UnauthorizedFailure();
+  }
+
+  @override
+  FutureOr<Failure?> createComment({
+    required String postId,
+    required String content,
+    required String authorName,
+    String? authorEmail,
+    String? parentCommentId,
+  }) {
+    _comments.add(
+      Comment(
+        id: kUuid.v4(),
+        content: content,
+        authorName: authorName,
+        authorEmail: authorEmail,
+        postId: postId,
+        parentCommentId: parentCommentId,
+        createdAt: DateTime.now(),
+      ),
+    );
+    return null;
+  }
+
+  @override
+  FutureOr<Failure?> deleteComment(String commentId) {
+    return const UnauthorizedFailure();
+  }
+
+  @override
+  Future<List<Comment>> getCommentsForPost(String postId) async {
+    return _comments.where((comment) => comment.postId == postId).toList();
+  }
+
+  @override
+  FutureOr<Failure?> updateComment({
+    required String commentId,
+    required String content,
+  }) {
+    return const UnauthorizedFailure();
   }
 }

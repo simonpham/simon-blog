@@ -7,6 +7,9 @@ class Injector {
     injector.registerLazySingleton<UserApis>(
       () => MockUserApis(),
     );
+    injector.registerLazySingleton<CommentApis>(
+      () => MockCommentApis(),
+    );
     injector.registerLazySingleton<PostApis>(
       () => MockPostApis(),
     );
@@ -14,6 +17,7 @@ class Injector {
 
   static Future<void> dispose() async {
     await injector.resetLazySingleton<PostApis>();
+    await injector.resetLazySingleton<CommentApis>();
     await injector.resetLazySingleton<UserApis>();
   }
 }
