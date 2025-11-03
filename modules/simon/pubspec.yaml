@@ -11,6 +11,10 @@ dependencies:
 
   core:
     path: ../../packages/core
+  core_remote_data:
+    path: ../../packages/core_remote_data
+  core_remote_data_pb:
+    path: ../../packages/core_remote_data_pb
   design_system:
     path: ../../packages/design_system
   ide_layout:

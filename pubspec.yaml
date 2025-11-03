@@ -5,6 +5,8 @@ workspace:
   - apps/simon_web
   - modules/simon
   - packages/core
+  - packages/core_remote_data
+  - packages/core_remote_data_pb
   - packages/icons
   - packages/ide_layout
   - packages/l10n

@@ -1,0 +1,13 @@
+name: core_remote_data_pb
+publish_to: "none"
+
+environment:
+  sdk: ^3.9.2
+
+resolution: workspace
+
+dependencies:
+  core:
+    path: ../core
+  core_remote_data:
+    path: ../core_remote_data

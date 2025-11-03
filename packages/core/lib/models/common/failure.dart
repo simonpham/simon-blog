@@ -9,3 +9,7 @@ class Failure {
   @override
   String toString() => message;
 }
+
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure() : super('Unauthorized');
+}

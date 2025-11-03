@@ -1,1 +1,1 @@
-export '';
+export 'mock.dart';

@@ -1,0 +1,135 @@
+import 'dart:async';
+
+import 'package:core/core.dart';
+import 'package:core_remote_data/core_remote_data.dart';
+import 'package:utils/utils.dart';
+
+class MockUserApis implements UserApis {
+  final List<User> _user = [
+    User(
+      id: 'default-user',
+      email: 'mock.author@example.com',
+      username: 'author',
+      displayName: 'Author',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      role: Role.admin,
+    ),
+  ];
+
+  @override
+  FutureOr<Failure?> add(User item) {
+    return const UnauthorizedFailure();
+  }
+
+  @override
+  FutureOr<Failure?> addAll(List<User> items) {
+    return const UnauthorizedFailure();
+  }
+
+  @override
+  FutureOr<int> count() {
+    return _user.length;
+  }
+
+  @override
+  FutureOr<Failure?> delete(String id) {
+    return const UnauthorizedFailure();
+  }
+
+  @override
+  FutureOr<User?> get(String id) {
+    return _user.firstWhereOrNull((user) => user.id == id);
+  }
+
+  @override
+  FutureOr<List<User>> list(Pagination pagination) {
+    return _user.toList();
+  }
+
+  @override
+  FutureOr<Failure?> update(User item) {
+    return const UnauthorizedFailure();
+  }
+}
+
+class MockPostApis implements PostApis {
+  final List<Post> _posts = [
+    Post(
+      id: kUuid.v4(),
+      title: 'Mock Post Title',
+      slug: 'mock-post-title',
+      content: 'Mock Post Content',
+      summary: 'Mock Post Summary',
+      authorId: 'default-user',
+      tags: ['mock', 'post'],
+      status: PostStatus.published,
+      visibility: PostVisibility.public,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    ),
+    Post(
+      id: kUuid.v4(),
+      title: 'Another Mock Post Title',
+      slug: 'another-mock-post-title',
+      content: 'Another Mock Post Content',
+      summary: 'Another Mock Post Summary',
+      authorId: 'default-user',
+      tags: ['another', 'mock'],
+      status: PostStatus.published,
+      visibility: PostVisibility.public,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    ),
+  ];
+
+  @override
+  FutureOr<Failure?> add(Post item) {
+    _posts.add(item);
+    return null;
+  }
+
+  @override
+  FutureOr<Failure?> addAll(List<Post> items) {
+    _posts.addAll(items);
+    return null;
+  }
+
+  @override
+  FutureOr<int> count() {
+    return _posts.length;
+  }
+
+  @override
+  FutureOr<Failure?> delete(String id) {
+    _posts.removeWhere((post) => post.id == id);
+    return null;
+  }
+
+  @override
+  FutureOr<Post?> get(String id) {
+    return _posts.firstWhereOrNull((post) => post.id == id);
+  }
+
+  @override
+  FutureOr<List<Post>> list(Pagination pagination) {
+    if (pagination is OffsetLimitPagination) {
+      return _posts.sublist(
+        pagination.offset,
+        pagination.offset + pagination.limit,
+      );
+    }
+
+    return _posts.toList();
+  }
+
+  @override
+  FutureOr<Failure?> update(Post item) {
+    final index = _posts.indexWhere((post) => post.id == item.id);
+    if (index != -1) {
+      _posts[index] = item;
+      return null;
+    }
+    return const PostNotFoundFailure('Failed to update post');
+  }
+}
