@@ -79,3 +79,5 @@ coverage/
 *.env.dart
 env.props
 *.jks
+
+.ref

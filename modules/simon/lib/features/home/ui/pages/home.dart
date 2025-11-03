@@ -1,5 +1,7 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:ide_layout/ide_layout.dart';
+import 'package:simon/simon.dart';
 
 class HomePage extends StatelessWidget {
   static const String routePath = '/';
@@ -16,11 +18,25 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Simon'),
-      ),
-      body: const Center(
-        child: Text('Simon'),
+      body: IdeLayout(
+        topBar: (BuildContext context) {
+          return const HeaderBar();
+        },
+        bottomBar: (BuildContext context) {
+          return const SizedBox();
+        },
+        leftPanel: (BuildContext context) {
+          return const SizedBox();
+        },
+        rightPanel: (BuildContext context) {
+          return const SizedBox();
+        },
+        bottomPanel: (BuildContext context) {
+          return const SizedBox();
+        },
+        content: (BuildContext context) {
+          return const SizedBox();
+        },
       ),
     );
   }

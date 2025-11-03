@@ -6,6 +6,7 @@ workspace:
   - modules/simon
   - packages/core
   - packages/icons
+  - packages/ide_layout
   - packages/l10n
   - packages/platform_utils
   - packages/utils

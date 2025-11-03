@@ -1,0 +1,22 @@
+name: ide_layout
+publish_to: "none"
+
+environment:
+  sdk: ^3.9.2
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: "flutter"
+
+  design_system:
+    path: ../design_system
+  l10n:
+    path: ../l10n
+  platform_utils:
+    path: ../platform_utils
+  utils:
+    path: ../utils
+
+  multi_split_view: ^3.6.1
