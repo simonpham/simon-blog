@@ -6,7 +6,6 @@ export 'package:path/path.dart';
 export 'package:uuid/uuid.dart';
 
 export 'constants.dart';
-export 'hash.dart';
 export 'iterable_extensions.dart';
 export 'legalize.dart';
 export 'some.dart';

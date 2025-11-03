@@ -1,7 +1,6 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:ide_layout/ide_layout.dart';
 
 class HeaderBar extends StatelessWidget {

@@ -1,2 +1,2 @@
-export 'pages/pages.dart';
+export 'frames/frames.dart';
 export 'widgets/widgets.dart';

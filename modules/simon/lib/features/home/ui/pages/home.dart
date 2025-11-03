@@ -22,16 +22,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final IdeLayoutController controller = IdeLayoutController.create(
     leftPanel: (BuildContext context) {
-      return const SizedBox();
+      return const PostBrowser();
     },
     rightPanel: (BuildContext context) {
-      return const SizedBox();
+      return const ChatPanel();
     },
     bottomPanel: (BuildContext context) {
-      return const SizedBox();
+      return const CommentPanel();
     },
     content: (BuildContext context) {
-      return const SizedBox();
+      return const PostContent();
     },
   );
 
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
           return const HeaderBar();
         },
         bottomBar: (BuildContext context) {
-          return const SizedBox();
+          return const StatusBar();
         },
       ),
     );

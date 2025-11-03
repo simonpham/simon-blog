@@ -4,8 +4,19 @@ import 'package:core/core.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:utils/utils.dart';
 
+part 'mock_content.dart';
+
 class MockUserApis implements UserApis {
   final List<User> _user = [
+    User(
+      id: 'simon',
+      email: 'simon@sofluffy.io',
+      username: 'simon',
+      displayName: 'Simon',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      role: Role.admin,
+    ),
     User(
       id: 'default-user',
       email: 'mock.author@example.com',
@@ -57,16 +68,17 @@ class MockPostApis implements PostApis {
   final List<Post> _posts = [
     Post(
       id: 'post-1',
-      title: 'Mock Post Title',
-      slug: 'mock-post-title',
-      content: 'Mock Post Content',
-      summary: 'Mock Post Summary',
-      authorId: 'default-user',
-      tags: ['mock', 'post'],
+      title: _mockTitle,
+      slug: _mockSlug,
+      content: _mockContent,
+      summary: _mockSummary,
+      authorId: 'simon',
+      tags: _mockTags,
+      featuredImageUrl: _mockCoverImage,
       status: PostStatus.published,
       visibility: PostVisibility.public,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
+      createdAt: _mockPublishedAt,
+      updatedAt: _mockPublishedAt,
     ),
     Post(
       id: 'post-2',
