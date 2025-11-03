@@ -1,10 +1,9 @@
 import 'package:flutter/widgets.dart';
 
 class RightPanel extends StatelessWidget {
-  static const String id = 'right_panel';
   static const double defaultWidth = 250.0;
 
-  static const double minWidth = defaultWidth;
+  static const double minWidth = 0;
   static const double maxWidth = defaultWidth * 2;
 
   final WidgetBuilder builder;
@@ -18,7 +17,7 @@ class RightPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(
-        minWidth: defaultWidth,
+        maxWidth: maxWidth,
       ),
       child: builder(context),
     );

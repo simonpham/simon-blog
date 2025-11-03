@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 class LeftPanel extends StatelessWidget {
-  static const String id = 'left_panel';
   static const double defaultWidth = 250.0;
   static const double minWidth = 56.0;
   static const double maxWidth = defaultWidth * 2;
