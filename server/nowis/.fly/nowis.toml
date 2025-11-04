@@ -1,0 +1,34 @@
+app = "nowis-api"
+primary_region = "sin"
+
+[processes]
+  nowis = "nowis"
+
+[build]
+  builder = "paketobuildpacks/builder:base"
+  buildpacks = ["gcr.io/paketo-buildpacks/go"]
+  [build.args]
+    BP_GO_TARGETS = "./cmd/nowis"
+
+[env]
+  ENV = "production"
+  SF_NOWIS_INTERNAL_ADDRESS = ":23399"
+
+[[services]]
+  auto_start_machines = true
+  auto_stop_machines = true
+  http_checks = []
+  internal_port = 23399
+  processes = ["nowis"]
+  protocol = "tcp"
+  script_checks = []
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    handlers = ["tls"]
+    port = 443
+    tls_options = { "alpn" = ["h2"] }

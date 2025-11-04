@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+message Post {
+  string id = 1;
+  string title = 2;
+  string slug = 3;
+  string content = 4;
+  string summary = 5;
+  string author_id = 6;
+  repeated string tags = 7;
+  string featured_image_url = 8;
+  PostStatus status = 9;
+  PostVisibility visibility = 10;
+  int32 comments_count = 11;
+  int32 likes_count = 12;
+  int32 read_time_minutes = 13;
+  int32 created_at = 14;
+  int32 updated_at = 15;
+}
+
+enum PostStatus {
+  draft = 0;
+  published = 1;
+  archived = 2;
+}
+
+enum PostVisibility {
+  public = 0;
+  private = 1;
+  unlisted = 2;
+}

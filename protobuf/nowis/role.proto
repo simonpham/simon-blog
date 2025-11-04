@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+enum Role {
+  admin = 0;
+  anonymous = 1;
+}

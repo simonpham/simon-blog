@@ -9,6 +9,7 @@ class User {
   final String email;
   final String displayName;
   final String? avatarUrl;
+  final String? avatarHash;
   final String? bio;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -20,6 +21,7 @@ class User {
     required this.email,
     required this.displayName,
     this.avatarUrl,
+    this.avatarHash,
     this.bio,
     required this.createdAt,
     required this.updatedAt,

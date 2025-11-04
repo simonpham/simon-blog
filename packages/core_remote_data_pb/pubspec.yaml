@@ -11,3 +11,6 @@ dependencies:
     path: ../core
   core_remote_data:
     path: ../core_remote_data
+
+  protobuf: ^5.0.0
+  grpc: ^4.3.1

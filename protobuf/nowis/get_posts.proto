@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "post.proto";
+import "locale.proto";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+message GetPostsRequest {
+  Locale locale = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message GetPostsResponse {
+  repeated Post posts = 1;
+}
