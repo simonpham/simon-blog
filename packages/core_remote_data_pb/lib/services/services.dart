@@ -60,9 +60,52 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<List<Post>> list(Pagination pagination) {
-    // TODO: implement list
-    throw UnimplementedError();
+  FutureOr<List<Post>> list(Pagination pagination) async {
+    final pagePagination = switch (pagination) {
+      PagePagination pagination => pagination,
+      _ => null,
+    };
+    final response = await _client.getPosts(
+      pb.GetPostsRequest(
+        limit: pagePagination?.pageSize,
+        page: pagePagination?.page,
+      ),
+    );
+    return response.posts
+        .map(
+          (post) => Post(
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            content: post.content,
+            summary: post.summary,
+            authorId: post.authorId,
+            tags: post.tags.toList(),
+            featuredImageUrl: post.featuredImageUrl,
+            status: switch (post.status) {
+              pb.PostStatus.draft => PostStatus.draft,
+              pb.PostStatus.published => PostStatus.published,
+              pb.PostStatus.archived => PostStatus.archived,
+              _ => PostStatus.draft,
+            },
+            createdAt: DateTime.fromMillisecondsSinceEpoch(
+              post.createdAt.toInt(),
+            ),
+            updatedAt: DateTime.fromMillisecondsSinceEpoch(
+              post.updatedAt.toInt(),
+            ),
+            commentsCount: post.commentsCount,
+            likesCount: post.likesCount,
+            readTimeMinutes: post.readTimeMinutes,
+            visibility: switch (post.visibility) {
+              pb.PostVisibility.public => PostVisibility.public,
+              pb.PostVisibility.private => PostVisibility.private,
+              pb.PostVisibility.unlisted => PostVisibility.unlisted,
+              _ => PostVisibility.public,
+            },
+          ),
+        )
+        .toList();
   }
 
   @override

@@ -15,3 +15,17 @@ final class OffsetLimitPagination extends Pagination {
     return const OffsetLimitPagination(offset: 0, limit: 10);
   }
 }
+
+final class PagePagination extends Pagination {
+  final int page;
+  final int pageSize;
+
+  const PagePagination({
+    required this.page,
+    required this.pageSize,
+  });
+
+  factory PagePagination.initial() {
+    return const PagePagination(page: 1, pageSize: 10);
+  }
+}
