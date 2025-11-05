@@ -1,0 +1,49 @@
+# Use a Go image as the base for building
+FROM golang:latest AS builder
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy go.mod and go.sum files to leverage Docker layer caching
+# This step allows Docker to cache dependency downloads
+COPY go.mod go.sum ./
+
+# Download all project dependencies
+# This command will only rerun if go.mod or go.sum change
+RUN go mod download
+
+# Copy the rest of the application source code into the container
+COPY . .
+
+# Set environment variables for Android ARM64 cross-compilation
+# CGO_ENABLED=0 disables CGO, which simplifies cross-compilation.
+# If your application requires CGO, you would need to install the Android NDK
+# and configure CGO_CC and other variables accordingly.
+ENV CGO_ENABLED=0
+ENV GOOS=android
+ENV GOARCH=arm64
+# For arm64, GOARCH=arm64 typically implies ARMv8.
+
+# Build the Go application
+# The output binary will be named 'nowis-android' and placed in the 'bin' directory
+# based on the original build command found in run_nowis.sh
+RUN go build -o bin/nowis-android cmd/nowis/main.go
+
+# After building this Docker image, you can extract the compiled binary
+# 'nowis-android' from the container. Here's an example sequence of commands
+# you would run in your shell:
+#
+# 1. Build the Docker image:
+#    docker build -t nowis-android-builder -f simon/server/nowis/Dockerfile.android simon/server/nowis
+#
+# 2. Create a temporary container to access the build artifacts:
+#    docker create --name temp_builder_container nowis-android-builder
+#
+# 3. Copy the compiled binary out of the container to your local machine:
+#    docker cp temp_builder_container:/app/bin/nowis-android .
+#
+# 4. Remove the temporary container:
+#    docker rm temp_builder_container
+#
+# The 'nowis-android' executable will then be in your current directory,
+# ready to be pushed to your Android arm64 device.
