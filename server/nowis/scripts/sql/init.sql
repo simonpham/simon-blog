@@ -20,6 +20,7 @@ CREATE TABLE users
     display_name TEXT,
     avatar       TEXT,
     avatar_hash  TEXT,
+    bio          TEXT,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -153,3 +154,34 @@ CREATE TABLE user_sessions
 );
 
 CREATE INDEX idx_user_sessions_user_id ON user_sessions(user_id);
+
+DROP VIEW IF EXISTS published_public_posts;
+CREATE VIEW published_public_posts AS
+SELECT
+    p.id,
+    p.title,
+    p.slug,
+    p.content,
+    p.summary,
+    p.featured_image_url,
+    p.author_id,
+    p.status,
+    p.visibility,
+    p.comments_count,
+    p.likes_count,
+    p.read_time_minutes,
+    p.created_at,
+    p.updated_at,
+    ARRAY_AGG(t.name) FILTER (WHERE t.name IS NOT NULL) AS tags
+FROM
+    posts p
+LEFT JOIN
+    post_tags pt ON p.id = pt.post_id
+LEFT JOIN
+    tags t ON pt.tag_id = t.id
+WHERE
+    p.status = 'published' AND p.visibility = 'public'
+GROUP BY
+    p.id, p.title, p.slug, p.content, p.summary, p.featured_image_url, p.author_id,
+    p.status, p.visibility, p.comments_count, p.likes_count, p.read_time_minutes,
+    p.created_at, p.updated_at;
