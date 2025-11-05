@@ -18,9 +18,9 @@ func NewNowisService(repo *nowisrepo.NowisRepository) NowisService {
 }
 
 func (h NowisService) GetPosts(ctx context.Context, request *nowispb.GetPostsRequest) (*nowispb.GetPostsResponse, error) {
-	locale := request.Locale.Lang
-	page := int(request.Page)
-	limit := int(request.Limit)
+	locale := request.Locale.GetLang()
+	page := int(request.GetPage())
+	limit := int(request.GetLimit())
 
 	posts, err := h.repo.GetPosts(ctx, locale, page, limit)
 	if err != nil {

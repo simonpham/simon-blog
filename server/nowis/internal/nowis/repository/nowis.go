@@ -9,6 +9,7 @@ import (
 	"nowis/pkg/utils"
 
 	"github.com/google/uuid"
+	pq "github.com/lib/pq"
 )
 
 type NowisRepositoryHandler interface {
@@ -56,7 +57,7 @@ func (r *NowisRepository) GetPost(ctx context.Context, postID uuid.UUID) (*model
 		&post.ReadTimeMinutes,
 		&post.CreatedAt,
 		&post.UpdatedAt,
-		&post.Tags,
+		pq.Array(&post.Tags),
 	)
 
 	if err != nil {
@@ -126,7 +127,7 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 			&post.ReadTimeMinutes,
 			&post.CreatedAt,
 			&post.UpdatedAt,
-			&post.Tags,
+			pq.Array(&post.Tags),
 		)
 		if err != nil {
 			return nil, utils.WrapError("failed to scan post row", err)
