@@ -12,7 +12,7 @@ primary_region = "sin"
 
 [env]
   ENV = "production"
-  SF_NOWIS_INTERNAL_ADDRESS = ":23399"
+  SF_NOWIS_INTERNAL_ADDRESS = ":22399"
 
 [[services]]
   auto_start_machines = true
