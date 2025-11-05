@@ -17,6 +17,7 @@ type NowisRepositoryHandler interface {
 }
 
 type NowisRepository struct {
+	NowisRepositoryHandler
 	db *sql.DB
 }
 
@@ -71,7 +72,7 @@ func (r *NowisRepository) GetPost(ctx context.Context, postID uuid.UUID) (*model
 // GetPosts fetches a list of published and public posts with pagination and optional locale filtering by tag.
 // page is 1-indexed.
 // If locale is empty, all posts (matching visibility/status) are returned without tag filtering.
-func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page, limit int) ([]model.Post, error) {
+func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int, limit int) ([]model.Post, error) {
 	if page < 1 {
 		page = 1
 	}

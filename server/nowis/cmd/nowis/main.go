@@ -1,16 +1,19 @@
 package main
 
 import (
+	"log"
+	"net"
+	nowisRepo "nowis/internal/nowis/repository"
 	nowis "nowis/internal/nowis/service"
 	"nowis/pkg/configs"
+	"nowis/pkg/db"
 	"nowis/pkg/interceptors"
 	nowispb "nowis/protobuf/generated/nowis"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
-	"log"
-	"net"
 )
 
 func main() {
@@ -23,7 +26,13 @@ func main() {
 
 	log.Printf("[NowisService] Listening at: %s", lis.Addr().String())
 
-	server := nowis.NewNowisService()
+	authDb, err := db.OpenAuthDatabase()
+	if err != nil {
+		log.Fatalf("[AuthService] Error opening database: %v", err)
+	}
+
+	repo := nowisRepo.NewNowisRepository(authDb)
+	server := nowis.NewNowisService(repo)
 
 	var opts []grpc.ServerOption
 
