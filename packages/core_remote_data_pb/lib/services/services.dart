@@ -56,9 +56,27 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Post?> get(String id) {
-    // TODO: implement get
-    throw UnimplementedError();
+  FutureOr<Post?> get(String id) async {
+    final response = await _client.getPostById(
+      pb.GetPostByIdRequest(id: id),
+    );
+
+    if (!response.hasPost()) {
+      return null;
+    }
+    return response.post.toModel();
+  }
+
+  @override
+  FutureOr<Post?> getPostBySlug(String slug) async {
+    final response = await _client.getPostBySlug(
+      pb.GetPostBySlugRequest(slug: slug),
+    );
+
+    if (!response.hasPost()) {
+      return null;
+    }
+    return response.post.toModel();
   }
 
   @override

@@ -155,6 +155,11 @@ class MockPostApis implements PostApis {
     }
     return const PostNotFoundFailure('Failed to update post');
   }
+
+  @override
+  FutureOr<Post?> getPostBySlug(String slug) {
+    return null;
+  }
 }
 
 class MockCommentApis implements CommentApis {
