@@ -36,5 +36,11 @@ void main() {
       expect(result, isA<Post>());
       expect(result!.slug, firstPostSlug);
     });
+
+    test('get sidebar posts by tags', () async {
+      final result = await nowisPostApis.getSidebarPostsByTags();
+      expect(result, isA<List<TagSidebar>>());
+      expect(result.length, greaterThan(0));
+    });
   });
 }

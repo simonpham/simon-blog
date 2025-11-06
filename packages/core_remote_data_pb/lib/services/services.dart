@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:core/models/common/failure.dart';
 import 'package:core/models/common/pagination.dart';
 import 'package:core/models/post.dart';
+import 'package:core/models/sidebar_post.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart' as pb;
 import 'package:core_remote_data_pb/utils/mapper.dart'; // Import the mapper extension
@@ -98,5 +99,13 @@ class NowisPostApis implements PostApis {
   FutureOr<Failure?> update(Post item) {
     // TODO: implement update
     throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<List<TagSidebar>> getSidebarPostsByTags() async {
+    final response = await _client.getSidebarPostsByTags(
+      pb.GetSidebarPostsByTagsRequest(),
+    );
+    return response.tags.map((tag) => tag.toModel()).toList();
   }
 }

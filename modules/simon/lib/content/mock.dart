@@ -160,6 +160,11 @@ class MockPostApis implements PostApis {
   FutureOr<Post?> getPostBySlug(String slug) {
     return null;
   }
+
+  @override
+  FutureOr<List<TagSidebar>> getSidebarPostsByTags() {
+    return [];
+  }
 }
 
 class MockCommentApis implements CommentApis {
