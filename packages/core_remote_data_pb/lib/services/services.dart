@@ -6,7 +6,7 @@ import 'package:core/models/post.dart';
 import 'package:core/models/sidebar_post.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart' as pb;
-import 'package:core_remote_data_pb/utils/mapper.dart'; // Import the mapper extension
+import 'package:core_remote_data_pb/utils/mapper.dart';
 import 'package:grpc/grpc.dart';
 
 class NowisPostApis implements PostApis {
@@ -81,7 +81,10 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<List<Post>> list(Pagination pagination) async {
+  FutureOr<List<Post>> list(
+    Pagination pagination, {
+    String? searchQuery,
+  }) async {
     final pagePagination = switch (pagination) {
       PagePagination pagination => pagination,
       _ => null,
@@ -90,7 +93,7 @@ class NowisPostApis implements PostApis {
       pb.GetPostsRequest(
         limit: pagePagination?.pageSize,
         page: pagePagination?.page,
-        searchQuery: pagePagination?.searchQuery,
+        searchQuery: searchQuery,
       ),
     );
     return response.posts.map((post) => post.toModel()).toList();

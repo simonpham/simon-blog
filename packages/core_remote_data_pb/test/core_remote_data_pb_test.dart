@@ -49,8 +49,8 @@ void main() {
         const PagePagination(
           page: 1,
           pageSize: 10,
-          searchQuery: searchQuery,
         ),
+        searchQuery: searchQuery,
       );
 
       expect(result, isA<List<Post>>());
@@ -63,8 +63,8 @@ void main() {
         const PagePagination(
           page: 1,
           pageSize: 10,
-          searchQuery: searchQuery,
         ),
+        searchQuery: searchQuery,
       );
 
       expect(result, isA<List<Post>>());

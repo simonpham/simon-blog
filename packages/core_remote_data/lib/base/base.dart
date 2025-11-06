@@ -13,7 +13,10 @@ abstract interface class BaseRepository<T> {
 
   FutureOr<T?> get(String id);
 
-  FutureOr<List<T>> list(Pagination pagination);
+  FutureOr<List<T>> list(
+    Pagination pagination, {
+    String? searchQuery,
+  });
 
   FutureOr<Failure?> delete(String id);
 

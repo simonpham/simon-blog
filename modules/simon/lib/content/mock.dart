@@ -54,7 +54,10 @@ class MockUserApis implements UserApis {
   }
 
   @override
-  FutureOr<List<User>> list(Pagination pagination) {
+  FutureOr<List<User>> list(
+    Pagination pagination, {
+    String? searchQuery,
+  }) {
     return _user.toList();
   }
 
@@ -124,7 +127,10 @@ class MockPostApis implements PostApis {
   }
 
   @override
-  FutureOr<List<Post>> list(Pagination pagination) {
+  FutureOr<List<Post>> list(
+    Pagination pagination, {
+    String? searchQuery,
+  }) {
     if (pagination is! OffsetLimitPagination) {
       return _posts.toList();
     }
