@@ -1,14 +1,15 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
+	"nowis/internal/nowis/util"
 	"nowis/protobuf/generated/nowis"
 
 	"github.com/google/uuid"
 )
 
-// PostStatus represents the status of a post, mapping to the PostgreSQL ENUM.
 type PostStatus string
 
 const (
@@ -17,7 +18,6 @@ const (
 	PostStatusArchived  PostStatus = "archived"
 )
 
-// PostVisibility represents the visibility of a post, mapping to the PostgreSQL ENUM.
 type PostVisibility string
 
 const (
@@ -45,7 +45,10 @@ type Post struct {
 	Tags             []string       `db:"tags" json:"tags"`
 }
 
-// ToPBPost converts a model.Post to a nowispb.Post
+// ToPBPost converts a model.Post to a nowispb.Post, encrypting the Content
+// and embedding the IV length, IV, and encryption timestamp within the content field itself,
+// then Base64 URL-encoding it.
+// The `content` field will now carry the Base64 URL-encoded combined payload.
 func (p *Post) ToPBPost() *nowis.Post {
 	var status nowis.PostStatus
 	var visibility nowis.PostVisibility
@@ -68,11 +71,23 @@ func (p *Post) ToPBPost() *nowis.Post {
 		visibility = nowis.PostVisibility_unlisted
 	}
 
-	return &nowis.Post{
+	// Encrypt the content just before sending. The returned `encodedPayload` is a
+	// Base64 URL-encoded string containing IV length, IV, timestamp, and encrypted content.
+	encodedPayload, err := util.EncryptContent(p.Content)
+	if err != nil {
+		// Handle this error appropriately in a real application.
+		// For now, log the error and send the original plaintext content
+		// (which means it won't be decrypted by the client, acting as an error indicator
+		// if the client tries to decrypt it).
+		fmt.Printf("Failed to encrypt post content for ID %s: %v\n", p.ID.String(), err)
+		encodedPayload = p.Content // Fallback to sending plaintext (not ideal for obfuscation)
+	}
+
+	pbPost := &nowis.Post{
 		Id:               p.ID.String(),
 		Title:            p.Title,
 		Slug:             p.Slug,
-		Content:          p.Content,
+		Content:          encodedPayload,
 		Summary:          p.Summary,
 		FeaturedImageUrl: *p.FeaturedImageURL,
 		AuthorId:         p.AuthorID.String(),
@@ -85,4 +100,6 @@ func (p *Post) ToPBPost() *nowis.Post {
 		UpdatedAt:        p.UpdatedAt.Unix(),
 		Tags:             p.Tags,
 	}
+
+	return pbPost
 }
