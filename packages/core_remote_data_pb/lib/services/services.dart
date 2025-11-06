@@ -32,7 +32,8 @@ class NowisPostApis implements PostApis {
 
   @override
   FutureOr<Failure?> add(Post item) {
-    _client;
+    // TODO: implement addAll
+    throw UnimplementedError();
   }
 
   @override

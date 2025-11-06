@@ -1,5 +1,7 @@
 abstract base class Pagination {
   const Pagination();
+
+  Pagination nextPage();
 }
 
 final class OffsetLimitPagination extends Pagination {
@@ -14,6 +16,11 @@ final class OffsetLimitPagination extends Pagination {
   factory OffsetLimitPagination.initial() {
     return const OffsetLimitPagination(offset: 0, limit: 10);
   }
+
+  @override
+  Pagination nextPage() {
+    return OffsetLimitPagination(offset: offset + limit, limit: limit);
+  }
 }
 
 final class PagePagination extends Pagination {
@@ -27,5 +34,10 @@ final class PagePagination extends Pagination {
 
   factory PagePagination.initial() {
     return const PagePagination(page: 1, pageSize: 10);
+  }
+
+  @override
+  Pagination nextPage() {
+    return PagePagination(page: page + 1, pageSize: pageSize);
   }
 }
