@@ -70,3 +70,20 @@ func (h NowisService) GetPosts(ctx context.Context, request *nowispb.GetPostsReq
 		Posts: pbPosts,
 	}, nil
 }
+
+// GetSidebarPostsByTags fetches all published and public posts, grouped by their tags.
+func (h NowisService) GetSidebarPostsByTags(ctx context.Context, request *nowispb.GetSidebarPostsByTagsRequest) (*nowispb.GetSidebarPostsByTagsResponse, error) {
+	repoTags, err := h.repo.GetSidebarPostsByTags(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pbTags := make([]*nowispb.TagSidebar, len(repoTags))
+	for i, tag := range repoTags {
+		pbTags[i] = tag.ToPBTagSidebar()
+	}
+
+	return &nowispb.GetSidebarPostsByTagsResponse{
+		Tags: pbTags,
+	}, nil
+}

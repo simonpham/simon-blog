@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+// SidebarPost represents a post item for the sidebar
+message SidebarPost {
+  string id = 1;
+  string title = 2;
+  string slug = 3;
+}
+
+// TagSidebar represents a tag and its associated posts for the sidebar
+message TagSidebar {
+  string tag_name = 1;
+  repeated SidebarPost posts = 2;
+}
+
+message GetSidebarPostsByTagsRequest {
+}
+
+message GetSidebarPostsByTagsResponse {
+  repeated TagSidebar tags = 1;
+}

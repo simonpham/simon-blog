@@ -16,6 +16,7 @@ type NowisRepositoryHandler interface {
 	GetPostById(ctx context.Context, postId uuid.UUID, locale string) (*model.Post, error)
 	GetPostBySlug(ctx context.Context, postSlug string, locale string) (*model.Post, error)
 	GetPosts(ctx context.Context, locale string, page, limit int) ([]model.Post, error)
+	GetSidebarPostsByTags(ctx context.Context) ([]model.TagSidebar, error)
 }
 
 type NowisRepository struct {
@@ -185,4 +186,67 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 	}
 
 	return posts, nil
+}
+
+// GetSidebarPostsByTags fetches all published and public posts, grouped by their tags.
+func (r *NowisRepository) GetSidebarPostsByTags(ctx context.Context) ([]model.TagSidebar, error) {
+	query := `
+        SELECT
+            t.name AS tag_name,
+            p.id AS post_id,
+            p.title AS post_title,
+            p.slug AS post_slug
+        FROM
+            tags t
+        JOIN
+            post_tags pt ON t.id = pt.tag_id
+        JOIN
+            published_public_posts p ON pt.post_id = p.id
+        ORDER BY
+            t.name, p.title;
+    `
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, utils.WrapError("failed to query sidebar posts by tags from database", err)
+	}
+	defer rows.Close()
+
+	// Use a map to build the hierarchical structure: tagName -> list of posts
+	tagMap := make(map[string][]model.SidebarPost)
+
+	for rows.Next() {
+		var tagName string
+		var postID uuid.UUID
+		var postTitle string
+		var postSlug string
+
+		err := rows.Scan(&tagName, &postID, &postTitle, &postSlug)
+		if err != nil {
+			return nil, utils.WrapError("failed to scan sidebar post row", err)
+		}
+
+		tagMap[tagName] = append(tagMap[tagName], model.SidebarPost{
+			ID:    postID,
+			Title: postTitle,
+			Slug:  postSlug,
+		})
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, utils.WrapError("error after iterating rows", err)
+	}
+
+	var sidebar []model.TagSidebar
+	// Iterate through the map to create the slice of TagSidebar.
+	// The order of tags in the slice will depend on map iteration, which is not guaranteed.
+	// Sorting can be applied at a higher layer (e.g., service or presentation).
+	for tagName, posts := range tagMap {
+		sidebar = append(sidebar, model.TagSidebar{
+			TagName: tagName,
+			Posts:   posts,
+		})
+	}
+
+	return sidebar, nil
 }

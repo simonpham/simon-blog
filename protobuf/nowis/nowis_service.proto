@@ -1,6 +1,7 @@
 syntax = "proto3";
 import "get_posts.proto";
 import "get_post.proto";
+import "get_sidebar_posts.proto";
 
 package nowis;
 
@@ -10,4 +11,5 @@ service NowisService {
   rpc GetPosts(GetPostsRequest) returns (GetPostsResponse) {}
   rpc GetPostById(GetPostByIdRequest) returns (GetPostByIdResponse) {}
   rpc GetPostBySlug(GetPostBySlugRequest) returns (GetPostBySlugResponse) {}
+  rpc GetSidebarPostsByTags(GetSidebarPostsByTagsRequest) returns (GetSidebarPostsByTagsResponse) {}
 }
