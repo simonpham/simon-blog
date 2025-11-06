@@ -10,6 +10,9 @@ void main() {
   );
 
   group('NowisPostApis', () {
+    String firstPostId = '';
+    String firstPostSlug = '';
+
     test('get list ', () async {
       final result = await nowisPostApis.list(
         PagePagination.initial(),
@@ -17,6 +20,21 @@ void main() {
 
       expect(result, isA<List<Post>>());
       expect(result.length, greaterThan(0));
+
+      firstPostId = result.first.id;
+      firstPostSlug = result.first.slug;
+    });
+
+    test('get post by id', () async {
+      final result = await nowisPostApis.get(firstPostId);
+      expect(result, isA<Post>());
+      expect(result!.id, firstPostId);
+    });
+
+    test('get post by slug', () async {
+      final result = await nowisPostApis.getPostBySlug(firstPostSlug);
+      expect(result, isA<Post>());
+      expect(result!.slug, firstPostSlug);
     });
   });
 }
