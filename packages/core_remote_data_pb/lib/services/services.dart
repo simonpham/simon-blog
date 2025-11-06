@@ -102,9 +102,13 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<List<TagSidebar>> getSidebarPostsByTags() async {
+  FutureOr<List<TagSidebar>> getSidebarPostsByTags({
+    String? tagNameFilter,
+  }) async {
     final response = await _client.getSidebarPostsByTags(
-      pb.GetSidebarPostsByTagsRequest(),
+      pb.GetSidebarPostsByTagsRequest(
+        tagNameFilter: tagNameFilter,
+      ),
     );
     return response.tags.map((tag) => tag.toModel()).toList();
   }

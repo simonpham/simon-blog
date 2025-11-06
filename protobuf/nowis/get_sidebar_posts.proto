@@ -18,6 +18,7 @@ message TagSidebar {
 }
 
 message GetSidebarPostsByTagsRequest {
+  string tag_name_filter = 1;
 }
 
 message GetSidebarPostsByTagsResponse {

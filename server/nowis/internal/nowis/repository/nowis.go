@@ -16,7 +16,7 @@ type NowisRepositoryHandler interface {
 	GetPostById(ctx context.Context, postId uuid.UUID, locale string) (*model.Post, error)
 	GetPostBySlug(ctx context.Context, postSlug string, locale string) (*model.Post, error)
 	GetPosts(ctx context.Context, locale string, page, limit int) ([]model.Post, error)
-	GetSidebarPostsByTags(ctx context.Context) ([]model.TagSidebar, error)
+	GetSidebarPostsByTags(ctx context.Context, tagNameFilter string) ([]model.TagSidebar, error)
 }
 
 type NowisRepository struct {
@@ -188,8 +188,9 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 	return posts, nil
 }
 
-// GetSidebarPostsByTags fetches all published and public posts, grouped by their tags.
-func (r *NowisRepository) GetSidebarPostsByTags(ctx context.Context) ([]model.TagSidebar, error) {
+// GetSidebarPostsByTags fetches all published and public posts, grouped by their tags, with an optional tag name filter.
+// If tagNameFilter is empty, all tags and their posts are returned.
+func (r *NowisRepository) GetSidebarPostsByTags(ctx context.Context, tagNameFilter string) ([]model.TagSidebar, error) {
 	query := `
         SELECT
             t.name AS tag_name,
@@ -202,11 +203,13 @@ func (r *NowisRepository) GetSidebarPostsByTags(ctx context.Context) ([]model.Ta
             post_tags pt ON t.id = pt.tag_id
         JOIN
             published_public_posts p ON pt.post_id = p.id
+        WHERE
+            ($1 = '' OR t.name = $1)
         ORDER BY
             t.name, p.title;
     `
 
-	rows, err := r.db.QueryContext(ctx, query)
+	rows, err := r.db.QueryContext(ctx, query, tagNameFilter)
 	if err != nil {
 		return nil, utils.WrapError("failed to query sidebar posts by tags from database", err)
 	}

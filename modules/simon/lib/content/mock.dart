@@ -162,7 +162,9 @@ class MockPostApis implements PostApis {
   }
 
   @override
-  FutureOr<List<TagSidebar>> getSidebarPostsByTags() {
+  FutureOr<List<TagSidebar>> getSidebarPostsByTags({
+    String? tagNameFilter,
+  }) {
     return [];
   }
 }
