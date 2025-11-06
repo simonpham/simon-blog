@@ -30,44 +30,7 @@ func (h NowisService) GetPosts(ctx context.Context, request *nowispb.GetPostsReq
 	var pbPosts []*nowispb.Post
 
 	for _, post := range posts {
-		var status nowispb.PostStatus
-		var visibility nowispb.PostVisibility
-
-		switch post.Status {
-		case "draft":
-			status = nowispb.PostStatus_draft
-		case "published":
-			status = nowispb.PostStatus_published
-		case "archived":
-			status = nowispb.PostStatus_archived
-		}
-
-		switch post.Visibility {
-		case "public":
-			visibility = nowispb.PostVisibility_public
-		case "private":
-			visibility = nowispb.PostVisibility_private
-		case "unlisted":
-			visibility = nowispb.PostVisibility_unlisted
-		}
-
-		pbPosts = append(pbPosts, &nowispb.Post{
-			Id:               post.ID.String(),
-			Title:            post.Title,
-			Slug:             post.Slug,
-			Content:          post.Content,
-			Summary:          post.Summary,
-			FeaturedImageUrl: *post.FeaturedImageURL,
-			AuthorId:         post.AuthorID.String(),
-			Status:           status,
-			Visibility:       visibility,
-			CommentsCount:    int32(post.CommentsCount),
-			LikesCount:       int32(post.LikesCount),
-			ReadTimeMinutes:  int32(post.ReadTimeMinutes),
-			CreatedAt:        post.CreatedAt.Unix(),
-			UpdatedAt:        post.UpdatedAt.Unix(),
-			Tags:             post.Tags,
-		})
+		pbPosts = append(pbPosts, post.ToPBPost())
 	}
 
 	return &nowispb.GetPostsResponse{

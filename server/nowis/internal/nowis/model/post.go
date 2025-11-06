@@ -3,6 +3,8 @@ package model
 import (
 	"time"
 
+	"nowis/protobuf/generated/nowis"
+
 	"github.com/google/uuid"
 )
 
@@ -41,4 +43,46 @@ type Post struct {
 	CreatedAt        time.Time      `db:"created_at" json:"createdAt"`
 	UpdatedAt        time.Time      `db:"updated_at" json:"updatedAt"`
 	Tags             []string       `db:"tags" json:"tags"`
+}
+
+// ToPBPost converts a model.Post to a nowispb.Post
+func (p *Post) ToPBPost() *nowis.Post {
+	var status nowis.PostStatus
+	var visibility nowis.PostVisibility
+
+	switch p.Status {
+	case "draft":
+		status = nowis.PostStatus_draft
+	case "published":
+		status = nowis.PostStatus_published
+	case "archived":
+		status = nowis.PostStatus_archived
+	}
+
+	switch p.Visibility {
+	case "public":
+		visibility = nowis.PostVisibility_public
+	case "private":
+		visibility = nowis.PostVisibility_private
+	case "unlisted":
+		visibility = nowis.PostVisibility_unlisted
+	}
+
+	return &nowis.Post{
+		Id:               p.ID.String(),
+		Title:            p.Title,
+		Slug:             p.Slug,
+		Content:          p.Content,
+		Summary:          p.Summary,
+		FeaturedImageUrl: *p.FeaturedImageURL,
+		AuthorId:         p.AuthorID.String(),
+		Status:           status,
+		Visibility:       visibility,
+		CommentsCount:    int32(p.CommentsCount),
+		LikesCount:       int32(p.LikesCount),
+		ReadTimeMinutes:  int32(p.ReadTimeMinutes),
+		CreatedAt:        p.CreatedAt.Unix(),
+		UpdatedAt:        p.UpdatedAt.Unix(),
+		Tags:             p.Tags,
+	}
 }
