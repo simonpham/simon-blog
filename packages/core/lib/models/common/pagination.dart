@@ -26,18 +26,24 @@ final class OffsetLimitPagination extends Pagination {
 final class PagePagination extends Pagination {
   final int page;
   final int pageSize;
+  final String? searchQuery;
 
   const PagePagination({
     required this.page,
     required this.pageSize,
+    this.searchQuery,
   });
 
   factory PagePagination.initial() {
-    return const PagePagination(page: 1, pageSize: 10);
+    return const PagePagination(page: 1, pageSize: 10, searchQuery: null);
   }
 
   @override
   Pagination nextPage() {
-    return PagePagination(page: page + 1, pageSize: pageSize);
+    return PagePagination(
+      page: page + 1,
+      pageSize: pageSize,
+      searchQuery: searchQuery,
+    );
   }
 }

@@ -10,6 +10,7 @@ message GetPostsRequest {
   Locale locale = 1;
   int32 page = 2;
   int32 limit = 3;
+  string search_query = 4;
 }
 
 message GetPostsResponse {

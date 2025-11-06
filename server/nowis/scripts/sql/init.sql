@@ -47,7 +47,8 @@ CREATE TABLE posts (
     likes_count INTEGER NOT NULL DEFAULT 0,
     read_time_minutes INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    search_vector TSVECTOR
 );
 
 CREATE TRIGGER update_post_updated_at
@@ -59,6 +60,20 @@ CREATE INDEX idx_posts_created_at ON posts(created_at DESC);
 CREATE INDEX idx_posts_status ON posts(status);
 CREATE INDEX idx_posts_visibility ON posts(visibility);
 CREATE INDEX idx_posts_author_id ON posts(author_id);
+
+CREATE OR REPLACE FUNCTION update_posts_search_vector()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.search_vector = to_tsvector('english', NEW.title || ' ' || NEW.summary || ' ' || NEW.content);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_posts_search_vector_trigger
+BEFORE INSERT OR UPDATE ON posts
+FOR EACH ROW EXECUTE FUNCTION update_posts_search_vector();
+
+CREATE INDEX idx_posts_search_vector ON posts USING GIN(search_vector);
 
 CREATE TABLE tags (
     id SERIAL PRIMARY KEY,
@@ -172,6 +187,7 @@ SELECT
     p.read_time_minutes,
     p.created_at,
     p.updated_at,
+    p.search_vector,
     ARRAY_AGG(t.name) FILTER (WHERE t.name IS NOT NULL) AS tags
 FROM
     posts p
@@ -184,4 +200,4 @@ WHERE
 GROUP BY
     p.id, p.title, p.slug, p.content, p.summary, p.featured_image_url, p.author_id,
     p.status, p.visibility, p.comments_count, p.likes_count, p.read_time_minutes,
-    p.created_at, p.updated_at;
+    p.created_at, p.updated_at, p.search_vector;

@@ -4,6 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"nowis/internal/nowis/model"
 	"nowis/pkg/utils"
@@ -15,7 +18,7 @@ import (
 type NowisRepositoryHandler interface {
 	GetPostById(ctx context.Context, postId uuid.UUID, locale string) (*model.Post, error)
 	GetPostBySlug(ctx context.Context, postSlug string, locale string) (*model.Post, error)
-	GetPosts(ctx context.Context, locale string, page, limit int) ([]model.Post, error)
+	GetPosts(ctx context.Context, locale string, page, limit int, searchQuery string) ([]model.Post, error)
 	GetSidebarPostsByTags(ctx context.Context, tagNameFilter string) ([]model.TagSidebar, error)
 }
 
@@ -119,7 +122,7 @@ func (r *NowisRepository) GetPostBySlug(ctx context.Context, postSlug string, lo
 // GetPosts fetches a list of published and public posts with pagination and optional locale filtering by tag.
 // page is 1-indexed.
 // If locale is empty, all posts (matching visibility/status) are returned without tag filtering.
-func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int, limit int) ([]model.Post, error) {
+func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int, limit int, searchQuery string) ([]model.Post, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -129,27 +132,86 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 		limit = 10 // Or any sensible default, or return an error
 	}
 
-	// SQL Query to select posts, including aggregated tags and filtering by locale tag.
-	// The `EXISTS` subquery efficiently filters posts that have a tag matching the locale,
-	// without introducing duplicate rows if a post has multiple tags.
-	query := `
+	var (
+		selectColumns []string
+		whereClauses  []string
+		args          []any
+		paramIndex    = 1
+	)
+
+	// Base columns
+	selectColumns = []string{
+		"p.id",
+		"p.title",
+		"p.slug",
+		"p.content",
+		"p.summary",
+		"p.featured_image_url",
+		"p.author_id",
+		"p.status",
+		"p.visibility",
+		"p.comments_count",
+		"p.likes_count",
+		"p.read_time_minutes",
+		"p.created_at",
+		"p.updated_at",
+		"p.tags",
+	}
+
+	orderByClause := " ORDER BY p.created_at DESC " // Default order
+
+	// Add full-text search condition if searchQuery is provided
+	if searchQuery != "" {
+		// Use websearch_to_tsquery for better user experience (handles multiple words, quoted phrases, etc.)
+		selectColumns = append(selectColumns, "ts_rank(p.search_vector, websearch_to_tsquery('english', $"+strconv.Itoa(paramIndex)+")) AS rank_score")
+		whereClauses = append(whereClauses, "p.search_vector @@ websearch_to_tsquery('english', $"+strconv.Itoa(paramIndex)+")")
+		args = append(args, searchQuery)
+		paramIndex++
+		orderByClause = " ORDER BY rank_score DESC, p.created_at DESC " // Prioritize rank, then date
+	} else {
+		// If no search query, still select a dummy rank_score to keep the SCAN statement consistent
+		selectColumns = append(selectColumns, "0.0 AS rank_score")
+	}
+
+	// Add locale filtering by tag
+	whereClauses = append(whereClauses, "($"+strconv.Itoa(paramIndex)+" = '' OR $"+strconv.Itoa(paramIndex)+" = ANY(p.tags))")
+	args = append(args, locale)
+	paramIndex++
+
+	// Construct the WHERE clause
+	whereClause := ""
+	if len(whereClauses) > 0 {
+		whereClause = " WHERE " + strings.Join(whereClauses, " AND ")
+	}
+
+	// Add pagination parameters
+	offsetClause := " OFFSET $" + strconv.Itoa(paramIndex)
+	args = append(args, offset)
+	paramIndex++
+
+	limitClause := " LIMIT $" + strconv.Itoa(paramIndex)
+	args = append(args, limit)
+	paramIndex++
+
+	// Assemble the final query
+	query := fmt.Sprintf(`
         SELECT
-            p.id, p.title, p.slug, p.content, p.summary, p.featured_image_url, p.author_id,
-            p.status, p.visibility, p.comments_count, p.likes_count, p.read_time_minutes,
-            p.created_at, p.updated_at,
-            p.tags
+            %s
         FROM
             published_public_posts p
-        WHERE
-            ($3 = '' OR $3 = ANY(p.tags))
-        ORDER BY
-            p.created_at DESC
-        OFFSET $1
-        LIMIT $2
-    `
-	// Parameters: $1 = offset, $2 = limit, $3 = locale
+        %s
+        %s
+        %s
+        %s
+    `,
+		strings.Join(selectColumns, ", "),
+		whereClause,
+		orderByClause,
+		offsetClause,
+		limitClause,
+	)
 
-	rows, err := r.db.QueryContext(ctx, query, offset, limit, locale)
+	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, utils.WrapError("failed to query posts from database", err)
 	}
@@ -158,6 +220,7 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 	var posts []model.Post
 	for rows.Next() {
 		post := model.Post{}
+		var rankScore float64 // Variable to hold the rank score
 		err := rows.Scan(
 			&post.ID,
 			&post.Title,
@@ -174,10 +237,13 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 			&post.CreatedAt,
 			&post.UpdatedAt,
 			pq.Array(&post.Tags),
+			&rankScore, // Scan the rank score
 		)
 		if err != nil {
 			return nil, utils.WrapError("failed to scan post row", err)
 		}
+		// You might want to store rankScore in the model.Post if it's relevant for the client,
+		// but for now, we just scan it to keep the row.Scan consistent.
 		posts = append(posts, post)
 	}
 

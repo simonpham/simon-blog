@@ -90,6 +90,7 @@ class NowisPostApis implements PostApis {
       pb.GetPostsRequest(
         limit: pagePagination?.pageSize,
         page: pagePagination?.page,
+        searchQuery: pagePagination?.searchQuery,
       ),
     );
     return response.posts.map((post) => post.toModel()).toList();

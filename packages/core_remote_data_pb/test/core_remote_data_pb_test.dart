@@ -42,5 +42,33 @@ void main() {
       expect(result, isA<List<TagSidebar>>());
       expect(result.length, greaterThan(0));
     });
+
+    test('search posts', () async {
+      const searchQuery = 'flutter';
+      final result = await nowisPostApis.list(
+        const PagePagination(
+          page: 1,
+          pageSize: 10,
+          searchQuery: searchQuery,
+        ),
+      );
+
+      expect(result, isA<List<Post>>());
+      expect(result.length, greaterThan(0));
+    });
+
+    test('search posts - empty', () async {
+      const searchQuery = 'dummy';
+      final result = await nowisPostApis.list(
+        const PagePagination(
+          page: 1,
+          pageSize: 10,
+          searchQuery: searchQuery,
+        ),
+      );
+
+      expect(result, isA<List<Post>>());
+      expect(result.length, 0);
+    });
   });
 }

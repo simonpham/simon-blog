@@ -54,8 +54,9 @@ func (h NowisService) GetPosts(ctx context.Context, request *nowispb.GetPostsReq
 	locale := request.Locale.GetLang()
 	page := int(request.GetPage())
 	limit := int(request.GetLimit())
+	searchQuery := request.GetSearchQuery()
 
-	posts, err := h.repo.GetPosts(ctx, locale, page, limit)
+	posts, err := h.repo.GetPosts(ctx, locale, page, limit, searchQuery)
 	if err != nil {
 		return nil, err
 	}
