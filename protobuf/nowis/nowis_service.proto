@@ -1,5 +1,6 @@
 syntax = "proto3";
 import "get_posts.proto";
+import "get_post.proto";
 
 package nowis;
 
@@ -7,5 +8,6 @@ option go_package = "protobuf/generated/nowis";
 
 service NowisService {
   rpc GetPosts(GetPostsRequest) returns (GetPostsResponse) {}
+  rpc GetPostById(GetPostByIdRequest) returns (GetPostByIdResponse) {}
+  rpc GetPostBySlug(GetPostBySlugRequest) returns (GetPostBySlugResponse) {}
 }
-

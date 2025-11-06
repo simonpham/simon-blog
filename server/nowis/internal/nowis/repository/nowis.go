@@ -13,7 +13,8 @@ import (
 )
 
 type NowisRepositoryHandler interface {
-	GetPost(ctx context.Context, postID uuid.UUID) (*model.Post, error)
+	GetPostById(ctx context.Context, postId uuid.UUID, locale string) (*model.Post, error)
+	GetPostBySlug(ctx context.Context, postSlug string, locale string) (*model.Post, error)
 	GetPosts(ctx context.Context, locale string, page, limit int) ([]model.Post, error)
 }
 
@@ -28,7 +29,7 @@ func NewNowisRepository(db *sql.DB) *NowisRepository {
 
 // GetPost fetches a single published and public post by its ID from the 'published_public_posts' view.
 // It also aggregates and returns the tags associated with the post.
-func (r *NowisRepository) GetPost(ctx context.Context, postID uuid.UUID) (*model.Post, error) {
+func (r *NowisRepository) GetPostById(ctx context.Context, postID uuid.UUID, locale string) (*model.Post, error) {
 	query := `
         SELECT
             id, title, slug, content, summary, featured_image_url, author_id,
@@ -37,12 +38,56 @@ func (r *NowisRepository) GetPost(ctx context.Context, postID uuid.UUID) (*model
         FROM
             published_public_posts
         WHERE
-            id = $1
+            id = $1 AND ($2 = '' OR $2 = ANY(tags))
     `
 
 	post := &model.Post{}
 
-	err := r.db.QueryRowContext(ctx, query, postID).Scan(
+	err := r.db.QueryRowContext(ctx, query, postID, locale).Scan(
+		&post.ID,
+		&post.Title,
+		&post.Slug,
+		&post.Content,
+		&post.Summary,
+		&post.FeaturedImageURL,
+		&post.AuthorID,
+		&post.Status,
+		&post.Visibility,
+		&post.CommentsCount,
+		&post.LikesCount,
+		&post.ReadTimeMinutes,
+		&post.CreatedAt,
+		&post.UpdatedAt,
+		pq.Array(&post.Tags),
+	)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil // No post found, return nil without error
+		}
+		return nil, utils.WrapError("failed to get post from database", err)
+	}
+
+	return post, nil
+}
+
+// GetPostBySlug fetches a single published and public post by its slug from the 'published_public_posts' view.
+// It also aggregates and returns the tags associated with the post.
+func (r *NowisRepository) GetPostBySlug(ctx context.Context, postSlug string, locale string) (*model.Post, error) {
+	query := `
+        SELECT
+            id, title, slug, content, summary, featured_image_url, author_id,
+            status, visibility, comments_count, likes_count, read_time_minutes,
+            created_at, updated_at, tags
+        FROM
+            published_public_posts
+        WHERE
+            slug = $1 AND ($2 = '' OR $2 = ANY(tags))
+    `
+
+	post := &model.Post{}
+
+	err := r.db.QueryRowContext(ctx, query, postSlug, locale).Scan(
 		&post.ID,
 		&post.Title,
 		&post.Slug,

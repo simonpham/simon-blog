@@ -1,0 +1,25 @@
+syntax = "proto3";
+import "post.proto";
+import "locale.proto";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+message GetPostByIdRequest {
+  Locale locale = 1;
+  string id = 2;
+}
+
+message GetPostByIdResponse {
+  Post post = 1;
+}
+
+message GetPostBySlugRequest {
+  Locale locale = 1;
+  string slug = 2;
+}
+
+message GetPostBySlugResponse {
+  Post post = 1;
+}
