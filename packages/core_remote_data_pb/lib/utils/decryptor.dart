@@ -3,18 +3,22 @@ import 'dart:typed_data';
 
 import 'package:utils/utils.dart';
 
-const String _encryptionPassphrase =
-    'ThisIsMySuperSecretPublicPassphraseThatEveryoneKnows';
-const String _encryptionStaticSaltHex =
-    'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'; // 32-byte salt
 const int _keyLen = 32; // AES-256 key
 const int _pbkdf2Iterations = 4096; // Recommended iterations
 const int _aesGCMNonceSize = 12; // GCM recommended nonce size
 const int _unixTimeByteSize = 8; // int64 is 8 bytes
 
-final Uint8List _staticEncryptionSalt = Uint8List.fromList(
-  hex.decode(_encryptionStaticSaltHex),
+Uint8List get _staticEncryptionSalt => Uint8List.fromList(
+  hex.decode(_appVersionRef),
 );
+
+String _appId = '';
+String _appVersionRef = ''; // 32-byte salt
+
+void setAppInfo(String appId, String appVersionRef) {
+  _appId = appId;
+  _appVersionRef = appVersionRef;
+}
 
 Uint8List _deriveDynamicKey(DateTime timestamp) {
   final DateTime utcTime = timestamp.toUtc();
@@ -43,7 +47,7 @@ Uint8List _deriveDynamicKey(DateTime timestamp) {
   keyDerivator.init(pbkdf2Params);
 
   return keyDerivator.process(
-    Uint8List.fromList(utf8.encode(_encryptionPassphrase)),
+    Uint8List.fromList(utf8.encode(_appId)),
   );
 }
 

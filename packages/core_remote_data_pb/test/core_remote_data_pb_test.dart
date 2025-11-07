@@ -9,6 +9,12 @@ void main() {
     host: 'api.nowis.sofluffy.io',
   );
 
+  setUpAll(() async {
+    if (nowisPostApis is NowisPostApis) {
+      await nowisPostApis.healthCheck();
+    }
+  });
+
   group('NowisPostApis', () {
     String firstPostId = '';
     String firstPostSlug = '';

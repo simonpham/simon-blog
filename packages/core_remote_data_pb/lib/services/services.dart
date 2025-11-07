@@ -34,6 +34,16 @@ class NowisPostApis implements PostApis {
          ),
        );
 
+  Future<void> healthCheck() async {
+    final response = await _client.healthCheck(pb.HealthCheckRequest());
+    if (response.appId.isEmpty || response.appVersionRef.isEmpty) {
+      throw const Failure(
+        'Health check failed',
+      );
+    }
+    decryptor.setAppInfo(response.appId, response.appVersionRef);
+  }
+
   @override
   FutureOr<Failure?> add(Post item) {
     // TODO: implement addAll
