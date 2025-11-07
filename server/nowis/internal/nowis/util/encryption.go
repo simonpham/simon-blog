@@ -10,18 +10,17 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"nowis/pkg/configs"
 	"time"
 
 	"golang.org/x/crypto/pbkdf2"
 )
 
 const (
-	EncryptionPassphrase    = "ThisIsMySuperSecretPublicPassphraseThatEveryoneKnows"
-	EncryptionStaticSaltHex = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2" // 32-byte salt
-	keyLen                  = 32                                                                 // AES-256 key
-	pbkdf2Iterations        = 4096                                                               // Recommended iterations
-	aesGCMNonceSize         = 12                                                                 // GCM recommended nonce size
-	unixTimeByteSize        = 8                                                                  // int64 is 8 bytes
+	keyLen          = 32   // AES-256 key
+	pbkdf2Iterations = 4096 // Recommended iterations
+	aesGCMNonceSize = 12   // GCM recommended nonce size
+	unixTimeByteSize = 8    // int64 is 8 bytes
 )
 
 var (
@@ -30,7 +29,8 @@ var (
 
 func init() {
 	var err error
-	staticEncryptionSalt, err = hex.DecodeString(EncryptionStaticSaltHex)
+	config := configs.GetConfig()
+	staticEncryptionSalt, err = hex.DecodeString(config.NowisEncryptionStaticSaltHex)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to decode encryption static salt hex: %v", err))
 	}
@@ -49,7 +49,8 @@ func deriveDynamicKey(timestamp time.Time) []byte {
 	copy(combinedSalt, staticEncryptionSalt)
 	copy(combinedSalt[len(staticEncryptionSalt):], dynamicSaltComponent)
 
-	return pbkdf2.Key([]byte(EncryptionPassphrase), combinedSalt, pbkdf2Iterations, keyLen, sha256.New)
+	config := configs.GetConfig()
+	return pbkdf2.Key([]byte(config.NowisEncryptionPassphrase), combinedSalt, pbkdf2Iterations, keyLen, sha256.New)
 }
 
 // EncryptContent encrypts the plaintext content (string) using AES-GCM with a key

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	nowisrepo "nowis/internal/nowis/repository"
-	nowisutil "nowis/internal/nowis/util"
+	"nowis/pkg/configs"
 	nowispb "nowis/protobuf/generated/nowis"
 
 	"github.com/google/uuid"
@@ -92,8 +92,9 @@ func (h NowisService) GetSidebarPostsByTags(ctx context.Context, request *nowisp
 
 // HealthCheck returns the encryption passphrase and static salt hex.
 func (h NowisService) HealthCheck(ctx context.Context, request *nowispb.HealthCheckRequest) (*nowispb.HealthCheckResponse, error) {
+	config := configs.GetConfig()
 	return &nowispb.HealthCheckResponse{
-		AppId:         nowisutil.EncryptionPassphrase,
-		AppVersionRef: nowisutil.EncryptionStaticSaltHex,
+		AppId:         config.NowisEncryptionPassphrase,
+		AppVersionRef: config.NowisEncryptionStaticSaltHex,
 	}, nil
 }
