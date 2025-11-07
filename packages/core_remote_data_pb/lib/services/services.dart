@@ -14,6 +14,8 @@ import 'package:grpc/grpc.dart';
 class NowisPostApis implements PostApis {
   final pb.NowisServiceClient _client;
 
+  final Completer<void> _healthCheckCompleter = Completer<void>();
+
   String _localAppId = '';
   String _localAppVersionRef = '';
 
@@ -35,9 +37,21 @@ class NowisPostApis implements PostApis {
              ),
            ),
          ),
-       );
+       ) {
+    _healthCheck();
+  }
 
-  Future<void> healthCheck() async {
+  Future<void> _waitForHealthCheck() async {
+    if (!_healthCheckCompleter.isCompleted) {
+      await _healthCheckCompleter.future;
+    }
+
+    if (_localAppId.isEmpty || _localAppVersionRef.isEmpty) {
+      throw const Failure('Health check failed');
+    }
+  }
+
+  Future<void> _healthCheck() async {
     if (_localAppId.isNotEmpty && _localAppVersionRef.isNotEmpty) {
       return;
     }
@@ -48,8 +62,11 @@ class NowisPostApis implements PostApis {
         'Health check failed',
       );
     }
+
     _localAppId = response.appId;
     _localAppVersionRef = response.appVersionRef;
+
+    _healthCheckCompleter.complete();
   }
 
   @override
@@ -78,6 +95,8 @@ class NowisPostApis implements PostApis {
 
   @override
   FutureOr<Post?> get(String id) async {
+    await _waitForHealthCheck();
+
     final response = await _client.getPostById(
       pb.GetPostByIdRequest(id: id),
     );
@@ -98,6 +117,8 @@ class NowisPostApis implements PostApis {
 
   @override
   FutureOr<Post?> getPostBySlug(String slug) async {
+    await _waitForHealthCheck();
+
     final response = await _client.getPostBySlug(
       pb.GetPostBySlugRequest(slug: slug),
     );
@@ -121,6 +142,8 @@ class NowisPostApis implements PostApis {
     Pagination pagination, {
     String? searchQuery,
   }) async {
+    await _waitForHealthCheck();
+
     final pagePagination = switch (pagination) {
       PagePagination pagination => pagination,
       _ => null,
@@ -159,6 +182,8 @@ class NowisPostApis implements PostApis {
   FutureOr<List<TagSidebar>> getSidebarPostsByTags({
     String? tagNameFilter,
   }) async {
+    await _waitForHealthCheck();
+
     final response = await _client.getSidebarPostsByTags(
       pb.GetSidebarPostsByTagsRequest(
         tagNameFilter: tagNameFilter,
