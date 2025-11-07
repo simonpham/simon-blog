@@ -3,12 +3,12 @@ import 'package:core/models/sidebar_post.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart' as pb;
 
 extension PostMapper on pb.Post {
-  Post toModel() {
+  Post toModel(String decryptedContent) {
     return Post(
       id: id,
       title: title,
       slug: slug,
-      content: content,
+      content: decryptedContent,
       summary: summary,
       authorId: authorId,
       tags: tags.toList(),

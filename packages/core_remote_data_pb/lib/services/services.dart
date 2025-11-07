@@ -6,7 +6,9 @@ import 'package:core/models/post.dart';
 import 'package:core/models/sidebar_post.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart' as pb;
+import 'package:core_remote_data_pb/utils/decryptor.dart' as decryptor;
 import 'package:core_remote_data_pb/utils/mapper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:grpc/grpc.dart';
 
 class NowisPostApis implements PostApis {
@@ -65,7 +67,11 @@ class NowisPostApis implements PostApis {
     if (!response.hasPost()) {
       return null;
     }
-    return response.post.toModel();
+    final decryptedContent = await compute(
+      decryptor.decrypt,
+      response.post.content,
+    );
+    return response.post.toModel(decryptedContent);
   }
 
   @override
@@ -77,7 +83,11 @@ class NowisPostApis implements PostApis {
     if (!response.hasPost()) {
       return null;
     }
-    return response.post.toModel();
+    final decryptedContent = await compute(
+      decryptor.decrypt,
+      response.post.content,
+    );
+    return response.post.toModel(decryptedContent);
   }
 
   @override
@@ -96,7 +106,17 @@ class NowisPostApis implements PostApis {
         searchQuery: searchQuery,
       ),
     );
-    return response.posts.map((post) => post.toModel()).toList();
+
+    final List<Post> posts = [];
+    for (final post in response.posts) {
+      final decryptedContent = await compute(
+        decryptor.decrypt,
+        post.content,
+      );
+      posts.add(post.toModel(decryptedContent));
+    }
+
+    return posts;
   }
 
   @override

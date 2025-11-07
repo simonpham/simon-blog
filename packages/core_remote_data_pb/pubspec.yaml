@@ -7,10 +7,15 @@ environment:
 resolution: workspace
 
 dependencies:
+  flutter:
+    sdk: flutter
+
   core:
     path: ../core
   core_remote_data:
     path: ../core_remote_data
+  utils:
+    path: ../utils
 
   protobuf: ^5.0.0
   grpc: ^4.3.1
