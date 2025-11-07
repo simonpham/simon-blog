@@ -2,12 +2,14 @@ syntax = "proto3";
 import "get_posts.proto";
 import "get_post.proto";
 import "get_sidebar_posts.proto";
+import "health_check.proto";
 
 package nowis;
 
 option go_package = "protobuf/generated/nowis";
 
 service NowisService {
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {}
   rpc GetPosts(GetPostsRequest) returns (GetPostsResponse) {}
   rpc GetPostById(GetPostByIdRequest) returns (GetPostByIdResponse) {}
   rpc GetPostBySlug(GetPostBySlugRequest) returns (GetPostBySlugResponse) {}

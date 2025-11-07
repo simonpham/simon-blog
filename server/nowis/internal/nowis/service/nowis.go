@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	nowisrepo "nowis/internal/nowis/repository"
+	nowisutil "nowis/internal/nowis/util"
 	nowispb "nowis/protobuf/generated/nowis"
 
 	"github.com/google/uuid"
@@ -86,5 +87,13 @@ func (h NowisService) GetSidebarPostsByTags(ctx context.Context, request *nowisp
 
 	return &nowispb.GetSidebarPostsByTagsResponse{
 		Tags: pbTags,
+	}, nil
+}
+
+// HealthCheck returns the encryption passphrase and static salt hex.
+func (h NowisService) HealthCheck(ctx context.Context, request *nowispb.HealthCheckRequest) (*nowispb.HealthCheckResponse, error) {
+	return &nowispb.HealthCheckResponse{
+		AppId:         nowisutil.EncryptionPassphrase,
+		AppVersionRef: nowisutil.EncryptionStaticSaltHex,
 	}, nil
 }

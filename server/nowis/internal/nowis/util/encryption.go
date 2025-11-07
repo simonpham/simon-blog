@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	encryptionPassphrase    = "ThisIsMySuperSecretPublicPassphraseThatEveryoneKnows"
-	encryptionStaticSaltHex = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2" // 32-byte salt
+	EncryptionPassphrase    = "ThisIsMySuperSecretPublicPassphraseThatEveryoneKnows"
+	EncryptionStaticSaltHex = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2" // 32-byte salt
 	keyLen                  = 32                                                                 // AES-256 key
 	pbkdf2Iterations        = 4096                                                               // Recommended iterations
 	aesGCMNonceSize         = 12                                                                 // GCM recommended nonce size
@@ -30,7 +30,7 @@ var (
 
 func init() {
 	var err error
-	staticEncryptionSalt, err = hex.DecodeString(encryptionStaticSaltHex)
+	staticEncryptionSalt, err = hex.DecodeString(EncryptionStaticSaltHex)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to decode encryption static salt hex: %v", err))
 	}
@@ -43,13 +43,13 @@ func deriveDynamicKey(timestamp time.Time) []byte {
 	hour := utcTime.Hour()
 	minute := utcTime.Minute()
 
-	dynamicSaltComponent := []byte(fmt.Sprintf("%02d%02d", hour, minute))
+	dynamicSaltComponent := fmt.Appendf(nil, "%02d%02d", hour, minute)
 
 	combinedSalt := make([]byte, len(staticEncryptionSalt)+len(dynamicSaltComponent))
 	copy(combinedSalt, staticEncryptionSalt)
 	copy(combinedSalt[len(staticEncryptionSalt):], dynamicSaltComponent)
 
-	return pbkdf2.Key([]byte(encryptionPassphrase), combinedSalt, pbkdf2Iterations, keyLen, sha256.New)
+	return pbkdf2.Key([]byte(EncryptionPassphrase), combinedSalt, pbkdf2Iterations, keyLen, sha256.New)
 }
 
 // EncryptContent encrypts the plaintext content (string) using AES-GCM with a key
