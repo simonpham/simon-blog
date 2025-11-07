@@ -14,6 +14,9 @@ import 'package:grpc/grpc.dart';
 class NowisPostApis implements PostApis {
   final pb.NowisServiceClient _client;
 
+  String _localAppId = '';
+  String _localAppVersionRef = '';
+
   NowisPostApis({
     required String host,
     int? port,
@@ -41,7 +44,8 @@ class NowisPostApis implements PostApis {
         'Health check failed',
       );
     }
-    decryptor.setAppInfo(response.appId, response.appVersionRef);
+    _localAppId = response.appId;
+    _localAppVersionRef = response.appVersionRef;
   }
 
   @override
@@ -79,7 +83,11 @@ class NowisPostApis implements PostApis {
     }
     final decryptedContent = await compute(
       decryptor.decrypt,
-      response.post.content,
+      {
+        'encodedPayload': response.post.content,
+        'appId': _localAppId,
+        'appVersionRef': _localAppVersionRef,
+      },
     );
     return response.post.toModel(decryptedContent);
   }
@@ -95,7 +103,11 @@ class NowisPostApis implements PostApis {
     }
     final decryptedContent = await compute(
       decryptor.decrypt,
-      response.post.content,
+      {
+        'encodedPayload': response.post.content,
+        'appId': _localAppId,
+        'appVersionRef': _localAppVersionRef,
+      },
     );
     return response.post.toModel(decryptedContent);
   }
@@ -121,7 +133,11 @@ class NowisPostApis implements PostApis {
     for (final post in response.posts) {
       final decryptedContent = await compute(
         decryptor.decrypt,
-        post.content,
+        {
+          'encodedPayload': post.content,
+          'appId': _localAppId,
+          'appVersionRef': _localAppVersionRef,
+        },
       );
       posts.add(post.toModel(decryptedContent));
     }

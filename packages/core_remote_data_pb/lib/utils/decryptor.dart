@@ -8,19 +8,11 @@ const int _pbkdf2Iterations = 4096; // Recommended iterations
 const int _aesGCMNonceSize = 12; // GCM recommended nonce size
 const int _unixTimeByteSize = 8; // int64 is 8 bytes
 
-Uint8List get _staticEncryptionSalt => Uint8List.fromList(
-  hex.decode(_appVersionRef),
-);
-
-String _appId = '';
-String _appVersionRef = ''; // 32-byte salt
-
-void setAppInfo(String appId, String appVersionRef) {
-  _appId = appId;
-  _appVersionRef = appVersionRef;
-}
-
-Uint8List _deriveDynamicKey(DateTime timestamp) {
+Uint8List _deriveDynamicKey(
+  DateTime timestamp,
+  String appId,
+  Uint8List appVersionRef,
+) {
   final DateTime utcTime = timestamp.toUtc();
   final int hour = utcTime.hour;
   final int minute = utcTime.minute;
@@ -32,7 +24,7 @@ Uint8List _deriveDynamicKey(DateTime timestamp) {
   );
 
   final Uint8List combinedSalt = Uint8List.fromList([
-    ..._staticEncryptionSalt,
+    ...appVersionRef,
     ...dynamicSaltComponent,
   ]);
 
@@ -47,11 +39,17 @@ Uint8List _deriveDynamicKey(DateTime timestamp) {
   keyDerivator.init(pbkdf2Params);
 
   return keyDerivator.process(
-    Uint8List.fromList(utf8.encode(_appId)),
+    Uint8List.fromList(utf8.encode(appId)),
   );
 }
 
-String decrypt(String encodedPayload) {
+String decrypt(Map<String, dynamic> params) {
+  final String encodedPayload = params['encodedPayload'];
+  final String appId = params['appId'];
+  final Uint8List appVersionRef = Uint8List.fromList(
+    hex.decode(params['appVersionRef']),
+  );
+
   final Uint8List encryptedPayloadWithMeta = base64Url.decode(encodedPayload);
 
   const int minExpectedLen =
@@ -104,7 +102,13 @@ String decrypt(String encodedPayload) {
       final DateTime currentAttemptTime = encryptionTime.subtract(
         Duration(minutes: i),
       );
-      return _decryptWithTimestamp(iv, encryptedContent, currentAttemptTime);
+      return _decryptWithTimestamp(
+        iv,
+        encryptedContent,
+        currentAttemptTime,
+        appId,
+        appVersionRef,
+      );
     } on Exception catch (e) {
       lastException = e;
       if (i == maxAttempts - 1) {
@@ -123,8 +127,14 @@ String _decryptWithTimestamp(
   Uint8List iv,
   Uint8List encryptedContent,
   DateTime encryptionTime,
+  String appId,
+  Uint8List appVersionRef,
 ) {
-  final Uint8List dynamicKey = _deriveDynamicKey(encryptionTime);
+  final Uint8List dynamicKey = _deriveDynamicKey(
+    encryptionTime,
+    appId,
+    appVersionRef,
+  );
 
   final KeyParameter keyParam = KeyParameter(dynamicKey);
   final AEADParameters params = AEADParameters(
