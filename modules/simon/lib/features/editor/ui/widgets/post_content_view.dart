@@ -1,5 +1,6 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:ui_markdown/ui_markdown.dart';
 
 class PostContentView extends StatelessWidget {
   final Post post;
@@ -11,8 +12,6 @@ class PostContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Text(post.content),
-    );
+    return MarkdownContent(post.content);
   }
 }
