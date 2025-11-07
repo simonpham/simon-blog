@@ -38,6 +38,10 @@ class NowisPostApis implements PostApis {
        );
 
   Future<void> healthCheck() async {
+    if (_localAppId.isNotEmpty && _localAppVersionRef.isNotEmpty) {
+      return;
+    }
+
     final response = await _client.healthCheck(pb.HealthCheckRequest());
     if (response.appId.isEmpty || response.appVersionRef.isEmpty) {
       throw const Failure(
