@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>terminal</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="terminal" transform="translate(1.500000, 1.500000)" stroke="#141B34" stroke-width="1.5">
+            <path d="M0,9.5 C0,5.02166 0,2.78249 1.39124,1.39124 C2.78249,0 5.02166,0 9.5,0 C13.9783,0 16.2175,0 17.6088,1.39124 C19,2.78249 19,5.02166 19,9.5 C19,13.9783 19,16.2175 17.6088,17.6088 C16.2175,19 13.9783,19 9.5,19 C5.02166,19 2.78249,19 1.39124,17.6088 C0,16.2175 0,13.9783 0,9.5 Z" id="Path"></path>
+            <path d="M5.5,6.5 L7.33981,8.0858 C8.11327,8.7524 8.5,9.08585 8.5,9.5 C8.5,9.91415 8.11327,10.2476 7.33981,10.9142 L5.5,12.5" id="Path" stroke-linecap="round" stroke-linejoin="round"></path>
+            <line x1="9.5" y1="14.5" x2="13.5" y2="14.5" id="Path" stroke-linecap="round" stroke-linejoin="round"></line>
+        </g>
+    </g>
+</svg>
