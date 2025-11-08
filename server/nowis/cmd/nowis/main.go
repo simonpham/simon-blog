@@ -13,7 +13,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
@@ -27,6 +26,7 @@ import (
 	"nowis/pkg/db"
 	"nowis/pkg/interceptors"
 	nowispb "nowis/protobuf/generated/nowis"
+	gatewayRouter "nowis/internal/gateway/router"
 )
 
 // grpcHandlerFunc is a unified handler that routes gRPC traffic (detected by HTTP/2 and content-type)
@@ -65,10 +65,7 @@ func main() {
 	server := nowis.NewNowisService(repo)
 
 	// --- Gin Server Setup ---
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "pong"})
-	})
+	r := gatewayRouter.InitApi()
 
 	// --- gRPC Server Setup ---
 	var opts []grpc.ServerOption
