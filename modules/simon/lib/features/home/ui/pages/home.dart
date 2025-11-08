@@ -22,7 +22,31 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final PostViewModel _postViewModel = PostViewModel();
 
+  final ValueNotifier<bool> _isLeftPanelExpandedNotifier = ValueNotifier<bool>(
+    true,
+  );
+  final ValueNotifier<bool> _isRightPanelExpandedNotifier = ValueNotifier<bool>(
+    false,
+  );
+  final ValueNotifier<bool> _isBottomPanelExpandedNotifier =
+      ValueNotifier<bool>(
+        false,
+      );
+
   late final IdeLayoutController controller = IdeLayoutController.create(
+    onPanelStateChanged: (IdePanel panel, bool isExpanded) {
+      switch (panel) {
+        case IdePanel.leftPanel:
+          _isLeftPanelExpandedNotifier.value = isExpanded;
+          break;
+        case IdePanel.rightPanel:
+          _isRightPanelExpandedNotifier.value = isExpanded;
+          break;
+        case IdePanel.bottomPanel:
+          _isBottomPanelExpandedNotifier.value = isExpanded;
+          break;
+      }
+    },
     leftPanel: (BuildContext context) {
       return ChangeNotifierProvider.value(
         value: _postViewModel,
@@ -76,7 +100,33 @@ class _HomePageState extends State<HomePage> {
           return const HeaderBar();
         },
         bottomBar: (BuildContext context) {
-          return const StatusBar();
+          return MultiValueListenableBuilder(
+            listenables: [
+              _isLeftPanelExpandedNotifier,
+              _isRightPanelExpandedNotifier,
+              _isBottomPanelExpandedNotifier,
+            ],
+            builder: (context) {
+              return StatusBar(
+                isLeftPanelOpen: _isLeftPanelExpandedNotifier.value,
+                isRightPanelOpen: _isRightPanelExpandedNotifier.value,
+                isBottomPanelOpen: _isBottomPanelExpandedNotifier.value,
+                onAction: (action) {
+                  switch (action) {
+                    case StatusBarAction.toggleLeftPanel:
+                      controller.toggle(IdePanel.leftPanel);
+                      break;
+                    case StatusBarAction.toggleRightPanel:
+                      controller.toggle(IdePanel.rightPanel);
+                      break;
+                    case StatusBarAction.toggleBottomPanel:
+                      controller.toggle(IdePanel.bottomPanel);
+                      break;
+                  }
+                },
+              );
+            },
+          );
         },
       ),
     );

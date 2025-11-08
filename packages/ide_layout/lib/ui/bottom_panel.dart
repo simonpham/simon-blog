@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 class BottomPanel extends StatelessWidget {
   static const double defaultHeight = 240.0;
-  static const double minHeight = 48.0;
+  static const double minHeight = 0.0;
   static const double maxHeight = 480.0;
 
   final WidgetBuilder builder;

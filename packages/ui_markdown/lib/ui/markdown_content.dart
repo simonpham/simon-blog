@@ -24,7 +24,7 @@ class MarkdownContent extends StatelessWidget {
       decoration: codeDecoration,
       child: child,
     );
-    final codeTextStyle = TextStyle().apply(fontFamily: kMonoFontFamily);
+    final codeTextStyle = const TextStyle().apply(fontFamily: kCodeFontFamily);
     return MarkdownWidget(
       selectable: false,
       config: config.copy(

@@ -1,12 +1,60 @@
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:icons/icons.dart';
+import 'package:simon/simon.dart';
+
+part 'status_bar/left.dart';
+part 'status_bar/center.dart';
+part 'status_bar/right.dart';
+
+enum StatusBarAction {
+  toggleLeftPanel,
+  toggleRightPanel,
+  toggleBottomPanel,
+}
 
 class StatusBar extends StatelessWidget {
+  final bool isLeftPanelOpen;
+  final bool isRightPanelOpen;
+  final bool isBottomPanelOpen;
+
+  final ValueChanged<StatusBarAction> onAction;
+
   const StatusBar({
     super.key,
+    required this.isLeftPanelOpen,
+    required this.isRightPanelOpen,
+    required this.isBottomPanelOpen,
+    required this.onAction,
   });
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox();
+    final theme = context.theme;
+    return Container(
+      height: Spacing.d32,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        border: Border(
+          top: BorderSide(
+            color: theme.dividerColor,
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          StatusBarLeftContent(
+            isLeftPanelOpen: isLeftPanelOpen,
+            onAction: onAction,
+          ),
+          StatusBarCenterContent(onAction: onAction),
+          StatusBarRightContent(
+            isBottomPanelOpen: isBottomPanelOpen,
+            onAction: onAction,
+          ),
+        ],
+      ),
+    );
   }
 }

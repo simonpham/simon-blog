@@ -15,6 +15,15 @@ class PostContent extends StatelessWidget {
       return const Text('No post selected');
     }
 
-    return PostContentView(selectedPost);
+    return Column(
+      children: [
+        EditorHeader(selectedPost),
+        Expanded(
+          child: PostContentView(
+            selectedPost,
+          ),
+        ),
+      ],
+    );
   }
 }

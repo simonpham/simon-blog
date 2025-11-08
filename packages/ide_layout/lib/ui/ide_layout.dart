@@ -40,10 +40,8 @@ class _IdeLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const dividerThickness = 2.0;
-    final dividerColor = context.theme.dividerColor.withValues(
-      alpha: 0.25,
-    );
+    const dividerThickness = 1.0;
+    final dividerColor = context.theme.dividerColor;
     final divider = Container(
       color: dividerColor,
       height: dividerThickness,

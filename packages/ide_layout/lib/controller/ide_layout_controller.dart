@@ -16,7 +16,11 @@ enum IdePanel {
   String get id => toString();
 }
 
+typedef IdePanelStateChanged = void Function(IdePanel panel, bool isExpanded);
+
 class IdeLayoutController {
+  final IdePanelStateChanged? onPanelStateChanged;
+
   /// Left Pandel, Inner, Right Panel.
   final MultiSplitViewController outerController;
 
@@ -26,6 +30,7 @@ class IdeLayoutController {
   const IdeLayoutController({
     required this.outerController,
     required this.innerController,
+    this.onPanelStateChanged,
   });
 
   factory IdeLayoutController.create({
@@ -33,6 +38,7 @@ class IdeLayoutController {
     required final WidgetBuilder rightPanel,
     required final WidgetBuilder bottomPanel,
     required final WidgetBuilder content,
+    IdePanelStateChanged? onPanelStateChanged,
   }) {
     final innerController = MultiSplitViewController(
       areas: [
@@ -49,6 +55,7 @@ class IdeLayoutController {
       ],
     );
     return IdeLayoutController(
+      onPanelStateChanged: onPanelStateChanged,
       outerController: MultiSplitViewController(
         areas: [
           Area(
@@ -83,14 +90,17 @@ class IdeLayoutController {
       case IdePanel.leftPanel:
         outerController.getArea(IdePanel.leftPanel.areaIndex).size =
             LeftPanel.minWidth;
+        onPanelStateChanged?.call(section, false);
         break;
       case IdePanel.rightPanel:
         outerController.getArea(IdePanel.rightPanel.areaIndex).size =
             RightPanel.minWidth;
+        onPanelStateChanged?.call(section, false);
         break;
       case IdePanel.bottomPanel:
         innerController.getArea(IdePanel.bottomPanel.areaIndex).size =
             BottomPanel.minHeight;
+        onPanelStateChanged?.call(section, false);
         break;
     }
   }
@@ -100,14 +110,17 @@ class IdeLayoutController {
       case IdePanel.leftPanel:
         outerController.getArea(IdePanel.leftPanel.areaIndex).size =
             LeftPanel.defaultWidth;
+        onPanelStateChanged?.call(section, true);
         break;
       case IdePanel.rightPanel:
         outerController.getArea(IdePanel.rightPanel.areaIndex).size =
             RightPanel.defaultWidth;
+        onPanelStateChanged?.call(section, true);
         break;
       case IdePanel.bottomPanel:
         innerController.getArea(IdePanel.bottomPanel.areaIndex).size =
             BottomPanel.defaultHeight;
+        onPanelStateChanged?.call(section, true);
         break;
     }
   }

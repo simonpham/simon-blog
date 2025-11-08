@@ -17,6 +17,8 @@ dependencies:
     path: ../../packages/core_remote_data_pb
   design_system:
     path: ../../packages/design_system
+  icons:
+    path: ../../packages/icons
   ide_layout:
     path: ../../packages/ide_layout
   l10n:

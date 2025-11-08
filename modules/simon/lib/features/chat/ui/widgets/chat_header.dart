@@ -1,10 +1,9 @@
 import 'package:design_system/design_system.dart';
-import 'package:flutter/material.dart';
-import 'package:icons/icons.dart';
+import 'package:flutter/widgets.dart';
 import 'package:simon/simon.dart';
 
-class CategoryHeader extends StatelessWidget {
-  const CategoryHeader({
+class ChatHeader extends StatelessWidget {
+  const ChatHeader({
     super.key,
   });
 
@@ -19,15 +18,7 @@ class CategoryHeader extends StatelessWidget {
         children: [
           Expanded(
             child: TitleText(
-              'Burrow files'.toUpperCase(),
-            ),
-          ),
-          Tappable(
-            onTap: () {},
-            child: ImageView(
-              Assets.moreVertical,
-              size: Spacing.d16,
-              color: context.theme.primaryColor,
+              '🦊 Chat den'.toUpperCase(),
             ),
           ),
         ],

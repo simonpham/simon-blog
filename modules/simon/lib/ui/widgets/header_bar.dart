@@ -10,7 +10,8 @@ class HeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      color: context.theme.colorScheme.surfaceContainer,
       padding: EdgeInsets.all(Spacing.d8),
       child: Row(
         children: [
