@@ -7,6 +7,8 @@ import (
 	nowispb "nowis/protobuf/generated/nowis"
 
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type NowisService struct {
@@ -24,12 +26,17 @@ func (h NowisService) GetPostById(ctx context.Context, request *nowispb.GetPostB
 	locale := request.Locale.GetLang()
 	id, err := uuid.Parse(request.Id)
 	if err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.InvalidArgument, "invalid post ID format: %v", err)
 	}
 
 	post, err := h.repo.GetPostById(ctx, id, locale)
 	if err != nil {
-		return nil, err
+		// Log the error for internal debugging
+		return nil, status.Errorf(codes.Internal, "failed to retrieve post: %v", err)
+	}
+
+	if post == nil {
+		return nil, status.Errorf(codes.NotFound, "post with ID %s not found", request.Id)
 	}
 
 	return &nowispb.GetPostByIdResponse{

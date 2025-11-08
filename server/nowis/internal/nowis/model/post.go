@@ -84,21 +84,26 @@ func (p *Post) ToPBPost() *nowis.Post {
 	}
 
 	pbPost := &nowis.Post{
-		Id:               p.ID.String(),
-		Title:            p.Title,
-		Slug:             p.Slug,
-		Content:          encodedPayload,
-		Summary:          p.Summary,
-		FeaturedImageUrl: *p.FeaturedImageURL,
-		AuthorId:         p.AuthorID.String(),
-		Status:           status,
-		Visibility:       visibility,
-		CommentsCount:    int32(p.CommentsCount),
-		LikesCount:       int32(p.LikesCount),
-		ReadTimeMinutes:  int32(p.ReadTimeMinutes),
-		CreatedAt:        p.CreatedAt.Unix(),
-		UpdatedAt:        p.UpdatedAt.Unix(),
-		Tags:             p.Tags,
+		Id:      p.ID.String(),
+		Title:   p.Title,
+		Slug:    p.Slug,
+		Content: encodedPayload,
+		Summary: p.Summary,
+		FeaturedImageUrl: func() string {
+			if p.FeaturedImageURL != nil {
+				return *p.FeaturedImageURL
+			}
+			return ""
+		}(),
+		AuthorId:        p.AuthorID.String(),
+		Status:          status,
+		Visibility:      visibility,
+		CommentsCount:   int32(p.CommentsCount),
+		LikesCount:      int32(p.LikesCount),
+		ReadTimeMinutes: int32(p.ReadTimeMinutes),
+		CreatedAt:       p.CreatedAt.Unix(),
+		UpdatedAt:       p.UpdatedAt.Unix(),
+		Tags:            p.Tags,
 	}
 
 	return pbPost
