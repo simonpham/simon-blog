@@ -5,7 +5,13 @@ final List<GoRoute> kSimonRoutes = [
   GoRoute(
     name: HomePage.routeName,
     path: HomePage.routePath,
-    builder: (context, state) => const HomePage(),
+    builder: (context, state) {
+      final postId = switch (state.pathParameters) {
+        {HomePage.identifierParam: String identifier} => identifier,
+        _ => null,
+      };
+      return HomePage(postId: postId);
+    },
   ),
   GoRoute(
     name: ErrorPage.routeName,

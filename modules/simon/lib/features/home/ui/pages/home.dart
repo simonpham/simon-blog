@@ -4,15 +4,34 @@ import 'package:ide_layout/ide_layout.dart';
 import 'package:simon/simon.dart';
 
 class HomePage extends StatefulWidget {
-  static const String routePath = '/';
   static const String routeName = 'home';
+  static const String routePath = '/:$identifierParam';
+
+  static const String identifierParam = 'identifier';
+
+  final String? postId;
+  final String? postSlug;
 
   static void go(BuildContext context) {
-    context.router.go(routePath);
+    context.router.goNamed(routeName);
+  }
+
+  static void goToPost(
+    BuildContext context, {
+    required String identifier,
+  }) {
+    context.router.goNamed(
+      routeName,
+      pathParameters: {
+        identifierParam: identifier,
+      },
+    );
   }
 
   const HomePage({
     super.key,
+    this.postId,
+    this.postSlug,
   });
 
   @override
@@ -81,6 +100,19 @@ class _HomePageState extends State<HomePage> {
     _listenable.removeListener(_handleSizeChanged);
     _postViewModel.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final currentPostId = widget.postId;
+    final currentLoadedPostId = _postViewModel.selectedPost?.data?.id;
+    if (currentPostId != null && currentLoadedPostId == currentPostId) {
+      return;
+    }
+    if (currentPostId != null && oldWidget.postId != currentPostId) {
+      _postViewModel.openPost(currentPostId);
+    }
   }
 
   void _handleSizeChanged() {

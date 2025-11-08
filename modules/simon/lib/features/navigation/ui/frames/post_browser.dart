@@ -40,7 +40,7 @@ class PostBrowser extends StatelessWidget {
                 child: FileTree(
                   categories: categories,
                   onItemTap: (file) {
-                    viewModel.openPost(file.id);
+                    HomePage.goToPost(context, identifier: file.id);
                   },
                 ),
               ),
