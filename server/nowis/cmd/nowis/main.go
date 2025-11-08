@@ -8,12 +8,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/soheilhy/cmux"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
@@ -27,6 +29,18 @@ import (
 	nowispb "nowis/protobuf/generated/nowis"
 )
 
+// grpcHandlerFunc is a unified handler that routes gRPC traffic (detected by HTTP/2 and content-type)
+// to the gRPC server, and all other traffic to the standard HTTP handler (Gin).
+func grpcHandlerFunc(grpcServer *grpc.Server, httpHandler http.Handler) http.Handler {
+	return h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
+			grpcServer.ServeHTTP(w, r)
+		} else {
+			httpHandler.ServeHTTP(w, r)
+		}
+	}), &http2.Server{})
+}
+
 func main() {
 	config := configs.GetConfig()
 
@@ -34,17 +48,13 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	var wg sync.WaitGroup
-	errChan := make(chan error, 3)
+	errChan := make(chan error, 1)
 
-	// --- Single Port Listener Setup ---
+	// --- Single Port Listener Setup (Plain TCP) ---
 	lis, err := net.Listen("tcp", config.NowisInternalAddress)
 	if err != nil {
 		log.Fatalf("failed to listen on shared address: %v", err)
 	}
-
-	mux := cmux.New(lis)
-	grpcL := mux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
-	httpL := mux.Match(cmux.Any())
 
 	authDb, err := db.OpenAuthDatabase()
 	if err != nil {
@@ -54,55 +64,42 @@ func main() {
 	repo := nowisRepo.NewNowisRepository(authDb)
 	server := nowis.NewNowisService(repo)
 
-	// --- gRPC Server Setup and Start ---
-	var opts []grpc.ServerOption
-	opts = append(opts, grpc.Creds(insecure.NewCredentials()))
-	opts = append(opts, grpc.UnaryInterceptor(interceptors.ValidationInterceptor))
-
-	srv := grpc.NewServer(opts...)
-	nowispb.RegisterNowisServiceServer(srv, &server)
-
-	healthcheck := nowis.NewNowisHealthService()
-	healthgrpc.RegisterHealthServer(srv, healthcheck)
-
-	if config.Env == "debug" {
-		reflection.Register(srv)
-	}
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		log.Printf("[gRPC Server] Started on shared listener (%s)", lis.Addr().String())
-		if err := srv.Serve(grpcL); err != nil && err != grpc.ErrServerStopped {
-			errChan <- fmt.Errorf("gRPC server failed to serve: %w", err)
-		}
-	}()
-
-	// --- Gin Server Setup and Start ---
+	// --- Gin Server Setup ---
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
 
-	ginSrv := &http.Server{
-		Handler: r,
+	// --- gRPC Server Setup ---
+	var opts []grpc.ServerOption
+	opts = append(opts, grpc.Creds(insecure.NewCredentials()))
+	opts = append(opts, grpc.UnaryInterceptor(interceptors.ValidationInterceptor))
+
+	grpcSrv := grpc.NewServer(opts...)
+	nowispb.RegisterNowisServiceServer(grpcSrv, &server)
+
+	healthcheck := nowis.NewNowisHealthService()
+	healthgrpc.RegisterHealthServer(grpcSrv, healthcheck)
+
+	if config.Env == "debug" {
+		reflection.Register(grpcSrv)
 	}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		log.Printf("[Gin Server] Started on shared listener (%s)", lis.Addr().String())
-		if err := ginSrv.Serve(httpL); err != nil && err != http.ErrServerClosed {
-			errChan <- fmt.Errorf("Gin server failed to run: %w", err)
-		}
-	}()
+	// --- Unified Handler Setup (Combining Gin and gRPC) ---
+	unifiedHandler := grpcHandlerFunc(grpcSrv, r)
 
-	// --- cmux Listener Start ---
+	ginSrv := &http.Server{
+		Handler: unifiedHandler,
+	}
+
+	// --- Start Unified Server ---
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		if err := mux.Serve(); err != nil && err != net.ErrClosed {
-			errChan <- fmt.Errorf("cmux failed to serve: %w", err)
+		log.Printf("[Unified Server] Started on address (%s)", lis.Addr().String())
+		// This single server handles both HTTP/1.1 and H2C (gRPC) traffic
+		if err := ginSrv.Serve(lis); err != nil && err != http.ErrServerClosed {
+			errChan <- fmt.Errorf("unified server failed to run: %w", err)
 		}
 	}()
 
@@ -118,15 +115,14 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Close the base listener first to stop accepting new connections
-	lis.Close()
-
 	log.Println("Stopping gRPC Server...")
-	srv.GracefulStop()
+	// GracefulStop on the gRPC server is called directly,
+	// which is safe even if it's served via the unified handler.
+	grpcSrv.GracefulStop()
 
-	log.Println("Stopping Gin Server...")
+	log.Println("Stopping Gin/Unified Server...")
 	if err := ginSrv.Shutdown(ctx); err != nil {
-		log.Printf("Gin Server shutdown error (may be forced): %v", err)
+		log.Printf("Unified Server shutdown error (may be forced): %v", err)
 	}
 
 	wg.Wait()
