@@ -27,16 +27,35 @@ class FileTree extends StatelessWidget {
       slivers: [
         for (final category in categories) ...[
           SliverToBoxAdapter(
-            child: ListItem(
-              leading: ImageView(
-                Assets.folder01,
-                size: Spacing.d16,
-                color: theme.primaryColor,
-              ),
-              child: Text(
-                category.name,
-                style: textStyle,
-                maxLines: 1,
+            child: Tappable(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: Spacing.d4,
+                  horizontal: Spacing.d16,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: Spacing.d2,
+                        bottom: Spacing.d2,
+                      ),
+                      child: ImageView(
+                        Assets.folder02,
+                        size: Spacing.d16,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    Spacing.h8,
+                    Flexible(
+                      child: Text(
+                        category.name,
+                        style: textStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -44,9 +63,15 @@ class FileTree extends StatelessWidget {
             itemCount: category.items.length,
             itemBuilder: (BuildContext context, int index) {
               final item = category.items[index];
-              return ListItem(
-                child: Tooltip(
-                  message: item.name,
+              return Tappable(
+                onTap: () => onItemTap?.call(item),
+                enableHover: true,
+                enableHoverOverlay: true,
+                child: Container(
+                  margin: EdgeInsets.only(
+                    left: Spacing.d24,
+                  ),
+                  padding: EdgeInsets.all(Spacing.d4),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -71,7 +96,6 @@ class FileTree extends StatelessWidget {
                     ],
                   ),
                 ),
-                onTap: () => onItemTap?.call(item),
               );
             },
           ),
