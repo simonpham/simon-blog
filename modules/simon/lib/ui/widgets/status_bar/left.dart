@@ -14,11 +14,11 @@ class StatusBarLeftContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: Spacing.d16),
+      padding: EdgeInsets.symmetric(horizontal: Spacing.d8),
       child: Row(
         children: [
           MiniIconButton(
-            icon: Assets.folder01,
+            icon: Assets.hierarchyFiles,
             isActive: isLeftPanelOpen,
             onTap: () {
               onAction(StatusBarAction.toggleLeftPanel);

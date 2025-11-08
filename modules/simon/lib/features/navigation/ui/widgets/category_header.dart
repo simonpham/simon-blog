@@ -1,6 +1,5 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:icons/icons.dart';
 import 'package:simon/simon.dart';
 
 class CategoryHeader extends StatelessWidget {
@@ -22,14 +21,14 @@ class CategoryHeader extends StatelessWidget {
               'Burrow files'.toUpperCase(),
             ),
           ),
-          Tappable(
-            onTap: () {},
-            child: ImageView(
-              Assets.moreVertical,
-              size: Spacing.d16,
-              color: context.theme.primaryColor,
-            ),
-          ),
+          // Tappable(
+          //   onTap: () {},
+          //   child: ImageView(
+          //     Assets.moreVertical,
+          //     size: Spacing.d16,
+          //     color: context.theme.primaryColor,
+          //   ),
+          // ),
         ],
       ),
     );

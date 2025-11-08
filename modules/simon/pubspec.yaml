@@ -25,6 +25,8 @@ dependencies:
     path: ../../packages/l10n
   platform_utils:
     path: ../../packages/platform_utils
+  ui_file_tree:
+    path: ../../packages/ui_file_tree
   ui_markdown:
     path: ../../packages/ui_markdown
   utils:

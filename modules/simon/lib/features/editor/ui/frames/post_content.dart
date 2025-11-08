@@ -8,7 +8,7 @@ class PostContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedPost = context.select<PostViewModel, Post?>(
-      (viewModel) => viewModel.selectedPost,
+      (viewModel) => viewModel.selectedPost?.data,
     );
 
     if (selectedPost == null) {

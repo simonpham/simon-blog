@@ -50,6 +50,7 @@ class StatusBar extends StatelessWidget {
           ),
           StatusBarCenterContent(onAction: onAction),
           StatusBarRightContent(
+            isRightPanelOpen: isRightPanelOpen,
             isBottomPanelOpen: isBottomPanelOpen,
             onAction: onAction,
           ),

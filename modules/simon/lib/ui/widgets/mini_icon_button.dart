@@ -18,13 +18,16 @@ class MiniIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tappable(
       onTap: onTap,
-      child: ImageView(
-        icon,
-        size: Spacing.d16,
-        color: switch (isActive) {
-          true => context.theme.primaryColor,
-          false => context.theme.colorScheme.onSurface,
-        },
+      child: Padding(
+        padding: EdgeInsets.all(Spacing.d4),
+        child: ImageView(
+          icon,
+          size: Spacing.d18,
+          color: switch (isActive) {
+            true => context.theme.primaryColor,
+            false => context.theme.colorScheme.onSurface,
+          },
+        ),
       ),
     );
   }

@@ -6,20 +6,24 @@ import 'package:utils/utils.dart';
 class PostViewModel extends ChangeNotifier {
   PostApis get _postApis => injector.get<PostApis>();
 
-  RxStatus<List<Post>> _posts = const RxStatus<List<Post>>();
+  RxStatus<List<TagSidebar>> _tags = const RxStatus<List<TagSidebar>>();
 
-  List<Post> get posts => _posts.data ?? const [];
+  List<TagSidebar> get tags => _tags.data ?? const [];
 
   Pagination _nextPage = OffsetLimitPagination.initial();
 
-  Post? _selectedPost;
+  String? _currentTag = null;
 
-  Post? get selectedPost => _selectedPost;
+  String? get currentTag => _currentTag;
 
-  void selectPost(Post post) {
-    _selectedPost = post;
+  set currentTag(String? tag) {
+    _currentTag = tag;
     notifyListeners();
   }
+
+  RxStatus<Post>? _selectedPost;
+
+  RxStatus<Post>? get selectedPost => _selectedPost;
 
   void refresh() {
     _nextPage = OffsetLimitPagination.initial();
@@ -27,17 +31,19 @@ class PostViewModel extends ChangeNotifier {
   }
 
   void loadPosts() async {
-    if (_posts.isLoading) {
+    if (_tags.isLoading) {
       return;
     }
 
     try {
-      _posts = _posts.copyWith(isLoading: true);
+      _tags = _tags.copyWith(isLoading: true);
       notifyListeners();
 
-      final posts = await _postApis.list(_nextPage);
-      if (posts.isEmpty) {
-        _posts = _posts.copyWith(
+      final tags = await _postApis.getSidebarPostsByTags(
+        tagNameFilter: _currentTag,
+      );
+      if (tags.isEmpty) {
+        _tags = _tags.copyWith(
           isLoading: false,
         );
         notifyListeners();
@@ -51,21 +57,42 @@ class PostViewModel extends ChangeNotifier {
         );
       }
 
-      _posts = _posts.copyWith(
+      _tags = _tags.copyWith(
         isLoading: false,
         data: Some([
-          ...this.posts,
-          ...posts,
+          ...this.tags,
+          ...tags,
         ]),
         error: const Some(null),
       );
       notifyListeners();
     } catch (err, trace) {
       printError(err, trace);
-      _posts = _posts.copyWith(
+      _tags = _tags.copyWith(
         isLoading: false,
         error: Some(err.toString()),
       );
+      notifyListeners();
+    }
+  }
+
+  Future<void> openPost(String postId) async {
+    _selectedPost = RxStatus.loading();
+    notifyListeners();
+
+    try {
+      final post = await _postApis.get(postId);
+      if (post == null) {
+        _selectedPost = RxStatus.error('Post not found');
+        notifyListeners();
+        return;
+      }
+
+      _selectedPost = RxStatus.data(post);
+      notifyListeners();
+    } catch (err, trace) {
+      printError(err, trace);
+      _selectedPost = RxStatus.error('Failed to load post');
       notifyListeners();
     }
   }

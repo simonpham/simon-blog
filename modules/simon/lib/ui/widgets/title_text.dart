@@ -22,7 +22,7 @@ class TitleText extends StatelessWidget {
             color: context.theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
           )
-          .apply(fontFamily: kCodeFontFamily),
+          .apply(fontFamily: kMonoFontFamily),
     );
   }
 }
