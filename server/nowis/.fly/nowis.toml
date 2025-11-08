@@ -29,6 +29,10 @@ primary_region = "sin"
     type = "connections"
 
   [[services.ports]]
-    handlers = ["tls"]
+    handlers = ["tls", "http"]
     port = 443
-    tls_options = { "alpn" = ["h2"] }
+    tls_options = { "alpn" = ["h2", "http/1.1"] }
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
