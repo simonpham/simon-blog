@@ -16,8 +16,8 @@ class ParseUtils {
       commentsCount: data['commentsCount'] as int,
       likesCount: data['likesCount'] as int,
       readTimeMinutes: data['readTimeMinutes'] as int,
-      createdAt: DateTime.parse(data['createdAt'] as String),
-      updatedAt: DateTime.parse(data['updatedAt'] as String),
+      createdAt: DateTime.parse(data['createdAt']),
+      updatedAt: DateTime.parse(data['updatedAt']),
       tags: List<String>.from(data['tags'] as List<dynamic>),
     );
   }
@@ -47,7 +47,7 @@ class ParseUtils {
       case 'archived':
         return PostStatus.archived;
       default:
-        return PostStatus.draft; // Default or error handling
+        return PostStatus.draft;
     }
   }
 
@@ -60,7 +60,7 @@ class ParseUtils {
       case 'unlisted':
         return PostVisibility.unlisted;
       default:
-        return PostVisibility.private; // Default or error handling
+        return PostVisibility.private;
     }
   }
 }

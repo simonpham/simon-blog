@@ -87,7 +87,7 @@ func EncryptContent(plaintext string) (encodedPayload string, err error) {
 	}
 	ivLenByte := byte(len(iv))
 
-	unixTimestamp := encryptionTime.Unix()
+	unixTimestamp := encryptionTime.UnixMilli()
 	unixTimestampBytes := make([]byte, unixTimeByteSize)
 	binary.BigEndian.PutUint64(unixTimestampBytes, uint64(unixTimestamp))
 

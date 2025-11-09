@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:fixnum/fixnum.dart';
+import 'package:isolate_manager/isolate_manager.dart';
 import 'package:utils/utils.dart';
 
 const int _keyLen = 32; // AES-256 key
@@ -43,6 +45,24 @@ Uint8List _deriveDynamicKey(
   );
 }
 
+Future<String> decryptAsync(
+  String encodedPayload, {
+  required String appId,
+  required String appVersionRef,
+}) async {
+  return await IsolateManager.runFunction(
+    decrypt,
+    {
+      'encodedPayload': encodedPayload,
+      'appId': appId,
+      'appVersionRef': appVersionRef,
+    },
+    enableWasmConverter: false,
+  );
+}
+
+@pragma('vm:entry-point')
+@isolateManagerWorker
 String decrypt(Map<String, dynamic> params) {
   final String encodedPayload = params['encodedPayload'];
   final String appId = params['appId'];
@@ -86,10 +106,13 @@ String decrypt(Map<String, dynamic> params) {
   );
   offset += _unixTimeByteSize;
 
-  final ByteData byteData = ByteData.view(unixTimestampBytes.buffer);
-  final int unixTimestamp = byteData.getUint64(0, Endian.big);
+  // Int64.fromBytes expects little-endian, but Go server uses big-endian.
+  // Reverse the bytes to match the expectation.
+  final int unixTimestamp = Int64.fromBytes(
+    unixTimestampBytes.reversed.toList(),
+  ).toInt();
   final DateTime encryptionTime = DateTime.fromMillisecondsSinceEpoch(
-    unixTimestamp * 1000,
+    unixTimestamp,
     isUtc: true,
   );
 

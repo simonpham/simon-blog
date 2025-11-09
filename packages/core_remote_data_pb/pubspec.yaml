@@ -22,5 +22,9 @@ dependencies:
 
   dio: ^5.9.0
 
+  fixnum: ^1.1.1
+  isolate_manager: ^6.1.2
+
 dev_dependencies:
   test: ^1.26.3
+  isolate_manager_generator: ^0.3.0

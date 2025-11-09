@@ -1,14 +1,10 @@
 import 'dart:async';
 
-import 'package:core/models/common/failure.dart';
-import 'package:core/models/common/pagination.dart';
-import 'package:core/models/post.dart';
-import 'package:core/models/sidebar_post.dart';
+import 'package:core/core.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/utils/decryptor.dart' as decryptor;
 import 'package:core_remote_data_pb/utils/parse_utils.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 class RestNowisPostApis implements PostApis {
   final Dio _dio;
@@ -71,19 +67,18 @@ class RestNowisPostApis implements PostApis {
         return null;
       }
 
-      final decryptedContent = await compute(
-        decryptor.decrypt,
-        {
-          'encodedPayload': postMap['content'],
-          'appId': _localAppId,
-          'appVersionRef': _localAppVersionRef,
-        },
+      final decryptedContent = await decryptor.decryptAsync(
+        postMap['content'],
+        appId: _localAppId,
+        appVersionRef: _localAppVersionRef,
       );
       return ParseUtils.parsePost(postMap, decryptedContent);
-    } on DioException catch (e) {
-      throw Failure('Failed to get post by ID: ${e.message}');
-    } catch (e) {
-      throw Failure('Failed to get post by ID: $e');
+    } on DioException catch (err, trace) {
+      printError(err, trace);
+      throw Failure('Failed to get post by ID: ${err.message}');
+    } catch (err, trace) {
+      printError(err, trace);
+      throw Failure('Failed to get post by ID: $err');
     }
   }
 
@@ -104,13 +99,10 @@ class RestNowisPostApis implements PostApis {
         return null;
       }
 
-      final decryptedContent = await compute(
-        decryptor.decrypt,
-        {
-          'encodedPayload': postMap['content'],
-          'appId': _localAppId,
-          'appVersionRef': _localAppVersionRef,
-        },
+      final decryptedContent = await decryptor.decryptAsync(
+        postMap['content'],
+        appId: _localAppId,
+        appVersionRef: _localAppVersionRef,
       );
       return ParseUtils.parsePost(postMap, decryptedContent);
     } on DioException catch (e) {
@@ -191,13 +183,10 @@ class RestNowisPostApis implements PostApis {
       final List<dynamic> postsJson = data['data'] as List<dynamic>;
       final List<Post> posts = [];
       for (final postJson in postsJson) {
-        final decryptedContent = await compute(
-          decryptor.decrypt,
-          {
-            'encodedPayload': postJson['content'],
-            'appId': _localAppId,
-            'appVersionRef': _localAppVersionRef,
-          },
+        final decryptedContent = await decryptor.decryptAsync(
+          postJson['content'],
+          appId: _localAppId,
+          appVersionRef: _localAppVersionRef,
         );
         posts.add(
           ParseUtils.parsePost(
