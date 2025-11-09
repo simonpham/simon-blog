@@ -128,11 +128,13 @@ func (controller *NowisController) HealthCheck(ginContext *gin.Context) {
 		return
 	}
 
+	healthCheckResponse := model.FromPBHealthCheckResponse(response)
+
 	ginContext.JSON(
 		http.StatusOK,
 		gin.H{
 			"success": true,
-			"data":    response,
+			"data":    healthCheckResponse.ToGinMap(),
 			"message": "Health check successful",
 		},
 	)

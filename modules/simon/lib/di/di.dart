@@ -1,5 +1,6 @@
 import 'package:core/core.dart';
 import 'package:core_remote_data/core_remote_data.dart';
+import 'package:core_remote_data_pb/core_remote_data_pb.dart';
 import 'package:simon/content/content.dart';
 
 class Injector {
@@ -11,7 +12,7 @@ class Injector {
       () => MockCommentApis(),
     );
     injector.registerLazySingleton<PostApis>(
-      () => MockPostApis(),
+      () => RestNowisPostApis(host: 'api.nowis.sofluffy.io'),
     );
   }
 
