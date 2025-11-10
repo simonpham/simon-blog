@@ -1,6 +1,7 @@
 syntax = "proto3";
-import "get_posts.proto";
 import "get_post.proto";
+import "get_post_comments.proto";
+import "get_posts.proto";
 import "get_sidebar_posts.proto";
 import "health_check.proto";
 
@@ -14,4 +15,5 @@ service NowisService {
   rpc GetPostById(GetPostByIdRequest) returns (GetPostByIdResponse) {}
   rpc GetPostBySlug(GetPostBySlugRequest) returns (GetPostBySlugResponse) {}
   rpc GetSidebarPostsByTags(GetSidebarPostsByTagsRequest) returns (GetSidebarPostsByTagsResponse) {}
+  rpc GetPostComments(GetPostCommentsRequest) returns (GetPostCommentsResponse) {}
 }

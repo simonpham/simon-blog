@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "comment.proto";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+message GetPostCommentsRequest {
+  string post_id = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message GetPostCommentsResponse {
+  repeated Comment comments = 1;
+}
