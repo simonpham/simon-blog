@@ -4,6 +4,10 @@ enum PostVisibility { public, private, unlisted }
 
 enum PostStatus { draft, published, archived }
 
+extension PostExtension on Post {
+  String get fileName => '$slug.md';
+}
+
 class Post {
   final String id;
   final String title;

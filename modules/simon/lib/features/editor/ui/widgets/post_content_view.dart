@@ -12,6 +12,17 @@ class PostContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MarkdownContent(post.content);
+    final headerBlock = '# ${post.title}';
+    final imageBlock = switch (post.featuredImageUrl) {
+      final String url => '![$url]($url)',
+      null => '',
+    };
+    final content =
+        '''
+$headerBlock
+$imageBlock
+${post.content}
+''';
+    return MarkdownContent(content);
   }
 }

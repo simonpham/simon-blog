@@ -12,14 +12,43 @@ class EditorHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
     return Container(
-      padding:  EdgeInsets.all(Spacing.d16),
+      height: Spacing.d32,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+      ),
       child: Row(
         children: [
-          Expanded(
+          Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              border: Border(
+                right: BorderSide(
+                  color: theme.dividerColor,
+                  width: 1.0,
+                ),
+              ),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: Spacing.d16,
+            ),
+            alignment: Alignment.center,
             child: Text(
-              selectedPost.title,
-              style: Theme.of(context).textTheme.headlineSmall,
+              selectedPost.fileName,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 1.0,
+                color: theme.dividerColor,
+              ),
             ),
           ),
         ],

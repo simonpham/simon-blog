@@ -10,9 +10,9 @@ class CategoryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: Spacing.d32,
       padding: EdgeInsets.symmetric(
         horizontal: Spacing.d16,
-        vertical: Spacing.d8,
       ),
       child: Row(
         children: [

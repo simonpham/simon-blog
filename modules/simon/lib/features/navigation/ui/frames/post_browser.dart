@@ -26,7 +26,7 @@ class PostBrowser extends StatelessWidget {
                 return FileTreeItem(
                   id: post.id,
                   icon: Assets.bookOpen01,
-                  name: '${post.slug}.md',
+                  name: post.fileName,
                 );
               }).toList(),
             );

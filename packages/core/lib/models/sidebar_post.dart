@@ -1,3 +1,7 @@
+extension SidebarPostExtension on SidebarPost {
+  String get fileName => '$slug.md';
+}
+
 class SidebarPost {
   final String id;
   final String title;
