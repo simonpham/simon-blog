@@ -1,7 +1,12 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_highlight/themes/tomorrow-night-eighties.dart'
+    as tomorrow;
+import 'package:flutter_highlight/themes/tomorrow.dart' as tomorrow;
 import 'package:icons/icons.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
@@ -26,7 +31,11 @@ class MarkdownContent extends StatelessWidget {
       decoration: codeDecoration,
       child: Stack(
         children: [
-          Positioned(child: child),
+          Positioned(
+            child: SelectionArea(
+              child: child,
+            ),
+          ),
           Positioned(
             top: Spacing.d8,
             right: Spacing.d8,
@@ -52,7 +61,9 @@ class MarkdownContent extends StatelessWidget {
         ],
       ),
     );
-    final codeTextStyle = const TextStyle().apply(fontFamily: kCodeFontFamily);
+    final codeTextStyle = const TextStyle(
+      fontSize: 13,
+    ).apply(fontFamily: kCodeFontFamily);
     return MarkdownWidget(
       selectable: false,
       config: config.copy(
@@ -62,11 +73,15 @@ class MarkdownContent extends StatelessWidget {
               decoration: const BoxDecoration(),
               wrapper: codeWrapper,
               textStyle: codeTextStyle,
+              styleNotMatched: codeTextStyle,
+              theme: tomorrow.tomorrowNightEightiesTheme,
             ),
             false => const PreConfig().copy(
               decoration: const BoxDecoration(),
               wrapper: codeWrapper,
               textStyle: codeTextStyle,
+              styleNotMatched: codeTextStyle,
+              theme: tomorrow.tomorrowTheme,
             ),
           },
         ],
