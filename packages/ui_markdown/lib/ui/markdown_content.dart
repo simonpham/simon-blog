@@ -1,6 +1,8 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:icons/icons.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
 class MarkdownContent extends StatelessWidget {
@@ -20,9 +22,35 @@ class MarkdownContent extends StatelessWidget {
         borderRadius: Spacing.smoothR12,
       ),
     );
-    final codeWrapper = (child, text, language) => Container(
+    Widget codeWrapper(child, text, language) => Container(
       decoration: codeDecoration,
-      child: child,
+      child: Stack(
+        children: [
+          Positioned(child: child),
+          Positioned(
+            top: Spacing.d8,
+            right: Spacing.d8,
+            child: Button(
+              padding: EdgeInsets.all(Spacing.d8),
+              variant: ButtonVariant.ghost,
+              child: ImageView(
+                Assets.copy01,
+                size: Spacing.d16,
+                color: context.theme.colorScheme.onSurface,
+              ),
+              onPressed: () {
+                Clipboard.setData(
+                  ClipboardData(text: text),
+                );
+                context.toast(
+                  'Copied to clipboard',
+                  type: MessageType.success,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
     final codeTextStyle = const TextStyle().apply(fontFamily: kCodeFontFamily);
     return MarkdownWidget(

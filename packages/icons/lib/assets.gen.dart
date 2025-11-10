@@ -15,6 +15,7 @@ class Assets {
   static const String archive01 = 'assets/archive-01.svg';
   static const String bookOpen01 = 'assets/book-open-01.svg';
   static const String bookOpen02 = 'assets/book-open-02.svg';
+  static const String copy01 = 'assets/copy-01.svg';
   static const String folder01 = 'assets/folder-01.svg';
   static const String folder02 = 'assets/folder-02.svg';
   static const String hierarchyFiles = 'assets/hierarchy-files.svg';
@@ -26,6 +27,7 @@ class Assets {
     archive01,
     bookOpen01,
     bookOpen02,
+    copy01,
     folder01,
     folder02,
     hierarchyFiles,
