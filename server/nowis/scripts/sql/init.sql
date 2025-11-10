@@ -1,6 +1,15 @@
 CREATE TYPE post_status AS ENUM ('draft', 'published', 'archived');
 CREATE TYPE post_visibility AS ENUM ('public', 'private', 'unlisted');
 
+CREATE TYPE animal_type AS ENUM (
+    'rabbit', 'cat', 'dog', 'bear', 'panda',
+    'sheep', 'koala', 'wolf', 'fox', 'chipmunk'
+);
+
+CREATE TYPE background_color_type AS ENUM (
+    'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink'
+);
+
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -92,7 +101,8 @@ CREATE INDEX idx_post_tags_tag_id ON post_tags(tag_id);
 CREATE TABLE comments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    animal animal_type,
+    background_color background_color_type,
     content TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -120,7 +130,6 @@ AFTER DELETE ON comments
 FOR EACH ROW EXECUTE PROCEDURE decrement_comments_count();
 
 CREATE INDEX idx_comments_post_id ON comments(post_id);
-CREATE INDEX idx_comments_author_id ON comments(author_id);
 CREATE INDEX idx_comments_created_at ON comments(created_at DESC);
 
 CREATE TABLE likes (
