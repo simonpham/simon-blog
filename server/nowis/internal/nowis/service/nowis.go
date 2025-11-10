@@ -97,6 +97,30 @@ func (h NowisService) GetSidebarPostsByTags(ctx context.Context, request *nowisp
 	}, nil
 }
 
+func (h NowisService) GetPostComments(ctx context.Context, request *nowispb.GetPostCommentsRequest) (*nowispb.GetPostCommentsResponse, error) {
+	postID, err := uuid.Parse(request.GetPostId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid post ID format: %v", err)
+	}
+
+	page := int(request.GetPage())
+	limit := int(request.GetLimit())
+
+	comments, err := h.repo.GetPostComments(ctx, postID, page, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	var pbComments []*nowispb.Comment
+	for _, comment := range comments {
+		pbComments = append(pbComments, comment.ToPBComment())
+	}
+
+	return &nowispb.GetPostCommentsResponse{
+		Comments: pbComments,
+	}, nil
+}
+
 // HealthCheck returns the encryption passphrase and static salt hex.
 func (h NowisService) HealthCheck(ctx context.Context, request *nowispb.HealthCheckRequest) (*nowispb.HealthCheckResponse, error) {
 	config := configs.GetConfig()

@@ -20,6 +20,7 @@ type NowisRepositoryHandler interface {
 	GetPostBySlug(ctx context.Context, postSlug string, locale string) (*model.Post, error)
 	GetPosts(ctx context.Context, locale string, page, limit int, searchQuery string) ([]model.Post, error)
 	GetSidebarPostsByTags(ctx context.Context, tagNameFilter string) ([]model.TagSidebar, error)
+	GetPostComments(ctx context.Context, postId uuid.UUID, page int, limit int) ([]model.Comment, error)
 }
 
 type NowisRepository struct {
@@ -318,4 +319,47 @@ func (r *NowisRepository) GetSidebarPostsByTags(ctx context.Context, tagNameFilt
 	}
 
 	return sidebar, nil
+}
+
+func (r *NowisRepository) GetPostComments(ctx context.Context, postID uuid.UUID, page int, limit int) ([]model.Comment, error) {
+	query := `
+        SELECT
+            id,
+            post_id,
+            animal,
+            background_color,
+            content,
+            created_at
+        FROM
+            comments
+        WHERE
+            post_id = $1
+        ORDER BY
+            created_at DESC
+        LIMIT $2 OFFSET $3;
+    `
+
+	rows, err := r.db.QueryContext(ctx, query, postID, limit, (page-1)*limit)
+	if err != nil {
+		return nil, utils.WrapError("failed to query post comments from database", err)
+	}
+	defer rows.Close()
+
+	var comments []model.Comment
+	for rows.Next() {
+		var comment model.Comment
+
+		err := rows.Scan(&comment.ID, &comment.PostID, &comment.Animal, &comment.BackgroundColor, &comment.Content, &comment.CreatedAt)
+		if err != nil {
+			return nil, utils.WrapError("failed to scan post comment row", err)
+		}
+
+		comments = append(comments, comment)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, utils.WrapError("error after iterating rows", err)
+	}
+
+	return comments, nil
 }
