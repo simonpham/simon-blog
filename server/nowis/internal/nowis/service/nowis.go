@@ -111,7 +111,7 @@ func (h NowisService) GetPostComments(ctx context.Context, request *nowispb.GetP
 		return nil, err
 	}
 
-	var pbComments []*nowispb.Comment
+	pbComments := []*nowispb.Comment{}
 	for _, comment := range comments {
 		pbComments = append(pbComments, comment.ToPBComment())
 	}

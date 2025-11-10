@@ -130,7 +130,7 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 	offset := (page - 1) * limit
 
 	if limit < 1 {
-		limit = 10 // Or any sensible default, or return an error
+		limit = 10
 	}
 
 	var (
@@ -322,6 +322,15 @@ func (r *NowisRepository) GetSidebarPostsByTags(ctx context.Context, tagNameFilt
 }
 
 func (r *NowisRepository) GetPostComments(ctx context.Context, postID uuid.UUID, page int, limit int) ([]model.Comment, error) {
+	if page < 1 {
+		page = 1
+	}
+	offset := (page - 1) * limit
+
+	if limit < 1 {
+		limit = 10
+	}
+
 	query := `
         SELECT
             id,
@@ -339,7 +348,7 @@ func (r *NowisRepository) GetPostComments(ctx context.Context, postID uuid.UUID,
         LIMIT $2 OFFSET $3;
     `
 
-	rows, err := r.db.QueryContext(ctx, query, postID, limit, (page-1)*limit)
+	rows, err := r.db.QueryContext(ctx, query, postID, limit, offset)
 	if err != nil {
 		return nil, utils.WrapError("failed to query post comments from database", err)
 	}
