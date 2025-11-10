@@ -1,3 +1,4 @@
+import 'package:core/core.dart';
 import 'package:core/models/post.dart';
 import 'package:core/models/sidebar_post.dart';
 
@@ -26,7 +27,9 @@ class ParseUtils {
     final List<dynamic> postsJson = data['posts'] as List<dynamic>;
     return TagSidebar(
       tagName: data['tag_name'] as String,
-      posts: postsJson.map((postJson) => parseSidebarPost(postJson as Map<String, dynamic>)).toList(),
+      posts: postsJson
+          .map((postJson) => parseSidebarPost(postJson as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -62,5 +65,16 @@ class ParseUtils {
       default:
         return PostVisibility.private;
     }
+  }
+
+  static Comment parseComment(Map<String, dynamic> data) {
+    return Comment(
+      id: data['id'] as String,
+      postId: data['post_id'] as String,
+      animal: Animals.fromName(data['animal']),
+      backgroundColor: BackgroundColorType.fromString(data['background_color']),
+      content: data['content'] as String,
+      createdAt: DateTime.parse(data['created_at']),
+    );
   }
 }

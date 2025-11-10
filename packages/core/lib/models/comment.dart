@@ -1,8 +1,33 @@
+import 'package:core/core.dart';
+
+enum BackgroundColorType {
+  red,
+  orange,
+  yellow,
+  green,
+  blue,
+  purple,
+  pink;
+
+  factory BackgroundColorType.fromString(String value) {
+    return switch (value) {
+      'red' => BackgroundColorType.red,
+      'orange' => BackgroundColorType.orange,
+      'yellow' => BackgroundColorType.yellow,
+      'green' => BackgroundColorType.green,
+      'blue' => BackgroundColorType.blue,
+      'purple' => BackgroundColorType.purple,
+      'pink' => BackgroundColorType.pink,
+      _ => BackgroundColorType.blue,
+    };
+  }
+}
+
 class Comment {
   final String id;
   final String content;
-  final String authorName;
-  final String? authorEmail;
+  final Animals animal;
+  final BackgroundColorType backgroundColor;
 
   final String postId;
 
@@ -14,8 +39,8 @@ class Comment {
   const Comment({
     required this.id,
     required this.content,
-    required this.authorName,
-    this.authorEmail,
+    required this.animal,
+    required this.backgroundColor,
     required this.postId,
     this.parentCommentId,
     this.children = const [],

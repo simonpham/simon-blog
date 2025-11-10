@@ -9,7 +9,7 @@ class Injector {
       () => MockUserApis(),
     );
     injector.registerLazySingleton<CommentApis>(
-      () => MockCommentApis(),
+      () => RestCommentNowisApis(host: 'api.nowis.sofluffy.io'),
     );
     injector.registerLazySingleton<PostApis>(
       () => RestNowisPostApis(host: 'api.nowis.sofluffy.io'),

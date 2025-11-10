@@ -76,7 +76,14 @@ class _HomePageState extends State<HomePage> {
       return const ChatPanel();
     },
     bottomPanel: (BuildContext context) {
-      return const CommentPanel();
+      return ChangeNotifierProvider.value(
+        value: _postViewModel,
+        builder: (context, _) => CommentPanel(
+          post: context.select<PostViewModel, Post?>(
+            (viewModel) => viewModel.selectedPost?.data,
+          ),
+        ),
+      );
     },
     content: (BuildContext context) {
       return ChangeNotifierProvider.value(

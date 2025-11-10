@@ -6,6 +6,89 @@ import 'package:core_remote_data_pb/utils/decryptor.dart' as decryptor;
 import 'package:core_remote_data_pb/utils/parse_utils.dart';
 import 'package:dio/dio.dart';
 
+class RestCommentNowisApis implements CommentApis {
+  final Dio _dio;
+
+  RestCommentNowisApis({
+    required String host,
+  }) : _dio = Dio(
+         BaseOptions(
+           baseUrl: 'https://$host/v1/nowis',
+           validateStatus: (status) {
+             return status != null && status >= 200 && status < 300;
+           },
+         ),
+       );
+
+  @override
+  FutureOr<Failure?> approveComment(String commentId) {
+    // TODO: implement approveComment
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> bulkApproveComments(List<String> commentIds) {
+    // TODO: implement bulkApproveComments
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> bulkDeleteComments(List<String> commentIds) {
+    // TODO: implement bulkDeleteComments
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> createComment({
+    required String postId,
+    required String content,
+    required String authorName,
+    String? authorEmail,
+    String? parentCommentId,
+  }) {
+    // TODO: implement createComment
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> deleteComment(String commentId) {
+    // TODO: implement deleteComment
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Comment>> getCommentsForPost(String postId) async {
+    try {
+      final response = await _dio.get(
+        '/comments',
+        queryParameters: {
+          'postId': postId,
+        },
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      if (!data['success']) {
+        throw const Failure('Failed to fetch comments');
+      }
+
+      final comments = data['data'] as List<dynamic>;
+      return comments.map((e) => ParseUtils.parseComment(e)).toList();
+    } catch (err, trace) {
+      printError(err, trace);
+      throw const Failure('Failed to fetch comments');
+    }
+  }
+
+  @override
+  FutureOr<Failure?> updateComment({
+    required String commentId,
+    required String content,
+  }) {
+    // TODO: implement updateComment
+    throw UnimplementedError();
+  }
+}
+
 class RestNowisPostApis implements PostApis {
   final Dio _dio;
 

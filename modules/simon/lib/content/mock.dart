@@ -205,8 +205,8 @@ class MockCommentApis implements CommentApis {
       Comment(
         id: kUuid.v4(),
         content: content,
-        authorName: authorName,
-        authorEmail: authorEmail,
+        animal: Animals.sheep,
+        backgroundColor: BackgroundColorType.red,
         postId: postId,
         parentCommentId: parentCommentId,
         createdAt: DateTime.now(),

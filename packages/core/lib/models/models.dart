@@ -1,3 +1,4 @@
+export 'animals.dart';
 export 'comment.dart';
 export 'common/common.dart';
 export 'post.dart';
