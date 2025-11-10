@@ -129,7 +129,11 @@ class _HomePageState extends State<HomePage> {
       body: IdeLayout(
         controller: controller,
         topBar: (BuildContext context) {
-          return const HeaderBar();
+          return HeaderBar(
+            onSearchTap: () {
+              // Implement search functionality here
+            },
+          );
         },
         bottomBar: (BuildContext context) {
           return MultiValueListenableBuilder(

@@ -1,24 +1,28 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:icons/icons.dart';
 import 'package:ide_layout/ide_layout.dart';
 
 class HeaderBar extends StatelessWidget {
+  final VoidCallback onSearchTap;
+
   const HeaderBar({
     super.key,
+    required this.onSearchTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: context.theme.colorScheme.surfaceContainer,
-      padding: EdgeInsets.all(Spacing.d8),
+      padding: EdgeInsets.symmetric(
+        horizontal: Spacing.d8,
+        vertical: Spacing.d6,
+      ),
       child: Row(
         children: [
           Container(
-            constraints: const BoxConstraints(
-              minWidth: LeftPanel.defaultWidth,
-            ),
             padding: EdgeInsets.symmetric(
               horizontal: Spacing.d8,
             ),
@@ -54,12 +58,60 @@ class HeaderBar extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(
-            child: InputText(
-              hintText: 'Sniffing out files and content...',
+          Flexible(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: Spacing.d8,
+              ),
+              child: Tappable(
+                onTap: onSearchTap,
+                enableHover: true,
+                enableAnimation: false,
+                builder: (context, state) {
+                  final isHovered = state == TappableState.hover;
+                  final color = isHovered
+                      ? context.theme.primaryColor
+                      : context.theme.colorScheme.onSurface;
+                  return Container(
+                    constraints: BoxConstraints(
+                      minHeight: Spacing.d32,
+                      maxWidth: LeftPanel.maxWidth,
+                    ),
+                    decoration: ShapeDecoration(
+                      color: context.theme.colorScheme.surface,
+                      shape: SmoothRectangleBorder(
+                        borderRadius: Spacing.smoothR12,
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Spacing.d12,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Sniffing out files and content...',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: kMonoFontFamily,
+                              color: color,
+                            ),
+                          ),
+                        ),
+                        ImageView(
+                          Assets.search,
+                          size: Spacing.d16,
+                          color: color,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-          const Spacer(),
         ],
       ),
     );

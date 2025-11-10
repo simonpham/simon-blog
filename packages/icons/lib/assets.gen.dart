@@ -19,8 +19,12 @@ class Assets {
   static const String folder01 = 'assets/folder-01.svg';
   static const String folder02 = 'assets/folder-02.svg';
   static const String hierarchyFiles = 'assets/hierarchy-files.svg';
+  static const String link04 = 'assets/link-04.svg';
   static const String messageProgramming = 'assets/message-programming.svg';
+  static const String search = 'assets/search.svg';
+  static const String share05 = 'assets/share-05.svg';
   static const String terminal = 'assets/terminal.svg';
+  static const String unlink04 = 'assets/unlink-04.svg';
 
   /// List of all assets
   static List<String> get values => [
@@ -31,7 +35,11 @@ class Assets {
     folder01,
     folder02,
     hierarchyFiles,
+    link04,
     messageProgramming,
+    search,
+    share05,
     terminal,
+    unlink04,
   ];
 }
