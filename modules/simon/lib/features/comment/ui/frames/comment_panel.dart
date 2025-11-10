@@ -19,6 +19,9 @@ class CommentPanel extends StatefulWidget {
 class _CommentPanelState extends State<CommentPanel> {
   CommentApis get _apis => injector<CommentApis>();
 
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _inputController = TextEditingController();
+
   List<Comment> _comments = [];
 
   void _fetchComments() async {
@@ -47,7 +50,9 @@ class _CommentPanelState extends State<CommentPanel> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final comments = this._comments;
+    final comments = _comments;
+    final animal = Animals.fox;
+    final backgroundColor = BackgroundColorType.red;
     return Container(
       color: theme.colorScheme.surfaceContainer,
       child: Column(
@@ -56,14 +61,31 @@ class _CommentPanelState extends State<CommentPanel> {
           const CommentHeader(),
           const Divider(height: 1.0),
           Expanded(
-            child: Container(
-              color: theme.colorScheme.surface,
-              child: ListView.builder(
-                itemCount: comments.length,
-                itemBuilder: (context, index) {
-                  final comment = comments[index];
-                  return Text(comment.content);
-                },
+            child: GestureDetector(
+              onTap: () {
+                _focusNode.requestFocus();
+              },
+              child: Container(
+                color: theme.colorScheme.surface,
+                child: ListView.builder(
+                  itemCount: comments.length + 1,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Spacing.d16,
+                  ),
+                  itemBuilder: (context, index) {
+                    if (index == comments.length) {
+                      return CommentInput(
+                        focusNode: _focusNode,
+                        controller: _inputController,
+                        onEnter: (text) {
+                          // TODO: Implement comment creation.
+                        },
+                      );
+                    }
+                    final comment = comments[index];
+                    return CommentRow(comment: comment);
+                  },
+                ),
               ),
             ),
           ),

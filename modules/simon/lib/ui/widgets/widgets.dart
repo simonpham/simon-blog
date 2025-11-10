@@ -6,3 +6,4 @@ export 'multi_value_listenable_builder.dart';
 export 'status_bar.dart';
 export 'theme_toggle_button.dart';
 export 'title_text.dart';
+export 'animal_avatar.dart';
