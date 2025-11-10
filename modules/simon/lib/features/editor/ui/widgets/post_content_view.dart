@@ -14,7 +14,7 @@ class PostContentView extends StatelessWidget {
   Widget build(BuildContext context) {
     final headerBlock = '# ${post.title}';
     final imageBlock = switch (post.featuredImageUrl) {
-      final String url => '![$url]($url)',
+      final String url => '![$url](https://cors-anywhere.com/$url)',
       null => '',
     };
     final content =
