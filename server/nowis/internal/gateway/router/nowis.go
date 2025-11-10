@@ -12,4 +12,5 @@ func SetupNowisRoutes(r *gin.RouterGroup, controller api.NowisController) {
 	r.GET("/:id", controller.GetPostById)
 	r.GET("/slug/:slug", controller.GetPostBySlug)
 	r.GET("/sidebar-posts-by-tags", controller.GetSidebarPostsByTags)
+	r.GET("/comments", controller.GetComments)
 }

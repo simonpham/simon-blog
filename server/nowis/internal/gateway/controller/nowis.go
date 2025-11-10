@@ -364,3 +364,83 @@ func (controller *NowisController) GetSidebarPostsByTags(ginContext *gin.Context
 		},
 	)
 }
+
+func (controller *NowisController) GetComments(ginContext *gin.Context) {
+	postId := ginContext.Query("postId")
+	if postId == "" {
+		ginContext.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"success": false,
+				"message": "Missing postId",
+			},
+		)
+		return
+	}
+
+	limit, err := strconv.Atoi(ginContext.Query("limit"))
+	if err != nil {
+		limit = 10
+	}
+
+	page, err := strconv.Atoi(ginContext.Query("page"))
+	if err != nil {
+		page = 1
+	}
+
+	conn, err := sfgrpc.CreateGrpcClientConnection(
+		context.Background(),
+		configs.GetConfig().NowisPublicAddress,
+	)
+
+	if err != nil {
+		log.Printf("[Nowis] Error when connecting to NowisService: %v", err)
+		ginContext.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"success": false,
+				"message": "Internal server error",
+			},
+		)
+		return
+	}
+
+	defer conn.Close()
+
+	nowisService := nowispb.NewNowisServiceClient(conn)
+
+	response, err := nowisService.GetPostComments(context.Background(), &nowispb.GetPostCommentsRequest{
+		PostId: postId,
+		Limit:  int32(limit),
+		Page:   int32(page),
+	})
+
+	if err != nil {
+		log.Printf("error when calling NowisService GetComments: %v", err)
+		ginContext.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"success": false,
+				"message": "Internal server error",
+			},
+		)
+		return
+	}
+
+	log.Printf("Response from server: %v", response)
+
+	var formattedComments []map[string]interface{}
+	for _, pbComment := range response.Comments {
+		comment := model.FromPBComment(pbComment)
+		formattedComments = append(formattedComments, comment.ToGinMap())
+	}
+
+	ginContext.JSON(
+		http.StatusOK,
+		gin.H{
+			"success": true,
+			"data":    formattedComments,
+			"message": "Success",
+		},
+	)
+}
