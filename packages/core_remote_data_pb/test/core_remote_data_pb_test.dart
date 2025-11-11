@@ -1,11 +1,15 @@
 import 'package:core/models/models.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart'
-    show NowisPostApis;
+    show NowisPostApis, NowisCommentApis;
 import 'package:test/test.dart';
 
 void main() {
   final PostApis nowisPostApis = NowisPostApis(
+    host: 'api.nowis.sofluffy.io',
+  );
+
+  final CommentApis nowisCommentApis = NowisCommentApis(
     host: 'api.nowis.sofluffy.io',
   );
 
@@ -69,6 +73,21 @@ void main() {
 
       expect(result, isA<List<Post>>());
       expect(result.length, 0);
+    });
+
+    test('create comment', () async {
+      final result = await nowisCommentApis.createComment(
+        postId: firstPostId,
+        content: 'test comment',
+        animal: Animals.cat,
+        backgroundColor: BackgroundColorType.orange,
+      );
+      expect(result, isNull);
+    });
+
+    test('get comments for post', () async {
+      final result = await nowisCommentApis.getCommentsForPost(firstPostId);
+      expect(result, isA<List<Comment>>());
     });
   });
 }
