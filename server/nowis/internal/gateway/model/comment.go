@@ -17,6 +17,13 @@ type Comment struct {
 	CreatedAt       time.Time `json:"created_at"`
 }
 
+type CreateCommentRequestBody struct {
+	PostId          string `json:"post_id" binding:"required"`
+	Content         string `json:"content" binding:"required"`
+	Animal          string `json:"animal" binding:"required"`
+	BackgroundColor string `json:"background_color" binding:"required"`
+}
+
 func FromPBComment(pbComment *nowispb.Comment) *Comment {
 	return &Comment{
 		ID:              uuid.MustParse(pbComment.Id),
@@ -28,8 +35,8 @@ func FromPBComment(pbComment *nowispb.Comment) *Comment {
 	}
 }
 
-func (ts *Comment) ToGinMap() map[string]interface{} {
-	return map[string]interface{}{
+func (ts *Comment) ToGinMap() map[string]any {
+	return map[string]any{
 		"id":               ts.ID.String(),
 		"post_id":          ts.PostID.String(),
 		"animal":           ts.Animal,

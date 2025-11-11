@@ -2,15 +2,19 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+
 	model "nowis/internal/gateway/model"
 	"nowis/pkg/configs"
 	sfgrpc "nowis/pkg/network"
 	nowispb "nowis/protobuf/generated/nowis"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type NowisController struct {
@@ -303,6 +307,72 @@ func (controller *NowisController) GetPosts(ginContext *gin.Context) {
 			"success": true,
 			"data":    formattedPosts,
 			"message": "Success",
+		},
+	)
+}
+
+func (controller *NowisController) CreateComment(ginContext *gin.Context) {
+	var reqBody model.CreateCommentRequestBody
+	if err := ginContext.ShouldBindJSON(&reqBody); err != nil {
+		ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": fmt.Sprintf("Invalid request body: %v", err)})
+		return
+	}
+
+	if reqBody.PostId == "" || reqBody.Content == "" || reqBody.Animal == "" || reqBody.BackgroundColor == "" {
+		ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "All fields (post_id, content, animal, background_color) are required"})
+		return
+	}
+
+	conn, err := sfgrpc.CreateGrpcClientConnection(
+		context.Background(),
+		configs.GetConfig().NowisPublicAddress,
+	)
+	if err != nil {
+		log.Printf("[Nowis] Error when connecting to NowisService: %v", err)
+		ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+		return
+	}
+	defer conn.Close()
+
+	nowisService := nowispb.NewNowisServiceClient(conn)
+
+	response, err := nowisService.CreateComment(context.Background(), &nowispb.CreateCommentRequest{
+		PostId:          reqBody.PostId,
+		Content:         reqBody.Content,
+		Animal:          reqBody.Animal,
+		BackgroundColor: reqBody.BackgroundColor,
+	})
+
+	if err != nil {
+		log.Printf("error when calling NowisService CreateComment: %v", err)
+		st, ok := status.FromError(err)
+		if ok {
+			switch st.Code() {
+			case codes.InvalidArgument:
+				ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": st.Message()})
+				return
+			case codes.NotFound:
+				ginContext.JSON(http.StatusNotFound, gin.H{"success": false, "message": st.Message()})
+				return
+			default:
+				ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+				return
+			}
+		}
+		ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+		return
+	}
+
+	log.Printf("Response from server: %v", response)
+
+	comment := model.FromPBComment(response.Comment)
+
+	ginContext.JSON(
+		http.StatusCreated,
+		gin.H{
+			"success": true,
+			"data":    comment.ToGinMap(),
+			"message": "Comment created successfully",
 		},
 	)
 }
