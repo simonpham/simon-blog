@@ -3,7 +3,11 @@ import 'package:core_remote_data/interfaces/comment_api.dart';
 import 'package:flutter/material.dart';
 
 class CommentViewModel extends ChangeNotifier {
-  final CommentApis _apis = injector<CommentApis>();
+  CommentApis get _apis => injector<CommentApis>();
+
+  // TODO: handle random animals creation.
+  Animals get animal => Animals.fox;
+  BackgroundColorType get backgroundColor => BackgroundColorType.red;
 
   List<Comment> _comments = [];
   List<Comment> get comments => _comments;
@@ -17,10 +21,10 @@ class CommentViewModel extends ChangeNotifier {
       return;
     }
     _post = post;
-    _fetchComments();
+    fetchComments();
   }
 
-  Future<void> _fetchComments() async {
+  Future<void> fetchComments() async {
     final postId = _post?.id;
     if (postId == null) {
       _comments = [];
@@ -40,7 +44,24 @@ class CommentViewModel extends ChangeNotifier {
   }
 
   Future<Failure?> createComment(String text) async {
-    // TODO: Implement comment creation logic.
-    return null;
+    final postId = _post?.id;
+    if (postId == null) {
+      return const Failure('No post selected');
+    }
+
+    try {
+      final failure = await _apis.createComment(
+        postId: postId,
+        content: text,
+        animal: animal,
+        backgroundColor: backgroundColor,
+      );
+
+      return failure;
+    } catch (err, trace) {
+      // TODO: Handle error.
+      printError(err, trace);
+      return const Failure('Failed to create comment');
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
@@ -51,10 +53,6 @@ class _CommentPanelState extends State<CommentPanel> {
         builder: (context, viewModel, child) {
           final theme = context.theme;
           final comments = viewModel.comments;
-
-          // TODO: handle random animals creation.
-          const animal = Animals.fox;
-          const backgroundColor = BackgroundColorType.red;
           return Container(
             color: theme.colorScheme.surfaceContainer,
             child: Column(
@@ -88,8 +86,9 @@ class _CommentPanelState extends State<CommentPanel> {
                           }
                           final comment = comments[index];
                           final isSame =
-                              comment.animal == animal &&
-                              comment.backgroundColor == backgroundColor;
+                              comment.animal == viewModel.animal &&
+                              comment.backgroundColor ==
+                                  viewModel.backgroundColor;
                           return CommentRow(comment: comment, isSame: isSame);
                         },
                       ),
@@ -115,6 +114,7 @@ class _CommentPanelState extends State<CommentPanel> {
       return;
     }
 
+    unawaited(_viewModel.fetchComments());
     _inputController.clear();
   }
 }
