@@ -6,8 +6,12 @@ import 'package:simon/simon.dart';
 class CommentRow extends StatelessWidget {
   final Comment comment;
 
+  final bool isSame;
+
   const CommentRow({
     required this.comment,
+    required this.isSame,
+    super.key,
   });
 
   @override
@@ -32,7 +36,7 @@ class CommentRow extends StatelessWidget {
                   text:
                       '@${comment.backgroundColor.name}_${comment.animal.name}: ',
                   style: textStyle?.copyWith(
-                    color: theme.primaryColor,
+                    color: isSame ? theme.primaryColor : null,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
