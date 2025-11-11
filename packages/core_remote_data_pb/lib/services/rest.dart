@@ -42,12 +42,33 @@ class RestCommentNowisApis implements CommentApis {
   FutureOr<Failure?> createComment({
     required String postId,
     required String content,
-    required String authorName,
-    String? authorEmail,
-    String? parentCommentId,
-  }) {
-    // TODO: implement createComment
-    throw UnimplementedError();
+    required Animals animal,
+    required BackgroundColorType backgroundColor,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/comments',
+        data: {
+          'post_id': postId,
+          'content': content,
+          'animal': animal.name,
+          'background_color': backgroundColor.name,
+        },
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      if (!data['success']) {
+        return Failure(data['message'] ?? 'Failed to create comment');
+      }
+
+      return null;
+    } on DioException catch (err, trace) {
+      printError(err, trace);
+      return Failure('Failed to create comment: ${err.message}');
+    } catch (err, trace) {
+      printError(err, trace);
+      return Failure('Failed to create comment: $err');
+    }
   }
 
   @override

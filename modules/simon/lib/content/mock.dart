@@ -197,9 +197,8 @@ class MockCommentApis implements CommentApis {
   FutureOr<Failure?> createComment({
     required String postId,
     required String content,
-    required String authorName,
-    String? authorEmail,
-    String? parentCommentId,
+    required Animals animal,
+    required BackgroundColorType backgroundColor,
   }) {
     _comments.add(
       Comment(
@@ -208,7 +207,6 @@ class MockCommentApis implements CommentApis {
         animal: Animals.sheep,
         backgroundColor: BackgroundColorType.red,
         postId: postId,
-        parentCommentId: parentCommentId,
         createdAt: DateTime.now(),
       ),
     );

@@ -11,9 +11,8 @@ abstract interface class _UserCommentApis {
   FutureOr<Failure?> createComment({
     required String postId,
     required String content,
-    required String authorName,
-    String? authorEmail,
-    String? parentCommentId,
+    required Animals animal,
+    required BackgroundColorType backgroundColor,
   });
 }
 
@@ -23,9 +22,8 @@ abstract interface class _AdminCommentApis {
   FutureOr<Failure?> createComment({
     required String postId,
     required String content,
-    required String authorName,
-    String? authorEmail,
-    String? parentCommentId,
+    required Animals animal,
+    required BackgroundColorType backgroundColor,
   });
 
   FutureOr<Failure?> deleteComment(String commentId);

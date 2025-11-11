@@ -1,3 +1,5 @@
+import 'package:core/models/animals.dart';
+import 'package:core/models/comment.dart';
 import 'package:core/models/post.dart';
 import 'package:core/models/sidebar_post.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart' as pb;
@@ -53,6 +55,21 @@ extension TagSidebarMapper on pb.TagSidebar {
     return TagSidebar(
       tagName: tagName,
       posts: posts.map((post) => post.toModel()).toList(),
+    );
+  }
+}
+
+extension CommentMapper on pb.Comment {
+  Comment toModel() {
+    return Comment(
+      id: id,
+      postId: postId,
+      content: content,
+      animal: Animals.fromName(animal),
+      backgroundColor: BackgroundColorType.fromString(backgroundColor),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        createdAt.toInt(),
+      ),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:core/models/animals.dart';
+import 'package:core/models/comment.dart';
 import 'package:core/models/common/failure.dart';
 import 'package:core/models/common/pagination.dart';
 import 'package:core/models/post.dart';
@@ -190,5 +192,102 @@ class NowisPostApis implements PostApis {
       ),
     );
     return response.tags.map((tag) => tag.toModel()).toList();
+  }
+}
+
+class NowisCommentApis implements CommentApis {
+  final pb.NowisServiceClient _client;
+
+  NowisCommentApis({
+    required String host,
+    int? port,
+  }) : _client = pb.NowisServiceClient(
+         ClientChannel(
+           host,
+           port: port ?? 443,
+           options: ChannelOptions(
+             credentials: port != null
+                 ? const ChannelCredentials.insecure()
+                 : const ChannelCredentials.secure(),
+             codecRegistry: CodecRegistry(
+               codecs: [
+                 const GzipCodec(),
+               ],
+             ),
+           ),
+         ),
+       );
+
+  @override
+  FutureOr<Failure?> approveComment(String commentId) {
+    // TODO: implement approveComment
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> bulkApproveComments(List<String> commentIds) {
+    // TODO: implement bulkApproveComments
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> bulkDeleteComments(List<String> commentIds) {
+    // TODO: implement bulkDeleteComments
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> createComment({
+    required String postId,
+    required String content,
+    required Animals animal,
+    required BackgroundColorType backgroundColor,
+  }) async {
+    try {
+      final response = await _client.createComment(
+        pb.CreateCommentRequest(
+          postId: postId,
+          content: content,
+          animal: animal.name,
+          backgroundColor: backgroundColor.name,
+        ),
+      );
+
+      if (!response.hasComment()) {
+        return const Failure('Failed to create comment');
+      }
+
+      return null;
+    } catch (e) {
+      return Failure('Failed to create comment: $e');
+    }
+  }
+
+  @override
+  FutureOr<Failure?> deleteComment(String commentId) {
+    // TODO: implement deleteComment
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Comment>> getCommentsForPost(String postId) async {
+    try {
+      final response = await _client.getPostComments(
+        pb.GetPostCommentsRequest(postId: postId),
+      );
+
+      return response.comments.map((e) => e.toModel()).toList();
+    } catch (e) {
+      throw Failure('Failed to fetch comments: $e');
+    }
+  }
+
+  @override
+  FutureOr<Failure?> updateComment({
+    required String commentId,
+    required String content,
+  }) {
+    // TODO: implement updateComment
+    throw UnimplementedError();
   }
 }
