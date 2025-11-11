@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	nowisrepo "nowis/internal/nowis/repository"
+	util "nowis/internal/nowis/util"
 	"nowis/pkg/configs"
 	nowispb "nowis/protobuf/generated/nowis"
+	"strings"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -118,6 +120,37 @@ func (h NowisService) GetPostComments(ctx context.Context, request *nowispb.GetP
 
 	return &nowispb.GetPostCommentsResponse{
 		Comments: pbComments,
+	}, nil
+}
+
+func (h NowisService) CreateComment(ctx context.Context, request *nowispb.CreateCommentRequest) (*nowispb.CreateCommentResponse, error) {
+	postID, err := uuid.Parse(request.GetPostId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid post ID format: %v", err)
+	}
+
+	content := strings.TrimSpace(request.GetContent())
+	if content == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "comment content cannot be empty")
+	}
+
+	animal := request.GetAnimal()
+	if !util.IsValidEnumValue(animal, util.AllowedAnimalTypes) {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid animal type: %s", animal)
+	}
+
+	backgroundColor := request.GetBackgroundColor()
+	if !util.IsValidEnumValue(backgroundColor, util.AllowedBackgroundColorTypes) {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid background color type: %s", backgroundColor)
+	}
+
+	comment, err := h.repo.CreateComment(ctx, postID, request.Content, request.Animal, request.BackgroundColor)
+	if err != nil {
+		return nil, err
+	}
+
+	return &nowispb.CreateCommentResponse{
+		Comment: comment.ToPBComment(),
 	}, nil
 }
 

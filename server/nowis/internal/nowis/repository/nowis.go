@@ -21,6 +21,7 @@ type NowisRepositoryHandler interface {
 	GetPosts(ctx context.Context, locale string, page, limit int, searchQuery string) ([]model.Post, error)
 	GetSidebarPostsByTags(ctx context.Context, tagNameFilter string) ([]model.TagSidebar, error)
 	GetPostComments(ctx context.Context, postId uuid.UUID, page int, limit int) ([]model.Comment, error)
+	CreateComment(ctx context.Context, postId uuid.UUID, content string, animal string, backgroundColor string) (*model.Comment, error)
 }
 
 type NowisRepository struct {
@@ -371,4 +372,27 @@ func (r *NowisRepository) GetPostComments(ctx context.Context, postID uuid.UUID,
 	}
 
 	return comments, nil
+}
+
+func (r *NowisRepository) CreateComment(ctx context.Context, postID uuid.UUID, content string, animal string, backgroundColor string) (*model.Comment, error) {
+	query := `
+        INSERT INTO comments (post_id, content, animal, background_color)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id, post_id, animal, background_color, content, created_at;
+    `
+
+	var comment model.Comment
+	err := r.db.QueryRowContext(ctx, query, postID, content, animal, backgroundColor).Scan(
+		&comment.ID,
+		&comment.PostID,
+		&comment.Animal,
+		&comment.BackgroundColor,
+		&comment.Content,
+		&comment.CreatedAt,
+	)
+	if err != nil {
+		return nil, utils.WrapError("failed to create comment", err)
+	}
+
+	return &comment, nil
 }

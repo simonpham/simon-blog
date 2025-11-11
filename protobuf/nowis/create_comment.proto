@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "comment.proto";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+message CreateCommentRequest {
+  string post_id = 1;
+  string content = 2;
+  string animal = 3;
+  string background_color = 4;
+}
+
+message CreateCommentResponse {
+  Comment comment = 1;
+}
