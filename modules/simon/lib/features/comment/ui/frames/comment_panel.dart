@@ -47,58 +47,60 @@ class _CommentPanelState extends State<CommentPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _viewModel,
-      child: Consumer<CommentViewModel>(
-        builder: (context, viewModel, child) {
-          final theme = context.theme;
-          final comments = viewModel.comments;
-          return Container(
-            color: theme.colorScheme.surfaceContainer,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CommentHeader(),
-                const Divider(height: 1.0),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      _focusNode.requestFocus();
-                    },
-                    child: Container(
-                      color: theme.colorScheme.surface,
-                      child: ListView.builder(
-                        itemCount: comments.length + 1,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Spacing.d16,
-                        ),
-                        itemBuilder: (context, index) {
-                          if (index == comments.length) {
-                            return CommentInput(
-                              focusNode: _focusNode,
-                              controller: _inputController,
-                              onEnter: (text) => _handleComment(
-                                context,
-                                viewModel,
-                                text,
-                              ),
-                            );
-                          }
-                          final comment = comments[index];
-                          final isSame =
-                              comment.animal == viewModel.animal &&
-                              comment.backgroundColor ==
-                                  viewModel.backgroundColor;
-                          return CommentRow(comment: comment, isSame: isSame);
-                        },
+    return GestureDetector(
+      onTap: () {
+        _focusNode.requestFocus();
+      },
+      child: ChangeNotifierProvider.value(
+        value: _viewModel,
+        child: Consumer<CommentViewModel>(
+          builder: (context, viewModel, child) {
+            final theme = context.theme;
+            final comments = viewModel.comments;
+            return Container(
+              color: theme.colorScheme.surface,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ColoredBox(
+                    color: theme.colorScheme.surfaceContainer,
+                    child: const CommentHeader(),
+                  ),
+                  const Divider(height: 1.0),
+                  Flexible(
+                    child: ListView.builder(
+                      reverse: true,
+                      shrinkWrap: true,
+                      itemCount: comments.length + 1,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Spacing.d16,
                       ),
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return CommentInput(
+                            focusNode: _focusNode,
+                            controller: _inputController,
+                            onEnter: (text) => _handleComment(
+                              context,
+                              viewModel,
+                              text,
+                            ),
+                          );
+                        }
+                        final comment = comments[index - 1];
+                        final isSame =
+                            comment.animal == viewModel.animal &&
+                            comment.backgroundColor ==
+                                viewModel.backgroundColor;
+                        return CommentRow(comment: comment, isSame: isSame);
+                      },
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
