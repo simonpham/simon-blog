@@ -1,3 +1,6 @@
 [submodule "sofluffy_design_system"]
 	path = packages/design_system
 	url = https://github.com/simonpham/sofluffy_design_system.git
+[submodule "chat"]
+	path = server/chat
+	url = https://github.com/simonpham/nowis-chat.git
