@@ -1,0 +1,26 @@
+name: chat
+publish_to: "none"
+
+environment:
+  sdk: ^3.9.2
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: "flutter"
+
+  core:
+    path: ../core
+  design_system:
+    path: ../design_system
+  icons:
+    path: ../icons
+  l10n:
+    path: ../l10n
+  platform_utils:
+    path: ../platform_utils
+  utils:
+    path: ../utils
+
+  socket_io_client: ^2.0.0

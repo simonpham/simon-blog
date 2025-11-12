@@ -1,6 +1,7 @@
 packages=(
   "apps/simon_web"
   "modules/simon"
+  "packages/chat"
   "packages/core"
   "packages/core_remote_data"
   "packages/core_remote_data_pb"
