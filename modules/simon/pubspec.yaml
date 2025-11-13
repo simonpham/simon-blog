@@ -9,6 +9,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  chat:
+    path: ../../packages/chat
   core:
     path: ../../packages/core
   core_remote_data:

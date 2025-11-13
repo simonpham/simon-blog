@@ -3,10 +3,13 @@ import 'package:core/core.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class ChatClient {
-  late final io.Socket socket = io.io(uri, <String, dynamic>{
-    'transports': ['websocket'],
-    'autoConnect': false,
-  });
+  late final io.Socket socket = io.io(
+    uri,
+    io.OptionBuilder()
+        .setTransports(['websocket'])
+        .disableAutoConnect()
+        .build(),
+  );
 
   final String uri;
   final Function(List<ChatMessage>)? onAllMessages;
@@ -32,7 +35,7 @@ class ChatClient {
       onConnected?.call();
     });
 
-    socket.on('allMessages', (data) {
+    socket.on('chatHistory', (data) {
       printLog('[ChatClient] Received all messages: $data');
       if (data is List) {
         final messages = data
@@ -64,7 +67,7 @@ class ChatClient {
   void sendMessage({
     required String senderName,
     required Animals avatarName,
-    required AvatarBackgroundColor avatarBackgroundColor,
+    required BackgroundColorType avatarBackgroundColor,
     required String message,
   }) {
     if (!socket.connected) {
@@ -88,5 +91,9 @@ class ChatClient {
       return;
     }
     socket.disconnect();
+  }
+
+  void dispose() {
+    socket.dispose();
   }
 }

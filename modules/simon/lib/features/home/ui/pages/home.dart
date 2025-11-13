@@ -40,6 +40,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final PostViewModel _postViewModel = PostViewModel();
+  final ChatViewModel _chatViewModel = ChatViewModel();
 
   final ValueNotifier<bool> _isLeftPanelExpandedNotifier = ValueNotifier<bool>(
     true,
@@ -73,7 +74,10 @@ class _HomePageState extends State<HomePage> {
       );
     },
     rightPanel: (BuildContext context) {
-      return const ChatPanel();
+      return ChangeNotifierProvider.value(
+        value: _chatViewModel,
+        builder: (context, _) => const ChatPanel(),
+      );
     },
     bottomPanel: (BuildContext context) {
       return ChangeNotifierProvider.value(
@@ -100,12 +104,14 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _listenable.addListener(_handleSizeChanged);
     _postViewModel.loadPosts();
+    _chatViewModel.init();
   }
 
   @override
   void dispose() {
     _listenable.removeListener(_handleSizeChanged);
     _postViewModel.dispose();
+    _chatViewModel.dispose();
     super.dispose();
   }
 
