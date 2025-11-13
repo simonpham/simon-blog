@@ -22,6 +22,7 @@ class Assets {
   static const String link04 = 'assets/link-04.svg';
   static const String messageProgramming = 'assets/message-programming.svg';
   static const String search = 'assets/search.svg';
+  static const String sent = 'assets/sent.svg';
   static const String share05 = 'assets/share-05.svg';
   static const String terminal = 'assets/terminal.svg';
   static const String unlink04 = 'assets/unlink-04.svg';
@@ -38,6 +39,7 @@ class Assets {
     link04,
     messageProgramming,
     search,
+    sent,
     share05,
     terminal,
     unlink04,

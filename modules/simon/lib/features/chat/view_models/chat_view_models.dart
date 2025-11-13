@@ -1,21 +1,16 @@
-import 'dart:math';
-
 import 'package:chat/chat.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:simon/simon.dart';
 
 class ChatViewModel extends ChangeNotifier {
   ChatClient? _chatClient;
 
-  // TODO: handle random animals creation.
-  Animals get animal => Animals.fox;
-  BackgroundColorType get backgroundColor => BackgroundColorType.yellow;
+  AnonymousUser get anonymousUser => SettingsBox().anonymousUser;
 
-  // random 3 number as String. min 100
-  // String randomInt = '${Random().nextInt(900) + 100}';
-  String randomInt = '233';
-
-  String get senderName => '${backgroundColor.name}_${animal.name}$randomInt';
+  Animals get animal => anonymousUser.animal;
+  BackgroundColorType get backgroundColor => anonymousUser.backgroundColor;
+  String get senderName => anonymousUser.displayName;
 
   List<ChatMessage> _chatMessages = [];
 

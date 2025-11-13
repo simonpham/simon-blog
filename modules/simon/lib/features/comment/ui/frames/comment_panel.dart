@@ -80,6 +80,7 @@ class _CommentPanelState extends State<CommentPanel> {
                           return CommentInput(
                             focusNode: _focusNode,
                             controller: _inputController,
+                            user: viewModel.anonymousUser,
                             onEnter: (text) => _handleComment(
                               context,
                               viewModel,

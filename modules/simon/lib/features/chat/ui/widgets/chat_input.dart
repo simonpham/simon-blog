@@ -33,7 +33,7 @@ class ChatInput extends StatelessWidget {
         vertical: Spacing.d8,
       ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
+        color: theme.colorScheme.surface,
         border: Border(
           top: BorderSide(
             color: theme.dividerColor,
@@ -69,7 +69,7 @@ class ChatInput extends StatelessWidget {
           Button(
             variant: ButtonVariant.primary,
             child: ImageView(
-              Assets.share05,
+              Assets.sent,
               size: Spacing.d20,
               color: theme.colorScheme.onPrimary,
             ),

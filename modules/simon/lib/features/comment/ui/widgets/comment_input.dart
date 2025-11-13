@@ -7,12 +7,15 @@ class CommentInput extends StatelessWidget {
   final FocusNode focusNode;
   final TextEditingController controller;
 
+  final AnonymousUser user;
+
   final ValueChanged<String> onEnter;
 
   const CommentInput({
     super.key,
     required this.focusNode,
     required this.controller,
+    required this.user,
     required this.onEnter,
   });
 
@@ -22,14 +25,14 @@ class CommentInput extends StatelessWidget {
     final textStyle = theme.textTheme.bodySmall?.copyWith(
       fontFamily: kMonoFontFamily,
     );
-    final animal = Animals.fox;
-    final backgroundColor = BackgroundColorType.red;
+    final animal = user.animal;
+    final backgroundColor = user.backgroundColor;
     return ColoredBox(
       color: theme.colorScheme.surface,
       child: Row(
         children: [
           AnimalAvatar(
-            animal: animal,
+            animal: user.animal,
             background: backgroundColor,
             size: textStyle?.fontSize ?? Spacing.d24,
           ),

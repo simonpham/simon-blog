@@ -1,13 +1,15 @@
 import 'package:core/core.dart';
 import 'package:core_remote_data/interfaces/comment_api.dart';
 import 'package:flutter/material.dart';
+import 'package:simon/simon.dart';
 
 class CommentViewModel extends ChangeNotifier {
   CommentApis get _apis => injector<CommentApis>();
 
-  // TODO: handle random animals creation.
-  Animals get animal => Animals.fox;
-  BackgroundColorType get backgroundColor => BackgroundColorType.red;
+  AnonymousUser get anonymousUser => SettingsBox().anonymousUser;
+
+  Animals get animal => anonymousUser.animal;
+  BackgroundColorType get backgroundColor => anonymousUser.backgroundColor;
 
   List<Comment> _comments = [];
   List<Comment> get comments => _comments;
