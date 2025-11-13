@@ -9,10 +9,11 @@ class ChatViewModel extends ChangeNotifier {
 
   // TODO: handle random animals creation.
   Animals get animal => Animals.fox;
-  BackgroundColorType get backgroundColor => BackgroundColorType.red;
+  BackgroundColorType get backgroundColor => BackgroundColorType.yellow;
 
   // random 3 number as String. min 100
-  String randomInt = '${Random().nextInt(900) + 100}';
+  // String randomInt = '${Random().nextInt(900) + 100}';
+  String randomInt = '233';
 
   String get senderName => '${backgroundColor.name}_${animal.name}$randomInt';
 

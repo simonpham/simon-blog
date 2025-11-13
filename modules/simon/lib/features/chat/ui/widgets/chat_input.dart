@@ -1,7 +1,7 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:simon/simon.dart';
+import 'package:icons/icons.dart';
 
 class ChatInput extends StatelessWidget {
   final FocusNode focusNode;
@@ -27,42 +27,56 @@ class ChatInput extends StatelessWidget {
     final textStyle = theme.textTheme.bodySmall?.copyWith(
       fontFamily: kMonoFontFamily,
     );
-    return Row(
-      children: [
-        AnimalAvatar(
-          animal: animal,
-          background: backgroundColor,
-          size: textStyle?.fontSize ?? Spacing.d24,
-        ),
-        Spacing.h8,
-        Text(
-          '@${backgroundColor.name}_${animal.name} \$ ',
-          style: textStyle?.copyWith(
-            color: theme.primaryColor,
-            fontWeight: FontWeight.bold,
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: Spacing.d16,
+        vertical: Spacing.d8,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        border: Border(
+          top: BorderSide(
+            color: theme.dividerColor,
           ),
         ),
-        Expanded(
-          child: SizedBox(
-            height: Spacing.d18,
+      ),
+      child: Row(
+        children: [
+          Expanded(
             child: InputText(
               focusNode: focusNode,
               controller: controller,
               onEditingComplete: () {
-                onEnter(controller.text);
+                final text = controller.text.trim();
+                if (text.isEmpty) {
+                  return;
+                }
+
+                onEnter(text);
                 controller.clear();
               },
               textInputAction: TextInputAction.send,
-              decorationBuilder: (_, _, _, _) => const BoxDecoration(),
+              inputPadding: EdgeInsets.symmetric(
+                vertical: Spacing.d12,
+                horizontal: Spacing.d16,
+              ),
               textStyle: textStyle,
-              hintText: 'Whisper your questions...',
-              inputPadding: EdgeInsets.zero,
-              cursorHeight: Spacing.d14,
-              cursorWidth: Spacing.d4,
+              hintText: 'Say something fluffy...',
             ),
           ),
-        ),
-      ],
+          Spacing.h8,
+          Spacing.h4,
+          Button(
+            variant: ButtonVariant.primary,
+            child: ImageView(
+              Assets.share05,
+              size: Spacing.d20,
+              color: theme.colorScheme.onPrimary,
+            ),
+            padding: EdgeInsets.all(Spacing.d8),
+          ),
+        ],
+      ),
     );
   }
 }
