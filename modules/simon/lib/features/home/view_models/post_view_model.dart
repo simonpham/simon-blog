@@ -81,7 +81,12 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final post = await _postApis.get(postId);
+      final isUuid = Uuid.isValidUUID(fromString: postId);
+      final post = isUuid
+          ? await _postApis.get(postId)
+          : await _postApis.getPostBySlug(
+              postId.replaceAll('.md', ''),
+            );
       if (post == null) {
         _selectedPost = RxStatus.error('Post not found');
         notifyListeners();
