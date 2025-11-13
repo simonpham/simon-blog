@@ -105,6 +105,11 @@ class _HomePageState extends State<HomePage> {
     _listenable.addListener(_handleSizeChanged);
     _postViewModel.loadPosts();
     _chatViewModel.init();
+
+    final currentPostId = widget.postId;
+    if (currentPostId != null && currentPostId.isNotEmpty) {
+      _postViewModel.openPost(currentPostId);
+    }
   }
 
   @override
