@@ -76,16 +76,16 @@ class PostViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> openPost(String postId) async {
+  Future<void> openPost(String postIdentifier) async {
     _selectedPost = RxStatus.loading();
     notifyListeners();
 
     try {
-      final isUuid = Uuid.isValidUUID(fromString: postId);
+      final isUuid = Uuid.isValidUUID(fromString: postIdentifier);
       final post = isUuid
-          ? await _postApis.get(postId)
+          ? await _postApis.get(postIdentifier)
           : await _postApis.getPostBySlug(
-              postId.replaceAll('.md', ''),
+              postIdentifier.replaceAll('.md', ''),
             );
       if (post == null) {
         _selectedPost = RxStatus.error('Post not found');

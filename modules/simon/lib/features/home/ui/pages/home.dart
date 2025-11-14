@@ -109,6 +109,13 @@ class _HomePageState extends State<HomePage> {
     final currentPostId = widget.postId;
     if (currentPostId != null && currentPostId.isNotEmpty) {
       _postViewModel.openPost(currentPostId);
+      return;
+    }
+
+    final currentPostSlug = widget.postSlug;
+    if (currentPostSlug != null && currentPostSlug.isNotEmpty) {
+      _postViewModel.openPost(currentPostSlug);
+      return;
     }
   }
 
@@ -123,13 +130,27 @@ class _HomePageState extends State<HomePage> {
   @override
   void didUpdateWidget(covariant HomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     final currentPostId = widget.postId;
     final currentLoadedPostId = _postViewModel.selectedPost?.data?.id;
     if (currentPostId != null && currentLoadedPostId == currentPostId) {
       return;
     }
+
     if (currentPostId != null && oldWidget.postId != currentPostId) {
       _postViewModel.openPost(currentPostId);
+      return;
+    }
+
+    final currentPostSlug = widget.postSlug;
+    final currentLoadedPostSlug = _postViewModel.selectedPost?.data?.slug;
+    if (currentPostSlug != null && currentLoadedPostSlug == currentPostSlug) {
+      return;
+    }
+
+    if (currentPostSlug != null && oldWidget.postSlug != currentPostSlug) {
+      _postViewModel.openPost(currentPostSlug);
+      return;
     }
   }
 
