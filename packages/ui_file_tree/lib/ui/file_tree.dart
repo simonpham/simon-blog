@@ -11,9 +11,12 @@ class FileTree extends StatelessWidget {
 
   final OnFileTreeItemTap? onItemTap;
 
+  final String? selectedId;
+
   const FileTree({
     required this.categories,
     this.onItemTap,
+    this.selectedId,
   });
 
   @override
@@ -22,6 +25,7 @@ class FileTree extends StatelessWidget {
     final textStyle = theme.textTheme.titleSmall?.copyWith(
       fontWeight: FontWeight.normal,
       fontFamily: kMonoFontFamily,
+      color: theme.textTheme.titleSmall?.color?.withValues(alpha: 0.6),
     );
     return CustomScrollView(
       slivers: [
@@ -44,7 +48,7 @@ class FileTree extends StatelessWidget {
                       child: ImageView(
                         Assets.folder02,
                         size: Spacing.d16,
-                        color: theme.primaryColor,
+                        color: theme.iconTheme.color,
                       ),
                     ),
                     Spacing.h8,
@@ -63,37 +67,55 @@ class FileTree extends StatelessWidget {
             itemCount: category.items.length,
             itemBuilder: (BuildContext context, int index) {
               final item = category.items[index];
-              return Tappable(
-                onTap: () => onItemTap?.call(item),
-                enableHover: true,
-                enableHoverOverlay: true,
-                child: Container(
-                  margin: EdgeInsets.only(
-                    left: Spacing.d24,
+              final isSelected =
+                  selectedId == item.id || selectedId == item.name;
+              return Container(
+                decoration: switch (isSelected) {
+                  true => BoxDecoration(
+                    color: theme.primaryColor.withValues(alpha: 0.1),
                   ),
-                  padding: EdgeInsets.all(Spacing.d4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: Spacing.d2,
-                          bottom: Spacing.d2,
+                  _ => null,
+                },
+                child: Tappable(
+                  onTap: () => onItemTap?.call(item),
+                  enableHover: true,
+                  enableHoverOverlay: true,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: Spacing.d24,
+                    ),
+                    padding: EdgeInsets.all(Spacing.d4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: Spacing.d2,
+                            bottom: Spacing.d2,
+                          ),
+                          child: ImageView(
+                            item.icon,
+                            size: Spacing.d16,
+                            color: switch (isSelected) {
+                              true => theme.primaryColor,
+                              false => theme.iconTheme.color,
+                            },
+                          ),
                         ),
-                        child: ImageView(
-                          item.icon,
-                          size: Spacing.d16,
-                          color: theme.primaryColor,
+                        Spacing.h8,
+                        Flexible(
+                          child: Text(
+                            item.name,
+                            style: switch (isSelected) {
+                              true => textStyle?.copyWith(
+                                color: textStyle.color?.withValues(alpha: 1),
+                              ),
+                              false => textStyle,
+                            },
+                          ),
                         ),
-                      ),
-                      Spacing.h8,
-                      Flexible(
-                        child: Text(
-                          item.name,
-                          style: textStyle,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

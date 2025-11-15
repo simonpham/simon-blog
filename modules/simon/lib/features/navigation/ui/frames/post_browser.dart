@@ -18,6 +18,10 @@ class PostBrowser extends StatelessWidget {
       color: theme.colorScheme.surfaceContainer,
       child: Consumer<PostViewModel>(
         builder: (context, viewModel, child) {
+          final routerState = context.router.state;
+          final postIdentifier =
+              routerState.pathParameters[HomePage.identifierParam];
+
           final categories = viewModel.tags.map((tag) {
             return FileTreeCategory(
               id: kUuid.v4(),
@@ -31,6 +35,7 @@ class PostBrowser extends StatelessWidget {
               }).toList(),
             );
           }).toList();
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -39,6 +44,7 @@ class PostBrowser extends StatelessWidget {
               Expanded(
                 child: FileTree(
                   categories: categories,
+                  selectedId: postIdentifier,
                   onItemTap: (file) {
                     HomePage.goToPost(context, identifier: file.name);
                   },
