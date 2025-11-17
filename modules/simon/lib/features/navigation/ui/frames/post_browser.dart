@@ -31,6 +31,7 @@ class PostBrowser extends StatelessWidget {
                   id: post.id,
                   icon: Assets.bookOpen01,
                   name: post.fileName,
+                  tooltip: post.title,
                 );
               }).toList(),
             );
