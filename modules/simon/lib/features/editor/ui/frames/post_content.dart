@@ -26,15 +26,19 @@ class PostContent extends StatelessWidget {
       );
     }
 
-    return Column(
-      children: [
-        EditorHeader(selectedPost),
-        Expanded(
-          child: PostContentView(
-            selectedPost,
+    return Title(
+      title: '${selectedPost.title} – SoFluffy',
+      color: context.theme.primaryColor,
+      child: Column(
+        children: [
+          EditorHeader(selectedPost),
+          Expanded(
+            child: PostContentView(
+              selectedPost,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
