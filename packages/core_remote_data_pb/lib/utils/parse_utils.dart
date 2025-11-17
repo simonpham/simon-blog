@@ -25,9 +25,14 @@ class ParseUtils {
     final List<dynamic> postsJson = data['posts'] as List<dynamic>;
     return TagSidebar(
       tagName: data['tag_name'] as String,
-      posts: postsJson
-          .map((postJson) => parseSidebarPost(postJson as Map<String, dynamic>))
-          .toList(),
+      posts:
+          postsJson
+              .map(
+                (postJson) =>
+                    parseSidebarPost(postJson as Map<String, dynamic>),
+              )
+              .toList()
+            ..sort((a, b) => a.slug.compareTo(b.slug)),
     );
   }
 

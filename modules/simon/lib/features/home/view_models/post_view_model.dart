@@ -59,10 +59,12 @@ class PostViewModel extends ChangeNotifier {
 
       _tags = _tags.copyWith(
         isLoading: false,
-        data: Some([
-          ...this.tags,
-          ...tags,
-        ]),
+        data: Some(
+          [
+            ...this.tags,
+            ...tags,
+          ]..sort((a, b) => a.tagName.compareTo(b.tagName)),
+        ),
         error: const Some(null),
       );
       notifyListeners();
