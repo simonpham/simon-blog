@@ -8,7 +8,8 @@ enum Animals {
   sheep('🐑'),
   koala('🐨'),
   wolf('🐺'),
-  chipmunk('🐿️');
+  chipmunk('🐿️')
+  ;
 
   final String emoji;
 

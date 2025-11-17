@@ -8,7 +8,8 @@ enum BackgroundColorType {
   green,
   blue,
   purple,
-  pink;
+  pink
+  ;
 
   factory BackgroundColorType.fromString(String value) {
     return switch (value) {

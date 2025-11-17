@@ -14,4 +14,3 @@ class FileFormat extends StatelessWidget {
     );
   }
 }
-
