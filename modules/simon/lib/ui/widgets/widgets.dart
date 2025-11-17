@@ -1,3 +1,4 @@
+export 'animal_avatar.dart';
 export 'cursor_position.dart';
 export 'file_format.dart';
 export 'header_bar.dart';
@@ -6,4 +7,3 @@ export 'multi_value_listenable_builder.dart';
 export 'status_bar.dart';
 export 'theme_toggle_button.dart';
 export 'title_text.dart';
-export 'animal_avatar.dart';

@@ -1,4 +1,4 @@
 library;
 
-export 'ui/ui.dart';
 export 'controller/controller.dart';
+export 'ui/ui.dart';

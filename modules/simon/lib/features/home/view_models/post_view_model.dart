@@ -12,7 +12,7 @@ class PostViewModel extends ChangeNotifier {
 
   Pagination _nextPage = OffsetLimitPagination.initial();
 
-  String? _currentTag = null;
+  String? _currentTag;
 
   String? get currentTag => _currentTag;
 

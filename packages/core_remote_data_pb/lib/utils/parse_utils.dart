@@ -1,6 +1,4 @@
 import 'package:core/core.dart';
-import 'package:core/models/post.dart';
-import 'package:core/models/sidebar_post.dart';
 
 class ParseUtils {
   static Post parsePost(Map<String, dynamic> data, String decryptedContent) {

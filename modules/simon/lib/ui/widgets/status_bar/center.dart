@@ -12,7 +12,7 @@ class StatusBarCenterContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
+      child: const Row(
         children: [],
       ),
     );

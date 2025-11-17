@@ -1,13 +1,11 @@
 import 'package:core/core.dart';
-import 'package:core/models/animals.dart'; // Import the Animals enum from core
 
-// ChatMessage model to represent a message
 class ChatMessage {
   final String senderName;
-  final Animals avatarName; // Using Animals enum from core
+  final Animals avatarName;
   final BackgroundColorType avatarBackgroundColor;
   final String message;
-  final DateTime? timestamp; // Nullable as it might not be present on creation
+  final DateTime? timestamp;
 
   ChatMessage({
     required this.senderName,
@@ -17,13 +15,12 @@ class ChatMessage {
     this.timestamp,
   });
 
-  // Factory constructor to create a ChatMessage from a JSON map
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
       senderName: json['senderName'],
       avatarName: Animals.fromName(
         json['avatarName'],
-      ), // Use fromName constructor
+      ),
       avatarBackgroundColor: BackgroundColorType.fromString(
         json['avatarBackgroundColor'],
       ),
@@ -34,7 +31,6 @@ class ChatMessage {
     );
   }
 
-  // Method to convert a ChatMessage to a JSON map for sending
   Map<String, dynamic> toJson() {
     return {
       'senderName': senderName,
