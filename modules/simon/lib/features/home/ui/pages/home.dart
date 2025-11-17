@@ -175,29 +175,38 @@ class _HomePageState extends State<HomePage> {
           );
         },
         bottomBar: (BuildContext context) {
-          return MultiValueListenableBuilder(
-            listenables: [
-              _isLeftPanelExpandedNotifier,
-              _isRightPanelExpandedNotifier,
-              _isBottomPanelExpandedNotifier,
-            ],
-            builder: (context) {
-              return StatusBar(
-                isLeftPanelOpen: _isLeftPanelExpandedNotifier.value,
-                isRightPanelOpen: _isRightPanelExpandedNotifier.value,
-                isBottomPanelOpen: _isBottomPanelExpandedNotifier.value,
-                onAction: (action) {
-                  switch (action) {
-                    case StatusBarAction.toggleLeftPanel:
-                      controller.toggle(IdePanel.leftPanel);
-                      break;
-                    case StatusBarAction.toggleRightPanel:
-                      controller.toggle(IdePanel.rightPanel);
-                      break;
-                    case StatusBarAction.toggleBottomPanel:
-                      controller.toggle(IdePanel.bottomPanel);
-                      break;
-                  }
+          return ChangeNotifierProvider.value(
+            value: _postViewModel,
+            builder: (context, model) {
+              final currentMessage = context.select(
+                (PostViewModel model) => model.statusBarMessage,
+              );
+              return MultiValueListenableBuilder(
+                listenables: [
+                  _isLeftPanelExpandedNotifier,
+                  _isRightPanelExpandedNotifier,
+                  _isBottomPanelExpandedNotifier,
+                ],
+                builder: (context) {
+                  return StatusBar(
+                    isLeftPanelOpen: _isLeftPanelExpandedNotifier.value,
+                    isRightPanelOpen: _isRightPanelExpandedNotifier.value,
+                    isBottomPanelOpen: _isBottomPanelExpandedNotifier.value,
+                    message: currentMessage,
+                    onAction: (action) {
+                      switch (action) {
+                        case StatusBarAction.toggleLeftPanel:
+                          controller.toggle(IdePanel.leftPanel);
+                          break;
+                        case StatusBarAction.toggleRightPanel:
+                          controller.toggle(IdePanel.rightPanel);
+                          break;
+                        case StatusBarAction.toggleBottomPanel:
+                          controller.toggle(IdePanel.bottomPanel);
+                          break;
+                      }
+                    },
+                  );
                 },
               );
             },

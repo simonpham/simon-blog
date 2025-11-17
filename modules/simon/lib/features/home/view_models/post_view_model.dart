@@ -1,6 +1,8 @@
 import 'package:core/core.dart';
 import 'package:core_remote_data/interfaces/post_api.dart';
+import 'package:design_system/design_system.dart';
 import 'package:flutter/foundation.dart';
+import 'package:simon/simon.dart';
 import 'package:utils/utils.dart';
 
 class PostViewModel extends ChangeNotifier {
@@ -25,6 +27,10 @@ class PostViewModel extends ChangeNotifier {
 
   RxStatus<Post>? get selectedPost => _selectedPost;
 
+  StatusBarMessage? _statusBarMessage;
+
+  StatusBarMessage? get statusBarMessage => _statusBarMessage;
+
   void refresh() {
     _nextPage = OffsetLimitPagination.initial();
     loadPosts();
@@ -36,6 +42,10 @@ class PostViewModel extends ChangeNotifier {
     }
 
     try {
+      _statusBarMessage = const StatusBarMessage(
+        type: MessageType.info,
+        message: 'Loading posts...',
+      );
       _tags = _tags.copyWith(isLoading: true);
       notifyListeners();
 
@@ -43,6 +53,7 @@ class PostViewModel extends ChangeNotifier {
         tagNameFilter: _currentTag,
       );
       if (tags.isEmpty) {
+        _statusBarMessage = null;
         _tags = _tags.copyWith(
           isLoading: false,
         );
@@ -57,6 +68,7 @@ class PostViewModel extends ChangeNotifier {
         );
       }
 
+      _statusBarMessage = null;
       _tags = _tags.copyWith(
         isLoading: false,
         data: Some(
@@ -70,6 +82,10 @@ class PostViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (err, trace) {
       printError(err, trace);
+      _statusBarMessage = const StatusBarMessage(
+        type: MessageType.error,
+        message: 'Failed to load posts',
+      );
       _tags = _tags.copyWith(
         isLoading: false,
         error: Some(err.toString()),
@@ -80,6 +96,10 @@ class PostViewModel extends ChangeNotifier {
 
   Future<void> openPost(String postIdentifier) async {
     _selectedPost = RxStatus.loading();
+    _statusBarMessage = const StatusBarMessage(
+      type: MessageType.info,
+      message: 'Loading post...',
+    );
     notifyListeners();
 
     try {
@@ -90,15 +110,24 @@ class PostViewModel extends ChangeNotifier {
               postIdentifier.replaceAll('.md', ''),
             );
       if (post == null) {
+        _statusBarMessage = const StatusBarMessage(
+          type: MessageType.error,
+          message: 'Post not found',
+        );
         _selectedPost = RxStatus.error('Post not found');
         notifyListeners();
         return;
       }
 
+      _statusBarMessage = null;
       _selectedPost = RxStatus.data(post);
       notifyListeners();
     } catch (err, trace) {
       printError(err, trace);
+      _statusBarMessage = const StatusBarMessage(
+        type: MessageType.error,
+        message: 'Failed to load post',
+      );
       _selectedPost = RxStatus.error('Failed to load post');
       notifyListeners();
     }

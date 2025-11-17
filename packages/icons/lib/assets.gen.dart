@@ -12,6 +12,9 @@
 class Assets {
   const Assets._();
 
+  static const String alert02 = 'assets/alert-02.svg';
+  static const String alertCircle = 'assets/alert-circle.svg';
+  static const String alertDiamond = 'assets/alert-diamond.svg';
   static const String archive01 = 'assets/archive-01.svg';
   static const String bookOpen01 = 'assets/book-open-01.svg';
   static const String bookOpen02 = 'assets/book-open-02.svg';
@@ -19,6 +22,8 @@ class Assets {
   static const String folder01 = 'assets/folder-01.svg';
   static const String folder02 = 'assets/folder-02.svg';
   static const String hierarchyFiles = 'assets/hierarchy-files.svg';
+  static const String informationCircle = 'assets/information-circle.svg';
+  static const String informationSquare = 'assets/information-square.svg';
   static const String link04 = 'assets/link-04.svg';
   static const String messageProgramming = 'assets/message-programming.svg';
   static const String search = 'assets/search.svg';
@@ -29,6 +34,9 @@ class Assets {
 
   /// List of all assets
   static List<String> get values => [
+    alert02,
+    alertCircle,
+    alertDiamond,
     archive01,
     bookOpen01,
     bookOpen02,
@@ -36,6 +44,8 @@ class Assets {
     folder01,
     folder02,
     hierarchyFiles,
+    informationCircle,
+    informationSquare,
     link04,
     messageProgramming,
     search,

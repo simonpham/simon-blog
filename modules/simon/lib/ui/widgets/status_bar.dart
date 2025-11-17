@@ -1,3 +1,4 @@
+import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:icons/icons.dart';
@@ -13,6 +14,18 @@ enum StatusBarAction {
   toggleBottomPanel,
 }
 
+class StatusBarMessage {
+  final MessageType type;
+  final String message;
+  final String? customIcon;
+
+  const StatusBarMessage({
+    required this.type,
+    required this.message,
+    this.customIcon,
+  });
+}
+
 class StatusBar extends StatelessWidget {
   final bool isLeftPanelOpen;
   final bool isRightPanelOpen;
@@ -20,12 +33,15 @@ class StatusBar extends StatelessWidget {
 
   final ValueChanged<StatusBarAction> onAction;
 
+  final StatusBarMessage? message;
+
   const StatusBar({
     super.key,
     required this.isLeftPanelOpen,
     required this.isRightPanelOpen,
     required this.isBottomPanelOpen,
     required this.onAction,
+    this.message,
   });
 
   @override
@@ -47,6 +63,7 @@ class StatusBar extends StatelessWidget {
           StatusBarLeftContent(
             isLeftPanelOpen: isLeftPanelOpen,
             onAction: onAction,
+            message: message,
           ),
           StatusBarCenterContent(onAction: onAction),
           StatusBarRightContent(
