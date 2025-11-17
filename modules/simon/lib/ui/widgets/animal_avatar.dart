@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 class AnimalAvatar extends StatelessWidget {
@@ -16,6 +17,24 @@ class AnimalAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isRedPanda =
+        animal == Animals.panda && background == BackgroundColorType.red;
+    if (isRedPanda) {
+      return ClipOval(
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: background.color,
+            shape: BoxShape.circle,
+          ),
+          child: Logo(
+            size: size,
+          ),
+        ),
+      );
+    }
+
     return Container(
       width: size,
       height: size,
