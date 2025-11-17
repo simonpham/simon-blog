@@ -1,5 +1,4 @@
 import 'package:chat/chat.dart';
-import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:simon/simon.dart';
@@ -22,9 +21,7 @@ class ChatMessageRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final textStyle = theme.textTheme.bodySmall?.copyWith(
-      fontFamily: kMonoFontFamily,
-    );
+    final textStyle = theme.textTheme.bodySmall;
     final avatarWidget = AnimalAvatar(
       animal: message.avatarName,
       background: message.avatarBackgroundColor,

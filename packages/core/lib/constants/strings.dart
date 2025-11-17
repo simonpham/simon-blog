@@ -1,7 +1,7 @@
 import 'package:platform_utils/platform_utils.dart';
 
-const String kAppFontFamily = 'Nunito';
-const String kMonoFontFamily = 'Iosevka';
+const String kAppFontFamily = 'Iosevka';
+const String kContentFontFamily = 'Lora';
 const String kCodeFontFamily = 'JetBrainsMono';
 
 const String kDefaultLanguage = 'en';

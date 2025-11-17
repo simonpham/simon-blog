@@ -24,9 +24,7 @@ class ChatInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final textStyle = theme.textTheme.bodySmall?.copyWith(
-      fontFamily: kMonoFontFamily,
-    );
+    final textStyle = theme.textTheme.bodySmall;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: Spacing.d16,

@@ -63,7 +63,6 @@ class StatusBarLeftContent extends StatelessWidget {
               message.message,
               style: context.theme.textTheme.bodyMedium?.copyWith(
                 color: color,
-                fontFamily: kMonoFontFamily,
               ),
             ),
           ],

@@ -1,4 +1,3 @@
-import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 class CursorPosition extends StatelessWidget {
@@ -11,7 +10,6 @@ class CursorPosition extends StatelessWidget {
     const column = 3;
     return const Text(
       '$line:$column',
-      style: TextStyle(fontFamily: kMonoFontFamily),
     );
   }
 }

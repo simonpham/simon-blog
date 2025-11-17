@@ -1,4 +1,3 @@
-import 'package:core/constants/constants.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:icons/icons.dart';
@@ -24,7 +23,6 @@ class FileTree extends StatelessWidget {
     final theme = context.theme;
     final textStyle = theme.textTheme.titleSmall?.copyWith(
       fontWeight: FontWeight.normal,
-      fontFamily: kMonoFontFamily,
       color: theme.textTheme.titleSmall?.color?.withValues(alpha: 0.6),
     );
     return CustomScrollView(

@@ -22,9 +22,7 @@ class CommentInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final textStyle = theme.textTheme.bodySmall?.copyWith(
-      fontFamily: kMonoFontFamily,
-    );
+    final textStyle = theme.textTheme.bodySmall;
     final animal = user.animal;
     final backgroundColor = user.backgroundColor;
     return ColoredBox(

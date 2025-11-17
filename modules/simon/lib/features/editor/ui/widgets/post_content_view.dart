@@ -23,6 +23,11 @@ $headerBlock
 $imageBlock
 ${post.content}
 ''';
-    return MarkdownContent(content);
+    return DefaultTextStyle.merge(
+      style: const TextStyle(
+        fontFamily: kContentFontFamily,
+      ),
+      child: MarkdownContent(content),
+    );
   }
 }

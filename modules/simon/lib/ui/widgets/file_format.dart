@@ -1,4 +1,3 @@
-import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
 class FileFormat extends StatelessWidget {
@@ -10,7 +9,6 @@ class FileFormat extends StatelessWidget {
     const format = 'Markdown';
     return const Text(
       format,
-      style: TextStyle(fontFamily: kMonoFontFamily),
     );
   }
 }
