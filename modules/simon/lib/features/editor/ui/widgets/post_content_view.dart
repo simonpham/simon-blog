@@ -13,6 +13,10 @@ class PostContentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final headerBlock = '# ${post.title}';
+    final summaryBlock = switch (post.summary.isNotEmpty) {
+      true => '> _${post.summary}_\n',
+      false => '',
+    };
     final imageBlock = switch (post.featuredImageUrl) {
       final String url => '![$url]($url)\n',
       null => '',
@@ -20,6 +24,7 @@ class PostContentView extends StatelessWidget {
     final content =
         '''
 $headerBlock
+$summaryBlock
 $imageBlock
 ${post.content}
 ''';
