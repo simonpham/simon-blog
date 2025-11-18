@@ -69,9 +69,9 @@ class HeaderBar extends StatelessWidget {
                 enableAnimation: false,
                 builder: (context, state) {
                   final isHovered = state == TappableState.hover;
-                  final color = isHovered
-                      ? context.theme.primaryColor
-                      : context.theme.colorScheme.onSurface;
+                  final color = context.theme.colorScheme.onSurface.withValues(
+                    alpha: isHovered ? 1.0 : 0.6,
+                  );
                   return Container(
                     constraints: BoxConstraints(
                       minHeight: Spacing.d32,
