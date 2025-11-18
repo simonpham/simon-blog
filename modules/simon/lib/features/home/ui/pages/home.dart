@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:ide_layout/ide_layout.dart';
 import 'package:simon/simon.dart';
@@ -38,7 +39,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AfterLayoutMixin {
   final PostViewModel _postViewModel = PostViewModel();
   final ChatViewModel _chatViewModel = ChatViewModel();
 
@@ -117,6 +118,11 @@ class _HomePageState extends State<HomePage> {
       _postViewModel.openPost(currentPostSlug);
       return;
     }
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    _handleSizeChanged();
   }
 
   @override
