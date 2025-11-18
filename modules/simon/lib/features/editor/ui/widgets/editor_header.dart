@@ -1,6 +1,8 @@
 import 'package:core/models/post.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:icons/icons.dart';
 
 class EditorHeader extends StatelessWidget {
   final Post selectedPost;
@@ -20,27 +22,78 @@ class EditorHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              border: Border(
-                right: BorderSide(
-                  color: theme.dividerColor,
-                  width: 1.0,
+          Tappable(
+            enableHover: true,
+            enableAnimation: false,
+            tooltip: 'Copy link',
+            onTap: () {
+              final link = 'https://sofluffy.io/${selectedPost.slug}.md';
+              Clipboard.setData(
+                ClipboardData(text: link),
+              );
+              context.toast(
+                'Copied to clipboard',
+                type: MessageType.success,
+              );
+            },
+            builder: (context, state) {
+              final shouldShowIcon =
+                  state == .hover || state == .pressed || state == .focus;
+              return Container(
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  border: Border(
+                    right: BorderSide(
+                      color: theme.dividerColor,
+                      width: 1.0,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: Spacing.d16,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              selectedPost.fileName,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
+                padding: EdgeInsets.only(
+                  left: Spacing.d16,
+                ),
+                alignment: Alignment.center,
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut,
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: shouldShowIcon ? Spacing.d8 : Spacing.d16,
+                    ),
+                    child: Text.rich(
+                      TextSpan(
+                        text: selectedPost.fileName,
+                        children: [
+                          WidgetSpan(
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: switch (shouldShowIcon) {
+                                true => Padding(
+                                  padding: EdgeInsets.only(
+                                    left: Spacing.d8,
+                                  ),
+                                  child: ImageView(
+                                    Assets.link04,
+                                    color: theme.colorScheme.onSurface,
+                                    size: Spacing.d16,
+                                  ),
+                                ),
+                                false => const SizedBox.shrink(),
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
           Expanded(
             child: Align(
