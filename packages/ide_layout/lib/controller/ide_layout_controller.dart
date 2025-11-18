@@ -48,7 +48,7 @@ class IdeLayoutController {
           id: IdePanel.bottomPanel.id,
           min: BottomPanel.minHeight,
           max: BottomPanel.maxHeight,
-          size: BottomPanel.minHeight,
+          size: BottomPanel.initialHeight,
           builder: (context, area) => BottomPanel(bottomPanel),
         ),
       ],
@@ -153,8 +153,6 @@ class IdeLayoutController {
   void handleWindowSizedChanged(Size size) {
     if (size.height < BottomPanel.minHeight) {
       hide(IdePanel.bottomPanel);
-    } else {
-      show(IdePanel.bottomPanel);
     }
 
     if (size.width < 800) {
