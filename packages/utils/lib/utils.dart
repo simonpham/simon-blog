@@ -13,3 +13,4 @@ export 'constants.dart';
 export 'iterable_extensions.dart';
 export 'legalize.dart';
 export 'some.dart';
+export 'word_count.dart';
