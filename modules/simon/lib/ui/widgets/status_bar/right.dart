@@ -19,7 +19,7 @@ class StatusBarRightContent extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: Spacing.d16),
       child: Row(
         children: [
-          const CursorPosition(),
+          const PostStatus(),
           Spacing.h16,
           const FileFormat(),
           Spacing.h16,
