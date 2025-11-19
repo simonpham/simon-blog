@@ -1,8 +1,9 @@
 import 'package:core/core.dart';
-import 'package:flutter/material.dart';
+import 'package:design_system/design_system.dart';
+import 'package:flutter/material.dart' hide Padding;
 import 'package:flutter/widgets.dart';
 import 'package:simon/simon.dart';
-import 'package:utils/utils.dart';
+import 'package:utils/utils.dart' hide Padding;
 import 'package:utils/utils.dart' as timeago;
 
 class PostStatus extends StatelessWidget {
@@ -26,11 +27,31 @@ class PostStatus extends StatelessWidget {
         selectedPost.content,
       ).inMinutes;
     }
+    final readTimeText = readTimeMinutes > 0
+        ? '$readTimeMinutes min read'
+        : null;
 
-    final date = timeago.format(selectedPost.createdAt);
+    final now = DateTime.now().toLocal();
+    final createdAt = selectedPost.createdAt.toLocal();
+    final offset = now.difference(createdAt);
+    final dateText = switch (offset.inDays > 30) {
+      true => 'Posted on ${DateFormat.yMMMd().format(createdAt)}',
+      false => 'Posted ${timeago.format(createdAt)}',
+    };
 
-    return Text(
-      '${selectedPost.readTimeMinutes} min read • $date',
+    final updatedAt = selectedPost.updatedAt.toLocal();
+    final updatedDate = DateFormat.yMMMd().format(updatedAt);
+
+    return Tooltip(
+      message: 'Last updated: $updatedDate',
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: Spacing.d8,
+        ),
+        child: Text(
+          [?readTimeText, dateText].join(' • '),
+        ),
+      ),
     );
   }
 }
