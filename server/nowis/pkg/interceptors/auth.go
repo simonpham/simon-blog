@@ -2,21 +2,27 @@ package interceptors
 
 import (
 	"context"
+	"nowis/pkg/utils"
+
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+type contextKey string
+
+const UserIDKey contextKey = "userID"
 
 func AuthInterceptor(ctx context.Context) (context.Context, error) {
 	token, err := auth.AuthFromMD(ctx, "bearer")
 	if err != nil {
 		return nil, err
 	}
-	// TODO: This is example only, perform proper Oauth/OIDC verification!
-	// docs: https://github.com/grpc-ecosystem/go-grpc-middleware/blob/main/interceptors/auth/examples_test.go
-	if token != "yolo" {
-		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token")
+
+	userID, err := utils.VerifyJwt(token)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
 	}
-	// NOTE: You can also pass the token in the context for further interceptors or gRPC service code.
-	return ctx, nil
+
+	return context.WithValue(ctx, UserIDKey, userID), nil
 }

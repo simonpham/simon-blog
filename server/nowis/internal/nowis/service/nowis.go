@@ -2,11 +2,17 @@ package service
 
 import (
 	"context"
+	"math"
+	"regexp"
+	"strings" // This import is used later in the file, so it should not be removed.
+
+	// This import is used later in the file, so it should not be removed.
+	"nowis/internal/nowis/model"
 	nowisrepo "nowis/internal/nowis/repository"
 	util "nowis/internal/nowis/util"
 	"nowis/pkg/configs"
+	"nowis/pkg/interceptors"
 	nowispb "nowis/protobuf/generated/nowis"
-	"strings"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -152,6 +158,94 @@ func (h NowisService) CreateComment(ctx context.Context, request *nowispb.Create
 	return &nowispb.CreateCommentResponse{
 		Comment: comment.ToPBComment(),
 	}, nil
+}
+
+func (h NowisService) CreatePost(ctx context.Context, request *nowispb.CreatePostRequest) (*nowispb.CreatePostResponse, error) {
+	userIDVal := ctx.Value(interceptors.UserIDKey)
+	if userIDVal == nil {
+		return nil, status.Errorf(codes.Unauthenticated, "user not authenticated")
+	}
+	userIDStr, ok := userIDVal.(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "invalid user ID type in context")
+	}
+	authorID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "invalid user ID format: %v", err)
+	}
+
+	title := strings.TrimSpace(request.GetTitle())
+	if title == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "title cannot be empty")
+	}
+
+	slug := generateSlug(title)
+	// TODO: Handle slug collision (append random suffix or check DB)
+
+	statusVal := model.PostStatusDraft
+	switch request.GetStatus() {
+	case nowispb.PostStatus_published:
+		statusVal = model.PostStatusPublished
+	case nowispb.PostStatus_archived:
+		statusVal = model.PostStatusArchived
+	}
+
+	visibilityVal := model.PostVisibilityPrivate
+	switch request.GetVisibility() {
+	case nowispb.PostVisibility_public:
+		visibilityVal = model.PostVisibilityPublic
+	case nowispb.PostVisibility_unlisted:
+		visibilityVal = model.PostVisibilityUnlisted
+	}
+
+	post := &model.Post{
+		Title:            title,
+		Slug:             slug,
+		Content:          request.GetContent(),
+		Summary:          request.GetSummary(),
+		FeaturedImageURL: nil,
+		AuthorID:         authorID,
+		Status:           statusVal,
+		Visibility:       visibilityVal,
+		Tags:             request.GetTags(),
+		ReadTimeMinutes:  calculateReadTime(request.GetContent()),
+	}
+
+	if request.GetFeaturedImageUrl() != "" {
+		url := request.GetFeaturedImageUrl()
+		post.FeaturedImageURL = &url
+	}
+
+	createdPost, err := h.repo.CreatePost(ctx, post)
+	if err != nil {
+		return nil, err
+	}
+
+	return &nowispb.CreatePostResponse{
+		Post: createdPost.ToPBPost(),
+	}, nil
+}
+
+func generateSlug(title string) string {
+	// Convert to lowercase
+	slug := strings.ToLower(title)
+	// Replace spaces with hyphens
+	slug = strings.ReplaceAll(slug, " ", "-")
+	// Remove non-alphanumeric characters (except hyphens)
+	reg, _ := regexp.Compile("[^a-z0-9-]+")
+	slug = reg.ReplaceAllString(slug, "")
+	// Trim hyphens
+	slug = strings.Trim(slug, "-")
+	return slug
+}
+
+func calculateReadTime(content string) int {
+	wordsPerMinute := 200
+	words := strings.Fields(content)
+	if len(words) == 0 {
+		return 0
+	}
+	return int(math.Ceil(float64(len(words)) / float64(wordsPerMinute)))
 }
 
 // HealthCheck returns the encryption passphrase and static salt hex.

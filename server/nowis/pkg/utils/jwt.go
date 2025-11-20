@@ -12,7 +12,7 @@ type Tokens struct {
 }
 
 // GenerateJwt generates an access and refresh token for a user.
-func GenerateJwt(userId int) (Tokens, error) {
+func GenerateJwt(userId string) (Tokens, error) {
 	config := configs.GetConfig()
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userId,
@@ -32,15 +32,15 @@ func GenerateJwt(userId int) (Tokens, error) {
 }
 
 // VerifyJwt verifies a JWT token and returns the user id.
-func VerifyJwt(token string) (int, error) {
+func VerifyJwt(token string) (string, error) {
 	config := configs.GetConfig()
 	claims := jwt.MapClaims{}
 	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.AuthTokenSigningKey), nil
 	})
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	sub := claims["sub"].(float64)
-	return int(sub), nil
+	sub := claims["sub"].(string)
+	return sub, nil
 }

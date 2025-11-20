@@ -22,6 +22,7 @@ type NowisRepositoryHandler interface {
 	GetSidebarPostsByTags(ctx context.Context, tagNameFilter string) ([]model.TagSidebar, error)
 	GetPostComments(ctx context.Context, postId uuid.UUID, page int, limit int) ([]model.Comment, error)
 	CreateComment(ctx context.Context, postId uuid.UUID, content string, animal string, backgroundColor string) (*model.Comment, error)
+	CreatePost(ctx context.Context, post *model.Post) (*model.Post, error)
 }
 
 type NowisRepository struct {
@@ -395,4 +396,64 @@ func (r *NowisRepository) CreateComment(ctx context.Context, postID uuid.UUID, c
 	}
 
 	return &comment, nil
+}
+
+func (r *NowisRepository) CreatePost(ctx context.Context, post *model.Post) (*model.Post, error) {
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, utils.WrapError("failed to begin transaction", err)
+	}
+	defer tx.Rollback()
+
+	query := `
+		INSERT INTO posts (title, slug, content, summary, featured_image_url, author_id, status, visibility, read_time_minutes)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		RETURNING id, created_at, updated_at
+	`
+
+	err = tx.QueryRowContext(ctx, query,
+		post.Title,
+		post.Slug,
+		post.Content,
+		post.Summary,
+		post.FeaturedImageURL,
+		post.AuthorID,
+		post.Status,
+		post.Visibility,
+		post.ReadTimeMinutes,
+	).Scan(&post.ID, &post.CreatedAt, &post.UpdatedAt)
+
+	if err != nil {
+		return nil, utils.WrapError("failed to insert post", err)
+	}
+
+	if len(post.Tags) > 0 {
+		for _, tagName := range post.Tags {
+			var tagID int
+			// Insert tag if not exists
+			err = tx.QueryRowContext(ctx, `
+				INSERT INTO tags (name) VALUES ($1)
+				ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+				RETURNING id
+			`, tagName).Scan(&tagID)
+			if err != nil {
+				return nil, utils.WrapError("failed to insert/get tag", err)
+			}
+
+			// Link post and tag
+			_, err = tx.ExecContext(ctx, `
+				INSERT INTO post_tags (post_id, tag_id) VALUES ($1, $2)
+				ON CONFLICT DO NOTHING
+			`, post.ID, tagID)
+			if err != nil {
+				return nil, utils.WrapError("failed to link post and tag", err)
+			}
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		return nil, utils.WrapError("failed to commit transaction", err)
+	}
+
+	return post, nil
 }

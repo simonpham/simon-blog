@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+import "post.proto";
+
+message CreatePostRequest {
+  string title = 1;
+  string content = 2;
+  string summary = 3;
+  string featured_image_url = 4;
+  PostStatus status = 5;
+  PostVisibility visibility = 6;
+  repeated string tags = 7;
+}
+
+message CreatePostResponse {
+  Post post = 1;
+}
