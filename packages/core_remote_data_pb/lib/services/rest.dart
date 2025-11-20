@@ -131,9 +131,34 @@ class RestNowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> add(Post item) {
-    // TODO: implement add
-    throw UnimplementedError();
+  FutureOr<Failure?> add(Post item) async {
+    await _waitForHealthCheck();
+
+    try {
+      final response = await _dio.post(
+        '/posts',
+        data: {
+          'title': item.title,
+          'content': item.content,
+          'summary': item.summary,
+          'featuredImageUrl': item.featuredImageUrl,
+          'status': item.status.name,
+          'visibility': item.visibility.name,
+          'tags': item.tags,
+        },
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      if (!data['success']) {
+        return Failure(data['message'] ?? 'Failed to create post');
+      }
+
+      return null;
+    } on DioException catch (e) {
+      return Failure('Failed to create post: ${e.message}');
+    } catch (e) {
+      return Failure('Failed to create post: $e');
+    }
   }
 
   @override
@@ -351,6 +376,100 @@ class RestNowisPostApis implements PostApis {
 
     if (_localAppId.isEmpty || _localAppVersionRef.isEmpty) {
       throw const Failure('Health check failed');
+    }
+  }
+}
+
+class RestNowisUserApis implements UserApis {
+  RestNowisUserApis({
+    required String host,
+  });
+
+  @override
+  FutureOr<Failure?> add(User item) {
+    // TODO: implement add
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> addAll(List<User> items) {
+    // TODO: implement addAll
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<int> count() {
+    // TODO: implement count
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> delete(String id) {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<User?> get(String id) {
+    // TODO: implement get
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<List<User>> list(Pagination pagination, {String? searchQuery}) {
+    // TODO: implement list
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<Failure?> update(User item) {
+    // TODO: implement update
+    throw UnimplementedError();
+  }
+}
+
+class RestNowisAuthApis implements AuthApis {
+  final Dio _dio;
+
+  RestNowisAuthApis({
+    required String host,
+  }) : _dio = Dio(
+         BaseOptions(
+           baseUrl: 'https://$host/v1',
+           validateStatus: (status) {
+             return status != null && status >= 200 && status < 300;
+           },
+         ),
+       );
+
+  @override
+  FutureOr<AuthTokens?> login({
+    required String username,
+    required String password,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/auth',
+        data: {
+          'username': username,
+          'password': password,
+        },
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      if (!data['success']) {
+        throw Failure(data['message'] ?? 'Login failed');
+      }
+
+      final authData = data['data'] as Map<String, dynamic>;
+      return AuthTokens(
+        accessToken: authData['accessToken'],
+        refreshToken: authData['refreshToken'],
+      );
+    } on DioException catch (e) {
+      throw Failure('Login failed: ${e.message}');
+    } catch (e) {
+      throw Failure('Login failed: $e');
     }
   }
 }

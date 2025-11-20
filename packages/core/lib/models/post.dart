@@ -49,6 +49,34 @@ class Post {
     this.readTimeMinutes = 0,
     this.visibility = PostVisibility.private,
   });
+
+  static Post newPost({
+    required String title,
+    required String content,
+    required String summary,
+    String? featuredImageUrl,
+    PostStatus status = PostStatus.draft,
+    required List<String> tags,
+    PostVisibility visibility = PostVisibility.private,
+  }) {
+    return Post(
+      title: title,
+      content: content,
+      summary: summary,
+      featuredImageUrl: featuredImageUrl,
+      status: status,
+      visibility: visibility,
+      tags: tags,
+      id: '',
+      slug: '',
+      authorId: '',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      commentsCount: 0,
+      likesCount: 0,
+      readTimeMinutes: 0,
+    );
+  }
 }
 
 class PostNotFoundFailure extends Failure {

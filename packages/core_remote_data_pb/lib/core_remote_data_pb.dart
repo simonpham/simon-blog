@@ -1,7 +1,9 @@
 library;
 
+export 'generated/protobuf/auth.pbgrpc.dart';
 export 'generated/protobuf/comment.pb.dart';
 export 'generated/protobuf/create_comment.pb.dart';
+export 'generated/protobuf/create_post.pb.dart';
 export 'generated/protobuf/get_post.pb.dart';
 export 'generated/protobuf/get_post_comments.pb.dart';
 export 'generated/protobuf/get_posts.pb.dart';

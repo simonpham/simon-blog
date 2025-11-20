@@ -1,7 +1,7 @@
 import 'package:core/models/models.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart'
-    show NowisPostApis, NowisCommentApis;
+    show NowisPostApis, NowisCommentApis, NowisAuthApis, RestNowisAuthApis;
 import 'package:test/test.dart';
 
 void main() {
@@ -10,6 +10,10 @@ void main() {
   );
 
   final CommentApis nowisCommentApis = NowisCommentApis(
+    host: 'api.nowis.sofluffy.io',
+  );
+
+  final AuthApis nowisAuthApis = RestNowisAuthApis(
     host: 'api.nowis.sofluffy.io',
   );
 
@@ -88,6 +92,33 @@ void main() {
     test('get comments for post', () async {
       final result = await nowisCommentApis.getCommentsForPost(firstPostId);
       expect(result, isA<List<Comment>>());
+    });
+
+    String _accessToken = '';
+    test('login', () async {
+      final result = await nowisAuthApis.login(
+        username: 'test@sofluffy.io',
+        password: 'password123',
+      );
+      expect(result, isA<AuthTokens>());
+      expect(result!.accessToken, isNotEmpty);
+      expect(result.refreshToken, isNotEmpty);
+      _accessToken = result.accessToken;
+    });
+
+    test('addPost', () async {
+      if (nowisPostApis is NowisPostApis) {
+        nowisPostApis.setAccessToken(_accessToken);
+      }
+      final result = await nowisPostApis.add(
+        Post.newPost(
+          title: 'test post',
+          content: 'test content',
+          tags: ['test-tag'],
+          summary: '',
+        ),
+      );
+      expect(result, isNull);
     });
   });
 }

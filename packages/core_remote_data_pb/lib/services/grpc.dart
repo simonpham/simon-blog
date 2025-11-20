@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:core/models/animals.dart';
+import 'package:core/models/auth.dart';
 import 'package:core/models/comment.dart';
 import 'package:core/models/common/failure.dart';
 import 'package:core/models/common/pagination.dart';
@@ -20,6 +21,12 @@ class NowisPostApis implements PostApis {
 
   String _localAppId = '';
   String _localAppVersionRef = '';
+
+  String _accessToken = '';
+
+  void setAccessToken(String value) {
+    _accessToken = value;
+  }
 
   NowisPostApis({
     required String host,
@@ -72,9 +79,45 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> add(Post item) {
-    // TODO: implement addAll
-    throw UnimplementedError();
+  FutureOr<Failure?> add(Post item) async {
+    await _waitForHealthCheck();
+
+    try {
+      final status = switch (item.status) {
+        PostStatus.draft => pb.PostStatus.draft,
+        PostStatus.published => pb.PostStatus.published,
+        PostStatus.archived => pb.PostStatus.archived,
+      };
+
+      final visibility = switch (item.visibility) {
+        PostVisibility.public => pb.PostVisibility.public,
+        PostVisibility.private => pb.PostVisibility.private,
+        PostVisibility.unlisted => pb.PostVisibility.unlisted,
+      };
+
+      final response = await _client.createPost(
+        pb.CreatePostRequest(
+          title: item.title,
+          content: item.content,
+          summary: item.summary,
+          featuredImageUrl: item.featuredImageUrl,
+          status: status,
+          visibility: visibility,
+          tags: item.tags,
+        ),
+        options: CallOptions(
+          metadata: {'authorization': 'Bearer $_accessToken'},
+        ),
+      );
+
+      if (!response.hasPost()) {
+        return const Failure('Failed to create post');
+      }
+
+      return null;
+    } catch (e) {
+      return Failure('Failed to create post: $e');
+    }
   }
 
   @override
@@ -289,5 +332,57 @@ class NowisCommentApis implements CommentApis {
   }) {
     // TODO: implement updateComment
     throw UnimplementedError();
+  }
+}
+
+class NowisAuthApis implements AuthApis {
+  final pb.AuthServiceClient _client;
+
+  NowisAuthApis({
+    required String host,
+    int? port,
+  }) : _client = pb.AuthServiceClient(
+         ClientChannel(
+           host,
+           port: port ?? 443,
+           options: ChannelOptions(
+             credentials: port != null
+                 ? const ChannelCredentials.insecure()
+                 : const ChannelCredentials.secure(),
+             codecRegistry: CodecRegistry(
+               codecs: [
+                 const GzipCodec(),
+               ],
+             ),
+           ),
+         ),
+       );
+
+  @override
+  FutureOr<AuthTokens?> login({
+    required String username,
+    required String password,
+  }) async {
+    try {
+      final response = await _client.auth(
+        pb.AuthRequest(
+          username: username,
+          password: password,
+        ),
+      );
+
+      if (!response.success) {
+        throw Failure(
+          response.message.isEmpty ? 'Login failed' : response.message,
+        );
+      }
+
+      return AuthTokens(
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+      );
+    } catch (e) {
+      throw Failure('Login failed: $e');
+    }
   }
 }
