@@ -1,7 +1,7 @@
 import 'package:core/models/models.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart'
-    show NowisPostApis, NowisCommentApis, NowisAuthApis, RestNowisAuthApis;
+    show NowisPostApis, NowisCommentApis, RestNowisAuthApis;
 import 'package:test/test.dart';
 
 void main() {

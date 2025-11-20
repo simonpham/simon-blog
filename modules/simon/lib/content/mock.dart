@@ -67,6 +67,22 @@ class MockUserApis implements UserApis {
   }
 }
 
+class MockAuthApis implements AuthApis {
+  @override
+  FutureOr<AuthTokens?> login({
+    required String username,
+    required String password,
+  }) {
+    if (username == 'simon' && password == 'password') {
+      return AuthTokens(
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
+      );
+    }
+    return null;
+  }
+}
+
 class MockPostApis implements PostApis {
   final List<Post> _posts = [
     Post(
