@@ -20,13 +20,17 @@ import (
 	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/selector"
+
+	gatewayRouter "nowis/internal/gateway/router"
 	nowisRepo "nowis/internal/nowis/repository"
 	nowis "nowis/internal/nowis/service"
 	"nowis/pkg/configs"
 	"nowis/pkg/db"
-	"nowis/pkg/interceptors"
+	localInterceptors "nowis/pkg/interceptors"
 	nowispb "nowis/protobuf/generated/nowis"
-	gatewayRouter "nowis/internal/gateway/router"
 )
 
 // grpcHandlerFunc is a unified handler that routes gRPC traffic (detected by HTTP/2 and content-type)
@@ -70,7 +74,19 @@ func main() {
 	// --- gRPC Server Setup ---
 	var opts []grpc.ServerOption
 	opts = append(opts, grpc.Creds(insecure.NewCredentials()))
-	opts = append(opts, grpc.UnaryInterceptor(interceptors.ValidationInterceptor))
+
+	// Auth Matcher
+	authMatcher := func(ctx context.Context, callMeta interceptors.CallMeta) bool {
+		return callMeta.FullMethod() == "/nowis.NowisService/CreatePost"
+	}
+
+	opts = append(opts, grpc.ChainUnaryInterceptor(
+		selector.UnaryServerInterceptor(
+			auth.UnaryServerInterceptor(localInterceptors.AuthInterceptor),
+			selector.MatchFunc(authMatcher),
+		),
+		localInterceptors.ValidationInterceptor,
+	))
 
 	grpcSrv := grpc.NewServer(opts...)
 	nowispb.RegisterNowisServiceServer(grpcSrv, &server)

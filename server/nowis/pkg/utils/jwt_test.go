@@ -3,7 +3,7 @@ package utils
 import "testing"
 
 func TestGenerateJwt(t *testing.T) {
-	tokens, err := GenerateJwt(1)
+	tokens, err := GenerateJwt("1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -16,7 +16,7 @@ func TestGenerateJwt(t *testing.T) {
 }
 
 func TestVerifyJwt(t *testing.T) {
-	tokens, err := GenerateJwt(1)
+	tokens, err := GenerateJwt("1")
 	if err != nil {
 		t.Error(err)
 	}
@@ -24,7 +24,7 @@ func TestVerifyJwt(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if userId != 1 {
-		t.Errorf("expected user id 1, got %d", userId)
+	if userId != "1" {
+		t.Errorf("expected user id 1, got %s", userId)
 	}
 }
