@@ -18,7 +18,7 @@ mkdir -p generated/go
 echo "🪄 Generating .pb.go files"
 for PROTO_FILE in $PROTO_FILES; do
   echo "Generating $PROTO_FILE"
-  protoc ./"$PROTO_FILE" --proto_path=protobuf/nowis --go_out=generated/go --go-grpc_out=generated/go --dart_out=grpc:generated/dart
+  protoc ./"$PROTO_FILE" --proto_path=protobuf/nowis --proto_path=protobuf/auth --go_out=generated/go --go-grpc_out=generated/go --dart_out=grpc:generated/dart
 done
 
 # Copy all generated files to the packages/core_remote_data_pb/lib/generated/protobuf directory.

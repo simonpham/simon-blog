@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "protobuf/generated/auth";
+
+service AuthService {
+  // Auth is used to authenticate a user and return a JWT token pair.
+  rpc Auth(AuthRequest) returns (AuthResponse);
+
+  // ReAuth is used to refresh a JWT token pair.
+  rpc ReAuth(ReAuthRequest) returns (ReAuthResponse);
+
+  // Verify is used to verify a user's email address, using token sent via email.
+  rpc Verify(VerificationRequest) returns (VerificationResponse);
+
+  // RequestVerification is used to request a verification email.
+  rpc RequestVerification(RequestVerificationRequest) returns (RequestVerificationResponse);
+}
+
+message AuthRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  bool success = 1;
+  string accessToken = 2;
+  string refreshToken = 3;
+  optional string message = 4;
+}
+
+message ReAuthRequest {
+  string accessToken = 1;
+  string refreshToken = 2;
+}
+
+message ReAuthResponse {
+  bool success = 1;
+  string accessToken = 2;
+  string refreshToken = 3;
+  optional string message = 4;
+}
+
+message VerificationRequest {
+  string token = 1;
+}
+
+message VerificationResponse {
+  bool success = 1;
+  optional string message = 2;
+}
+
+message RequestVerificationRequest {
+  string username = 1;
+}
+
+message RequestVerificationResponse {
+  bool success = 1;
+  optional string message = 2;
+}
+
+message VerifyAuthRequest {
+  string accessToken = 1;
+}
+
+message VerifyAuthResponse {
+  bool success = 1;
+  optional string message = 2;
+}

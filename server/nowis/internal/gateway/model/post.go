@@ -121,3 +121,13 @@ func (p *Post) ToGinMap() map[string]interface{} {
 		"tags":             p.Tags,
 	}
 }
+
+type CreatePostRequestBody struct {
+	Title            string         `json:"title" binding:"required"`
+	Content          string         `json:"content" binding:"required"`
+	Summary          string         `json:"summary"`
+	FeaturedImageURL string         `json:"featuredImageUrl"`
+	Status           PostStatus     `json:"status"`
+	Visibility       PostVisibility `json:"visibility"`
+	Tags             []string       `json:"tags"`
+}

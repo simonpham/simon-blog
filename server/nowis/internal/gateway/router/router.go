@@ -22,9 +22,13 @@ func InitApi() *gin.Engine {
 
 	apiController := api.NewApiController()
 	nowisController := api.NewNowisController()
+	authController := api.NewAuthController()
 
 	// Setup health-check routes.
 	apiV1.GET("/health", apiController.Health)
+
+	// Setup Auth routes.
+	apiV1.POST("/auth", authController.Auth)
 
 	// Setup Nowis routes.
 	nowisGroup := apiV1.Group("/nowis")
