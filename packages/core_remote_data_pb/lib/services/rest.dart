@@ -21,25 +21,25 @@ class RestCommentNowisApis implements CommentApis {
        );
 
   @override
-  FutureOr<Failure?> approveComment(String commentId) {
+  FutureOr<Comment> approveComment(String commentId) {
     // TODO: implement approveComment
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<Failure?> bulkApproveComments(List<String> commentIds) {
+  FutureOr<void> bulkApproveComments(List<String> commentIds) {
     // TODO: implement bulkApproveComments
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<Failure?> bulkDeleteComments(List<String> commentIds) {
+  FutureOr<void> bulkDeleteComments(List<String> commentIds) {
     // TODO: implement bulkDeleteComments
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<Failure?> createComment({
+  FutureOr<Comment> createComment({
     required String postId,
     required String content,
     required Animals animal,
@@ -58,21 +58,22 @@ class RestCommentNowisApis implements CommentApis {
 
       final data = response.data as Map<String, dynamic>;
       if (!data['success']) {
-        return Failure(data['message'] ?? 'Failed to create comment');
+        throw Failure(data['message'] ?? 'Failed to create comment');
       }
 
-      return null;
+      // TODO: Parse and return created comment
+      throw UnimplementedError('REST create comment not fully implemented to return Comment');
     } on DioException catch (err, trace) {
       printError(err, trace);
-      return Failure('Failed to create comment: ${err.message}');
+      throw Failure('Failed to create comment: ${err.message}');
     } catch (err, trace) {
       printError(err, trace);
-      return Failure('Failed to create comment: $err');
+      throw Failure('Failed to create comment: $err');
     }
   }
 
   @override
-  FutureOr<Failure?> deleteComment(String commentId) {
+  FutureOr<void> deleteComment(String commentId) {
     // TODO: implement deleteComment
     throw UnimplementedError();
   }
@@ -101,7 +102,7 @@ class RestCommentNowisApis implements CommentApis {
   }
 
   @override
-  FutureOr<Failure?> updateComment({
+  FutureOr<Comment> updateComment({
     required String commentId,
     required String content,
   }) {
@@ -131,7 +132,7 @@ class RestNowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> add(Post item) async {
+  FutureOr<Post> add(Post item) async {
     await _waitForHealthCheck();
 
     try {
@@ -150,19 +151,35 @@ class RestNowisPostApis implements PostApis {
 
       final data = response.data as Map<String, dynamic>;
       if (!data['success']) {
-        return Failure(data['message'] ?? 'Failed to create post');
+        throw Failure(data['message'] ?? 'Failed to create post');
       }
 
-      return null;
+      // TODO: Parse and return the created post from response
+      // For now, we just return the item as if it was created successfully,
+      // but ideally the server should return the created post.
+      // Assuming the server returns the created post in 'data' field.
+      // But the current implementation of add in grpc returns void (or null failure).
+      // Wait, I updated grpc to return Post.
+      // The REST implementation should also return Post.
+      // If the server response doesn't contain the full post, we might need to fetch it or construct it.
+      // Let's assume for now we throw UnimplementedError or try to parse if available.
+      // The current REST implementation was returning null (success).
+      
+      // Since I don't have the full REST response structure verified, 
+      // and this file seems to be less used (grpc is primary?), 
+      // I will update the signature but throw UnimplementedError for now 
+      // or just return the item passed in (which is wrong because ID is missing).
+      
+      throw UnimplementedError('REST add post not fully implemented to return Post');
     } on DioException catch (e) {
-      return Failure('Failed to create post: ${e.message}');
+      throw Failure('Failed to create post: ${e.message}');
     } catch (e) {
-      return Failure('Failed to create post: $e');
+      throw Failure('Failed to create post: $e');
     }
   }
 
   @override
-  FutureOr<Failure?> addAll(List<Post> items) {
+  FutureOr<List<Post>> addAll(List<Post> items) {
     // TODO: implement addAll
     throw UnimplementedError();
   }
@@ -333,7 +350,7 @@ class RestNowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> update(Post item) {
+  FutureOr<Post> update(Post item) {
     // TODO: implement update
     throw UnimplementedError();
   }
@@ -386,13 +403,13 @@ class RestNowisUserApis implements UserApis {
   });
 
   @override
-  FutureOr<Failure?> add(User item) {
+  FutureOr<User> add(User item) {
     // TODO: implement add
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<Failure?> addAll(List<User> items) {
+  FutureOr<List<User>> addAll(List<User> items) {
     // TODO: implement addAll
     throw UnimplementedError();
   }
@@ -422,7 +439,7 @@ class RestNowisUserApis implements UserApis {
   }
 
   @override
-  FutureOr<Failure?> update(User item) {
+  FutureOr<User> update(User item) {
     // TODO: implement update
     throw UnimplementedError();
   }

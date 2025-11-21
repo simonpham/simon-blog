@@ -79,7 +79,7 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> add(Post item) async {
+  FutureOr<Post> add(Post item) async {
     await _waitForHealthCheck();
 
     try {
@@ -111,17 +111,25 @@ class NowisPostApis implements PostApis {
       );
 
       if (!response.hasPost()) {
-        return const Failure('Failed to create post');
+        throw const Failure('Failed to create post');
       }
 
-      return null;
+      final decryptedContent = await compute(
+        decryptor.decrypt,
+        {
+          'encodedPayload': response.post.content,
+          'appId': _localAppId,
+          'appVersionRef': _localAppVersionRef,
+        },
+      );
+      return response.post.toModel(decryptedContent);
     } catch (e) {
-      return Failure('Failed to create post: $e');
+      throw Failure('Failed to create post: $e');
     }
   }
 
   @override
-  FutureOr<Failure?> addAll(List<Post> items) {
+  FutureOr<List<Post>> addAll(List<Post> items) {
     // TODO: implement addAll
     throw UnimplementedError();
   }
@@ -133,7 +141,7 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> delete(String id) {
+  FutureOr<void> delete(String id) {
     // TODO: implement delete
     throw UnimplementedError();
   }
@@ -218,7 +226,7 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> update(Post item) async {
+  FutureOr<Post> update(Post item) async {
     await _waitForHealthCheck();
 
     try {
@@ -251,12 +259,20 @@ class NowisPostApis implements PostApis {
       );
 
       if (!response.hasPost()) {
-        return const Failure('Failed to update post');
+        throw const Failure('Failed to update post');
       }
 
-      return null;
+      final decryptedContent = await compute(
+        decryptor.decrypt,
+        {
+          'encodedPayload': response.post.content,
+          'appId': _localAppId,
+          'appVersionRef': _localAppVersionRef,
+        },
+      );
+      return response.post.toModel(decryptedContent);
     } catch (e) {
-      return Failure('Failed to update post: $e');
+      throw Failure('Failed to update post: $e');
     }
   }
 
@@ -299,25 +315,25 @@ class NowisCommentApis implements CommentApis {
        );
 
   @override
-  FutureOr<Failure?> approveComment(String commentId) {
+  FutureOr<Comment> approveComment(String commentId) {
     // TODO: implement approveComment
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<Failure?> bulkApproveComments(List<String> commentIds) {
+  FutureOr<void> bulkApproveComments(List<String> commentIds) {
     // TODO: implement bulkApproveComments
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<Failure?> bulkDeleteComments(List<String> commentIds) {
+  FutureOr<void> bulkDeleteComments(List<String> commentIds) {
     // TODO: implement bulkDeleteComments
     throw UnimplementedError();
   }
 
   @override
-  FutureOr<Failure?> createComment({
+  FutureOr<Comment> createComment({
     required String postId,
     required String content,
     required Animals animal,
@@ -334,17 +350,17 @@ class NowisCommentApis implements CommentApis {
       );
 
       if (!response.hasComment()) {
-        return const Failure('Failed to create comment');
+        throw const Failure('Failed to create comment');
       }
 
-      return null;
+      return response.comment.toModel();
     } catch (e) {
-      return Failure('Failed to create comment: $e');
+      throw Failure('Failed to create comment: $e');
     }
   }
 
   @override
-  FutureOr<Failure?> deleteComment(String commentId) {
+  FutureOr<void> deleteComment(String commentId) {
     // TODO: implement deleteComment
     throw UnimplementedError();
   }
@@ -363,7 +379,7 @@ class NowisCommentApis implements CommentApis {
   }
 
   @override
-  FutureOr<Failure?> updateComment({
+  FutureOr<Comment> updateComment({
     required String commentId,
     required String content,
   }) {

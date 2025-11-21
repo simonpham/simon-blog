@@ -8,7 +8,7 @@ abstract interface class CommentApis
 abstract interface class _UserCommentApis {
   Future<List<Comment>> getCommentsForPost(String postId);
 
-  FutureOr<Failure?> createComment({
+  FutureOr<Comment> createComment({
     required String postId,
     required String content,
     required Animals animal,
@@ -19,23 +19,23 @@ abstract interface class _UserCommentApis {
 abstract interface class _AdminCommentApis {
   Future<List<Comment>> getCommentsForPost(String postId);
 
-  FutureOr<Failure?> createComment({
+  FutureOr<Comment> createComment({
     required String postId,
     required String content,
     required Animals animal,
     required BackgroundColorType backgroundColor,
   });
 
-  FutureOr<Failure?> deleteComment(String commentId);
+  FutureOr<void> deleteComment(String commentId);
 
-  FutureOr<Failure?> updateComment({
+  FutureOr<Comment> updateComment({
     required String commentId,
     required String content,
   });
 
-  FutureOr<Failure?> approveComment(String commentId);
+  FutureOr<Comment> approveComment(String commentId);
 
-  FutureOr<Failure?> bulkApproveComments(List<String> commentIds);
+  FutureOr<void> bulkApproveComments(List<String> commentIds);
 
-  FutureOr<Failure?> bulkDeleteComments(List<String> commentIds);
+  FutureOr<void> bulkDeleteComments(List<String> commentIds);
 }

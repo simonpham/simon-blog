@@ -5,11 +5,11 @@ import 'package:core/core.dart';
 abstract interface class BaseRepository<T> {
   const BaseRepository();
 
-  FutureOr<Failure?> add(T item);
+  FutureOr<T> add(T item);
 
-  FutureOr<Failure?> addAll(List<T> items);
+  FutureOr<List<T>> addAll(List<T> items);
 
-  FutureOr<Failure?> update(T item);
+  FutureOr<T> update(T item);
 
   FutureOr<T?> get(String id);
 
@@ -18,7 +18,7 @@ abstract interface class BaseRepository<T> {
     String? searchQuery,
   });
 
-  FutureOr<Failure?> delete(String id);
+  FutureOr<void> delete(String id);
 
   FutureOr<int> count();
 }

@@ -86,7 +86,7 @@ void main() {
         animal: Animals.cat,
         backgroundColor: BackgroundColorType.orange,
       );
-      expect(result, isNull);
+      expect(result, isA<Comment>());
     });
 
     test('get comments for post', () async {
@@ -106,6 +106,8 @@ void main() {
       _accessToken = result.accessToken;
     });
 
+    String createdPostId = '';
+
     test('addPost', () async {
       if (nowisPostApis is NowisPostApis) {
         nowisPostApis.setAccessToken(_accessToken);
@@ -116,37 +118,31 @@ void main() {
           content: 'test content',
           tags: ['test-tag'],
           summary: '',
+          visibility: PostVisibility.public,
+          status: PostStatus.published,
         ),
       );
-      expect(result, isNull);
+      expect(result, isA<Post>());
+      createdPostId = result.id;
     });
 
     test('updatePost', () async {
       if (nowisPostApis is NowisPostApis) {
         nowisPostApis.setAccessToken(_accessToken);
       }
-      // We need to fetch the post we just created to get its ID, but add() doesn't return ID.
-      // However, we can search for it or just use the firstPostId we fetched earlier (if we own it).
-      // The test user 'test@sofluffy.io' might not be the author of 'firstPostId'.
-      // So we should probably rely on the fact that 'add' was called.
-      // But 'add' returns void/Failure.
-      // Let's try to list posts and find the one we created.
       
-      final posts = await nowisPostApis.list(
-        const PagePagination(page: 1, pageSize: 1),
-        searchQuery: 'test post',
-      );
+      expect(createdPostId, isNotEmpty);
+      final postToUpdate = await nowisPostApis.get(createdPostId);
+      expect(postToUpdate, isNotNull);
       
-      expect(posts, isNotEmpty);
-      final postToUpdate = posts.first;
-      
-      final updatedPost = postToUpdate.copyWith(
+      final updatedPost = postToUpdate!.copyWith(
         title: 'updated test post',
         content: 'updated test content',
       );
 
       final result = await nowisPostApis.update(updatedPost);
-      expect(result, isNull);
+      expect(result, isA<Post>());
+      expect(result.title, 'updated test post');
       
       // Verify update
       final fetchedPost = await nowisPostApis.get(postToUpdate.id);
