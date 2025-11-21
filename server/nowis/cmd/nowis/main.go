@@ -77,7 +77,8 @@ func main() {
 
 	// Auth Matcher
 	authMatcher := func(ctx context.Context, callMeta interceptors.CallMeta) bool {
-		return callMeta.FullMethod() == "/nowis.NowisService/CreatePost"
+		return callMeta.FullMethod() == "/nowis.NowisService/CreatePost" ||
+			callMeta.FullMethod() == "/nowis.NowisService/UpdatePost"
 	}
 
 	opts = append(opts, grpc.ChainUnaryInterceptor(
