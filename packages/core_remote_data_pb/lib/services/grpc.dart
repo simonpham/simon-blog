@@ -218,9 +218,46 @@ class NowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> update(Post item) {
-    // TODO: implement update
-    throw UnimplementedError();
+  FutureOr<Failure?> update(Post item) async {
+    await _waitForHealthCheck();
+
+    try {
+      final status = switch (item.status) {
+        PostStatus.draft => pb.PostStatus.draft,
+        PostStatus.published => pb.PostStatus.published,
+        PostStatus.archived => pb.PostStatus.archived,
+      };
+
+      final visibility = switch (item.visibility) {
+        PostVisibility.public => pb.PostVisibility.public,
+        PostVisibility.private => pb.PostVisibility.private,
+        PostVisibility.unlisted => pb.PostVisibility.unlisted,
+      };
+
+      final response = await _client.updatePost(
+        pb.UpdatePostRequest(
+          postId: item.id,
+          title: item.title,
+          content: item.content,
+          summary: item.summary,
+          featuredImageUrl: item.featuredImageUrl,
+          status: status,
+          visibility: visibility,
+          tags: item.tags,
+        ),
+        options: CallOptions(
+          metadata: {'authorization': 'Bearer $_accessToken'},
+        ),
+      );
+
+      if (!response.hasPost()) {
+        return const Failure('Failed to update post');
+      }
+
+      return null;
+    } catch (e) {
+      return Failure('Failed to update post: $e');
+    }
   }
 
   @override

@@ -1,6 +1,7 @@
 syntax = "proto3";
 import "create_comment.proto";
 import "create_post.proto";
+import "update_post.proto";
 import "get_post.proto";
 import "get_post_comments.proto";
 import "get_posts.proto";
@@ -20,4 +21,5 @@ service NowisService {
   rpc GetPostComments(GetPostCommentsRequest) returns (GetPostCommentsResponse) {}
   rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse) {}
   rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {}
+  rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse) {}
 }

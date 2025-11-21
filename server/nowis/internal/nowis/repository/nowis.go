@@ -23,6 +23,7 @@ type NowisRepositoryHandler interface {
 	GetPostComments(ctx context.Context, postId uuid.UUID, page int, limit int) ([]model.Comment, error)
 	CreateComment(ctx context.Context, postId uuid.UUID, content string, animal string, backgroundColor string) (*model.Comment, error)
 	CreatePost(ctx context.Context, post *model.Post) (*model.Post, error)
+	UpdatePost(ctx context.Context, post *model.Post) (*model.Post, error)
 }
 
 type NowisRepository struct {
@@ -427,6 +428,79 @@ func (r *NowisRepository) CreatePost(ctx context.Context, post *model.Post) (*mo
 		return nil, utils.WrapError("failed to insert post", err)
 	}
 
+	if len(post.Tags) > 0 {
+		for _, tagName := range post.Tags {
+			var tagID int
+			// Insert tag if not exists
+			err = tx.QueryRowContext(ctx, `
+				INSERT INTO tags (name) VALUES ($1)
+				ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+				RETURNING id
+			`, tagName).Scan(&tagID)
+			if err != nil {
+				return nil, utils.WrapError("failed to insert/get tag", err)
+			}
+
+			// Link post and tag
+			_, err = tx.ExecContext(ctx, `
+				INSERT INTO post_tags (post_id, tag_id) VALUES ($1, $2)
+				ON CONFLICT DO NOTHING
+			`, post.ID, tagID)
+			if err != nil {
+				return nil, utils.WrapError("failed to link post and tag", err)
+			}
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		return nil, utils.WrapError("failed to commit transaction", err)
+	}
+
+	return post, nil
+}
+
+func (r *NowisRepository) UpdatePost(ctx context.Context, post *model.Post) (*model.Post, error) {
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, utils.WrapError("failed to begin transaction", err)
+	}
+	defer tx.Rollback()
+
+	query := `
+		UPDATE posts
+		SET title = $1, slug = $2, content = $3, summary = $4, featured_image_url = $5, status = $6, visibility = $7, read_time_minutes = $8, updated_at = NOW()
+		WHERE id = $9 AND author_id = $10
+		RETURNING created_at, updated_at
+	`
+
+	err = tx.QueryRowContext(ctx, query,
+		post.Title,
+		post.Slug,
+		post.Content,
+		post.Summary,
+		post.FeaturedImageURL,
+		post.Status,
+		post.Visibility,
+		post.ReadTimeMinutes,
+		post.ID,
+		post.AuthorID,
+	).Scan(&post.CreatedAt, &post.UpdatedAt)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, utils.WrapError("post not found or user not authorized", err)
+		}
+		return nil, utils.WrapError("failed to update post", err)
+	}
+
+	// Update tags
+	// First, delete existing tags for the post
+	_, err = tx.ExecContext(ctx, `DELETE FROM post_tags WHERE post_id = $1`, post.ID)
+	if err != nil {
+		return nil, utils.WrapError("failed to delete existing post tags", err)
+	}
+
+	// Then insert new tags
 	if len(post.Tags) > 0 {
 		for _, tagName := range post.Tags {
 			var tagID int

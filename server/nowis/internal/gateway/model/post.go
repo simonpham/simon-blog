@@ -131,3 +131,13 @@ type CreatePostRequestBody struct {
 	Visibility       PostVisibility `json:"visibility"`
 	Tags             []string       `json:"tags"`
 }
+
+type UpdatePostRequestBody struct {
+	Title            string         `json:"title"`
+	Content          string         `json:"content"`
+	Summary          string         `json:"summary"`
+	FeaturedImageURL string         `json:"featuredImageUrl"`
+	Status           PostStatus     `json:"status"`
+	Visibility       PostVisibility `json:"visibility"`
+	Tags             []string       `json:"tags"`
+}

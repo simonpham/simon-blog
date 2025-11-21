@@ -77,6 +77,41 @@ class Post {
       readTimeMinutes: 0,
     );
   }
+  Post copyWith({
+    String? id,
+    String? title,
+    String? slug,
+    String? content,
+    String? summary,
+    String? featuredImageUrl,
+    String? authorId,
+    List<String>? tags,
+    PostStatus? status,
+    PostVisibility? visibility,
+    int? commentsCount,
+    int? likesCount,
+    int? readTimeMinutes,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Post(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      slug: slug ?? this.slug,
+      content: content ?? this.content,
+      summary: summary ?? this.summary,
+      featuredImageUrl: featuredImageUrl ?? this.featuredImageUrl,
+      authorId: authorId ?? this.authorId,
+      tags: tags ?? this.tags,
+      status: status ?? this.status,
+      visibility: visibility ?? this.visibility,
+      commentsCount: commentsCount ?? this.commentsCount,
+      likesCount: likesCount ?? this.likesCount,
+      readTimeMinutes: readTimeMinutes ?? this.readTimeMinutes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
 
 class PostNotFoundFailure extends Failure {

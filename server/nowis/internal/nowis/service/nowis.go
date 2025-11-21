@@ -226,6 +226,90 @@ func (h NowisService) CreatePost(ctx context.Context, request *nowispb.CreatePos
 	}, nil
 }
 
+func (h NowisService) UpdatePost(ctx context.Context, request *nowispb.UpdatePostRequest) (*nowispb.UpdatePostResponse, error) {
+	userIDVal := ctx.Value(interceptors.UserIDKey)
+	if userIDVal == nil {
+		return nil, status.Errorf(codes.Unauthenticated, "user not authenticated")
+	}
+	userIDStr, ok := userIDVal.(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "invalid user ID type in context")
+	}
+	authorID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "invalid user ID format: %v", err)
+	}
+
+	postID, err := uuid.Parse(request.GetPostId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid post ID format: %v", err)
+	}
+
+	existingPost, err := h.repo.GetPostById(ctx, postID, "")
+	if err != nil {
+		return nil, err
+	}
+	if existingPost == nil {
+		return nil, status.Errorf(codes.NotFound, "post not found")
+	}
+
+	if existingPost.AuthorID != authorID {
+		return nil, status.Errorf(codes.PermissionDenied, "user is not the author of this post")
+	}
+
+	// Update fields
+	if request.GetTitle() != "" {
+		existingPost.Title = request.GetTitle()
+		existingPost.Slug = generateSlug(existingPost.Title) // Regenerate slug if title changes
+	}
+	if request.GetContent() != "" {
+		existingPost.Content = request.GetContent()
+		existingPost.ReadTimeMinutes = calculateReadTime(existingPost.Content)
+	}
+	if request.GetSummary() != "" {
+		existingPost.Summary = request.GetSummary()
+	}
+	if request.GetFeaturedImageUrl() != "" {
+		url := request.GetFeaturedImageUrl()
+		existingPost.FeaturedImageURL = &url
+	}
+
+	// Status and Visibility are enums, 0 is the default value.
+	// If the user sends DRAFT (0), we should update it to DRAFT.
+	// We assume if it's provided we update it.
+
+	switch request.GetStatus() {
+	case nowispb.PostStatus_published:
+		existingPost.Status = model.PostStatusPublished
+	case nowispb.PostStatus_archived:
+		existingPost.Status = model.PostStatusArchived
+	case nowispb.PostStatus_draft:
+		existingPost.Status = model.PostStatusDraft
+	}
+
+	switch request.GetVisibility() {
+	case nowispb.PostVisibility_public:
+		existingPost.Visibility = model.PostVisibilityPublic
+	case nowispb.PostVisibility_unlisted:
+		existingPost.Visibility = model.PostVisibilityUnlisted
+	case nowispb.PostVisibility_private:
+		existingPost.Visibility = model.PostVisibilityPrivate
+	}
+
+	if len(request.GetTags()) > 0 {
+		existingPost.Tags = request.GetTags()
+	}
+
+	updatedPost, err := h.repo.UpdatePost(ctx, existingPost)
+	if err != nil {
+		return nil, err
+	}
+
+	return &nowispb.UpdatePostResponse{
+		Post: updatedPost.ToPBPost(),
+	}, nil
+}
+
 func generateSlug(title string) string {
 	// Convert to lowercase
 	slug := strings.ToLower(title)

@@ -619,3 +619,120 @@ func (controller *NowisController) CreatePost(ginContext *gin.Context) {
 		},
 	)
 }
+
+func (controller *NowisController) UpdatePost(ginContext *gin.Context) {
+	id := ginContext.Param("id")
+	if id == "" {
+		ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid ID"})
+		return
+	}
+
+	var reqBody model.UpdatePostRequestBody
+	if err := ginContext.ShouldBindJSON(&reqBody); err != nil {
+		ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": fmt.Sprintf("Invalid request body: %v", err)})
+		return
+	}
+
+	authHeader := ginContext.GetHeader("Authorization")
+	if authHeader == "" {
+		ginContext.JSON(http.StatusUnauthorized, gin.H{"success": false, "message": "Missing Authorization header"})
+		return
+	}
+
+	conn, err := sfgrpc.CreateGrpcClientConnection(
+		context.Background(),
+		configs.GetConfig().NowisPublicAddress,
+	)
+	if err != nil {
+		log.Printf("[Nowis] Error when connecting to NowisService: %v", err)
+		ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+		return
+	}
+	defer conn.Close()
+
+	nowisService := nowispb.NewNowisServiceClient(conn)
+
+	var statusPb nowispb.PostStatus
+	switch reqBody.Status {
+	case model.PostStatusDraft:
+		statusPb = nowispb.PostStatus_draft
+	case model.PostStatusPublished:
+		statusPb = nowispb.PostStatus_published
+	case model.PostStatusArchived:
+		statusPb = nowispb.PostStatus_archived
+	default:
+		statusPb = nowispb.PostStatus_draft
+	}
+
+	var visibilityPb nowispb.PostVisibility
+	switch reqBody.Visibility {
+	case model.PostVisibilityPublic:
+		visibilityPb = nowispb.PostVisibility_public
+	case model.PostVisibilityPrivate:
+		visibilityPb = nowispb.PostVisibility_private
+	case model.PostVisibilityUnlisted:
+		visibilityPb = nowispb.PostVisibility_unlisted
+	default:
+		visibilityPb = nowispb.PostVisibility_private
+	}
+
+	ctx := metadata.AppendToOutgoingContext(context.Background(), "authorization", authHeader)
+
+	response, err := nowisService.UpdatePost(ctx, &nowispb.UpdatePostRequest{
+		PostId:           id,
+		Title:            reqBody.Title,
+		Content:          reqBody.Content,
+		Summary:          reqBody.Summary,
+		FeaturedImageUrl: reqBody.FeaturedImageURL,
+		Status:           statusPb,
+		Visibility:       visibilityPb,
+		Tags:             reqBody.Tags,
+	})
+
+	if err != nil {
+		log.Printf("error when calling NowisService UpdatePost: %v", err)
+		st, ok := status.FromError(err)
+		if ok {
+			switch st.Code() {
+			case codes.InvalidArgument:
+				ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": st.Message()})
+				return
+			case codes.Unauthenticated:
+				ginContext.JSON(http.StatusUnauthorized, gin.H{"success": false, "message": st.Message()})
+				return
+			case codes.PermissionDenied:
+				ginContext.JSON(http.StatusForbidden, gin.H{"success": false, "message": st.Message()})
+				return
+			case codes.NotFound:
+				ginContext.JSON(http.StatusNotFound, gin.H{"success": false, "message": st.Message()})
+				return
+			case codes.Internal:
+				ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": st.Message()})
+				return
+			default:
+				ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+				return
+			}
+		}
+		ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+		return
+	}
+
+	log.Printf("Response from server: %v", response)
+
+	post, err := model.FromPBPost(response.Post)
+	if err != nil {
+		log.Printf("error when converting post: %v", err)
+		ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+		return
+	}
+
+	ginContext.JSON(
+		http.StatusOK,
+		gin.H{
+			"success": true,
+			"data":    post.ToGinMap(),
+			"message": "Post updated successfully",
+		},
+	)
+}

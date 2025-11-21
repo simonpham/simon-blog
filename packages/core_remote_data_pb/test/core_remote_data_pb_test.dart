@@ -120,5 +120,38 @@ void main() {
       );
       expect(result, isNull);
     });
+
+    test('updatePost', () async {
+      if (nowisPostApis is NowisPostApis) {
+        nowisPostApis.setAccessToken(_accessToken);
+      }
+      // We need to fetch the post we just created to get its ID, but add() doesn't return ID.
+      // However, we can search for it or just use the firstPostId we fetched earlier (if we own it).
+      // The test user 'test@sofluffy.io' might not be the author of 'firstPostId'.
+      // So we should probably rely on the fact that 'add' was called.
+      // But 'add' returns void/Failure.
+      // Let's try to list posts and find the one we created.
+      
+      final posts = await nowisPostApis.list(
+        const PagePagination(page: 1, pageSize: 1),
+        searchQuery: 'test post',
+      );
+      
+      expect(posts, isNotEmpty);
+      final postToUpdate = posts.first;
+      
+      final updatedPost = postToUpdate.copyWith(
+        title: 'updated test post',
+        content: 'updated test content',
+      );
+
+      final result = await nowisPostApis.update(updatedPost);
+      expect(result, isNull);
+      
+      // Verify update
+      final fetchedPost = await nowisPostApis.get(postToUpdate.id);
+      expect(fetchedPost, isNotNull);
+      expect(fetchedPost!.title, 'updated test post');
+    });
   });
 }
