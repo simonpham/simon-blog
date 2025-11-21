@@ -52,13 +52,14 @@ class CommentViewModel extends ChangeNotifier {
     }
 
     try {
-      final failure = await _apis.createComment(
+      await _apis.createComment(
         postId: postId,
         content: text,
         animal: animal,
         backgroundColor: backgroundColor,
       );
-
+      return null;
+    } on Failure catch (failure) {
       return failure;
     } catch (err, trace) {
       // TODO: Handle error.

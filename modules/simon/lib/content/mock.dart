@@ -29,13 +29,13 @@ class MockUserApis implements UserApis {
   ];
 
   @override
-  FutureOr<Failure?> add(User item) {
-    return const UnauthorizedFailure();
+  FutureOr<User> add(User item) {
+    throw const UnauthorizedFailure();
   }
 
   @override
-  FutureOr<Failure?> addAll(List<User> items) {
-    return const UnauthorizedFailure();
+  FutureOr<List<User>> addAll(List<User> items) {
+    throw const UnauthorizedFailure();
   }
 
   @override
@@ -44,8 +44,8 @@ class MockUserApis implements UserApis {
   }
 
   @override
-  FutureOr<Failure?> delete(String id) {
-    return const UnauthorizedFailure();
+  FutureOr<void> delete(String id) {
+    throw const UnauthorizedFailure();
   }
 
   @override
@@ -62,8 +62,8 @@ class MockUserApis implements UserApis {
   }
 
   @override
-  FutureOr<Failure?> update(User item) {
-    return const UnauthorizedFailure();
+  FutureOr<User> update(User item) {
+    throw const UnauthorizedFailure();
   }
 }
 
@@ -115,15 +115,15 @@ class MockPostApis implements PostApis {
   ];
 
   @override
-  FutureOr<Failure?> add(Post item) {
+  FutureOr<Post> add(Post item) {
     _posts.add(item);
-    return null;
+    return item;
   }
 
   @override
-  FutureOr<Failure?> addAll(List<Post> items) {
+  FutureOr<List<Post>> addAll(List<Post> items) {
     _posts.addAll(items);
-    return null;
+    return items;
   }
 
   @override
@@ -132,9 +132,8 @@ class MockPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> delete(String id) {
+  FutureOr<void> delete(String id) {
     _posts.removeWhere((post) => post.id == id);
-    return null;
   }
 
   @override
@@ -169,13 +168,13 @@ class MockPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Failure?> update(Post item) {
+  FutureOr<Post> update(Post item) {
     final index = _posts.indexWhere((post) => post.id == item.id);
     if (index != -1) {
       _posts[index] = item;
-      return null;
+      return item;
     }
-    return const PostNotFoundFailure('Failed to update post');
+    throw const PostNotFoundFailure('Failed to update post');
   }
 
   @override
@@ -195,43 +194,42 @@ class MockCommentApis implements CommentApis {
   final List<Comment> _comments = [];
 
   @override
-  FutureOr<Failure?> approveComment(String commentId) {
-    return const UnauthorizedFailure();
+  FutureOr<Comment> approveComment(String commentId) {
+    throw const UnauthorizedFailure();
   }
 
   @override
-  FutureOr<Failure?> bulkApproveComments(List<String> commentIds) {
-    return const UnauthorizedFailure();
+  FutureOr<void> bulkApproveComments(List<String> commentIds) {
+    throw const UnauthorizedFailure();
   }
 
   @override
-  FutureOr<Failure?> bulkDeleteComments(List<String> commentIds) {
-    return const UnauthorizedFailure();
+  FutureOr<void> bulkDeleteComments(List<String> commentIds) {
+    throw const UnauthorizedFailure();
   }
 
   @override
-  FutureOr<Failure?> createComment({
+  FutureOr<Comment> createComment({
     required String postId,
     required String content,
     required Animals animal,
     required BackgroundColorType backgroundColor,
   }) {
-    _comments.add(
-      Comment(
-        id: kUuid.v4(),
-        content: content,
-        animal: Animals.sheep,
-        backgroundColor: BackgroundColorType.red,
-        postId: postId,
-        createdAt: DateTime.now(),
-      ),
+    final comment = Comment(
+      id: kUuid.v4(),
+      content: content,
+      animal: animal,
+      backgroundColor: backgroundColor,
+      postId: postId,
+      createdAt: DateTime.now(),
     );
-    return null;
+    _comments.add(comment);
+    return comment;
   }
 
   @override
-  FutureOr<Failure?> deleteComment(String commentId) {
-    return const UnauthorizedFailure();
+  FutureOr<void> deleteComment(String commentId) {
+    throw const UnauthorizedFailure();
   }
 
   @override
@@ -240,10 +238,10 @@ class MockCommentApis implements CommentApis {
   }
 
   @override
-  FutureOr<Failure?> updateComment({
+  FutureOr<Comment> updateComment({
     required String commentId,
     required String content,
   }) {
-    return const UnauthorizedFailure();
+    throw const UnauthorizedFailure();
   }
 }
