@@ -1,3 +1,4 @@
+export 'auth/auth.dart';
 export 'chat/chat.dart';
 export 'comment/comment.dart';
 export 'editor/editor.dart';

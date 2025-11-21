@@ -2,6 +2,7 @@ import 'package:core/core.dart';
 
 enum UserData {
   anonymousUser,
+  authTokens,
 }
 
 extension UserDataExtension on SettingsBox {
@@ -19,5 +20,17 @@ extension UserDataExtension on SettingsBox {
 
   set anonymousUser(AnonymousUser user) {
     put(UserData.anonymousUser, user.toJson());
+  }
+
+  AuthTokens? get tokens {
+    final rawValue = get(UserData.authTokens, defaultValue: null);
+    if (rawValue == null) {
+      return null;
+    }
+    return AuthTokens.fromJson(rawValue);
+  }
+
+  set tokens(AuthTokens? tokens) {
+    put(UserData.authTokens, tokens?.toJson());
   }
 }

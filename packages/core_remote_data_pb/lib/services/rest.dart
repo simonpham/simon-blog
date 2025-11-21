@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:core/core.dart';
 import 'package:core_remote_data/core_remote_data.dart';
@@ -62,7 +63,9 @@ class RestCommentNowisApis implements CommentApis {
       }
 
       // TODO: Parse and return created comment
-      throw UnimplementedError('REST create comment not fully implemented to return Comment');
+      throw UnimplementedError(
+        'REST create comment not fully implemented to return Comment',
+      );
     } on DioException catch (err, trace) {
       printError(err, trace);
       throw Failure('Failed to create comment: ${err.message}');
@@ -164,13 +167,15 @@ class RestNowisPostApis implements PostApis {
       // If the server response doesn't contain the full post, we might need to fetch it or construct it.
       // Let's assume for now we throw UnimplementedError or try to parse if available.
       // The current REST implementation was returning null (success).
-      
-      // Since I don't have the full REST response structure verified, 
-      // and this file seems to be less used (grpc is primary?), 
-      // I will update the signature but throw UnimplementedError for now 
+
+      // Since I don't have the full REST response structure verified,
+      // and this file seems to be less used (grpc is primary?),
+      // I will update the signature but throw UnimplementedError for now
       // or just return the item passed in (which is wrong because ID is missing).
-      
-      throw UnimplementedError('REST add post not fully implemented to return Post');
+
+      throw UnimplementedError(
+        'REST add post not fully implemented to return Post',
+      );
     } on DioException catch (e) {
       throw Failure('Failed to create post: ${e.message}');
     } catch (e) {
@@ -484,6 +489,9 @@ class RestNowisAuthApis implements AuthApis {
         refreshToken: authData['refreshToken'],
       );
     } on DioException catch (e) {
+      if (e.response?.statusCode == HttpStatus.unauthorized) {
+        throw const UnauthorizedFailure();
+      }
       throw Failure('Login failed: ${e.message}');
     } catch (e) {
       throw Failure('Login failed: $e');

@@ -40,6 +40,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with AfterLayoutMixin {
+  final AuthViewModel _authViewModel = AuthViewModel();
   final PostViewModel _postViewModel = PostViewModel();
   final ChatViewModel _chatViewModel = ChatViewModel();
 
@@ -130,6 +131,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     _listenable.removeListener(_handleSizeChanged);
     _postViewModel.dispose();
     _chatViewModel.dispose();
+    _authViewModel.dispose();
     super.dispose();
   }
 
@@ -174,9 +176,14 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
       body: IdeLayout(
         controller: controller,
         topBar: (BuildContext context) {
-          return HeaderBar(
-            onSearchTap: () {
-              // Implement search functionality here
+          return ChangeNotifierProvider.value(
+            value: _authViewModel,
+            builder: (context, model) {
+              return HeaderBar(
+                onSearchTap: () {
+                  // Implement search functionality here
+                },
+              );
             },
           );
         },

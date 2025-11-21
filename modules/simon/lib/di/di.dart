@@ -5,14 +5,19 @@ import 'package:simon/content/content.dart';
 
 class Injector {
   static Future<void> init() async {
+    const host = 'api.nowis.sofluffy.io';
+
+    injector.registerLazySingleton<AuthApis>(
+      () => RestNowisAuthApis(host: host),
+    );
     injector.registerLazySingleton<UserApis>(
       () => MockUserApis(),
     );
     injector.registerLazySingleton<CommentApis>(
-      () => RestCommentNowisApis(host: 'api.nowis.sofluffy.io'),
+      () => RestCommentNowisApis(host: host),
     );
     injector.registerLazySingleton<PostApis>(
-      () => RestNowisPostApis(host: 'api.nowis.sofluffy.io'),
+      () => RestNowisPostApis(host: host),
     );
   }
 
@@ -20,5 +25,6 @@ class Injector {
     await injector.resetLazySingleton<PostApis>();
     await injector.resetLazySingleton<CommentApis>();
     await injector.resetLazySingleton<UserApis>();
+    await injector.resetLazySingleton<AuthApis>();
   }
 }
