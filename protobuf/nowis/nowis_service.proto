@@ -6,6 +6,7 @@ import "get_post.proto";
 import "get_post_comments.proto";
 import "get_posts.proto";
 import "get_sidebar_posts.proto";
+import "get_user.proto";
 import "health_check.proto";
 
 package nowis;
@@ -22,4 +23,5 @@ service NowisService {
   rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse) {}
   rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {}
   rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse) {}
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
 }

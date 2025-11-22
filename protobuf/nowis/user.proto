@@ -1,5 +1,4 @@
 syntax = "proto3";
-import "role.proto";
 
 package nowis;
 
@@ -13,7 +12,6 @@ message User {
   string avatarUrl = 5;
   string avatarHash = 6;
   string bio = 7;
-  int64 createdAt = 8;
-  int64 updatedAt = 9;
-  Role role = 10;
+  int64 created_at = 8;
+  int64 updated_at = 9;
 }

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "user.proto";
+
+package nowis;
+
+option go_package = "protobuf/generated/nowis";
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
