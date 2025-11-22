@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
-	"nowis/internal/nowis/model"
 	"nowis/pkg/utils"
+	"nowis/internal/nowis/model"
 
 	"github.com/google/uuid"
 	pq "github.com/lib/pq"
@@ -544,6 +545,7 @@ func (r *NowisRepository) GetUser(ctx context.Context, id uuid.UUID) (*model.Use
 	`
 
 	user := &model.User{}
+	var createdAt, updatedAt time.Time
 
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
 		&user.ID,
@@ -553,8 +555,8 @@ func (r *NowisRepository) GetUser(ctx context.Context, id uuid.UUID) (*model.Use
 		&user.AvatarURL,
 		&user.AvatarHash,
 		&user.Bio,
-		&user.CreatedAt,
-		&user.UpdatedAt,
+		&createdAt,
+		&updatedAt,
 	)
 
 	if err != nil {
@@ -563,6 +565,9 @@ func (r *NowisRepository) GetUser(ctx context.Context, id uuid.UUID) (*model.Use
 		}
 		return nil, utils.WrapError("failed to get user from database", err)
 	}
+
+	user.CreatedAt = createdAt.Unix()
+	user.UpdatedAt = updatedAt.Unix()
 
 	return user, nil
 }
