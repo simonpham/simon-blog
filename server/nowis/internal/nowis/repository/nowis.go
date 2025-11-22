@@ -536,7 +536,7 @@ func (r *NowisRepository) UpdatePost(ctx context.Context, post *model.Post) (*mo
 func (r *NowisRepository) GetUser(ctx context.Context, id uuid.UUID) (*model.User, error) {
 	query := `
 		SELECT
-			id, username, email, display_name, avatar_url, avatar_hash, bio, created_at, updated_at
+			id, username, email, display_name, avatar, avatar_hash, bio, created_at, updated_at
 		FROM
 			users
 		WHERE
