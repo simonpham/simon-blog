@@ -1,12 +1,6 @@
 import 'dart:async';
 
-import 'package:core/models/animals.dart';
-import 'package:core/models/auth.dart';
-import 'package:core/models/comment.dart';
-import 'package:core/models/common/failure.dart';
-import 'package:core/models/common/pagination.dart';
-import 'package:core/models/post.dart';
-import 'package:core/models/sidebar_post.dart';
+import 'package:core/core.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart' as pb;
 import 'package:core_remote_data_pb/utils/decryptor.dart' as decryptor;
@@ -437,5 +431,81 @@ class NowisAuthApis implements AuthApis {
     } catch (e) {
       throw Failure('Login failed: $e');
     }
+  }
+}
+
+class NowisUserApis implements UserApis {
+  final pb.NowisServiceClient _client;
+
+  NowisUserApis({
+    required String host,
+    int? port,
+    pb.NowisServiceClient? client,
+  }) : _client =
+           client ??
+           pb.NowisServiceClient(
+             ClientChannel(
+               host,
+               port: port ?? 443,
+               options: ChannelOptions(
+                 credentials: port != null
+                     ? const ChannelCredentials.insecure()
+                     : const ChannelCredentials.secure(),
+                 codecRegistry: CodecRegistry(
+                   codecs: [
+                     const GzipCodec(),
+                   ],
+                 ),
+               ),
+             ),
+           );
+
+  @override
+  FutureOr<User> add(User item) {
+    // TODO: implement add
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<List<User>> addAll(List<User> items) {
+    // TODO: implement addAll
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<int> count() {
+    // TODO: implement count
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<void> delete(String id) {
+    // TODO: implement delete
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<User?> get(String id) async {
+    try {
+      final response = await _client.getUser(
+        pb.GetUserRequest(id: id),
+      );
+      return response.user.toModel();
+    } catch (err, trace) {
+      printError('Error in getUser: $err', trace);
+      return null;
+    }
+  }
+
+  @override
+  FutureOr<List<User>> list(Pagination pagination, {String? searchQuery}) {
+    // TODO: implement list
+    throw UnimplementedError();
+  }
+
+  @override
+  FutureOr<User> update(User item) {
+    // TODO: implement update
+    throw UnimplementedError();
   }
 }

@@ -403,9 +403,18 @@ class RestNowisPostApis implements PostApis {
 }
 
 class RestNowisUserApis implements UserApis {
+  final Dio _dio;
+
   RestNowisUserApis({
     required String host,
-  });
+  }) : _dio = Dio(
+         BaseOptions(
+           baseUrl: 'https://$host/v1/nowis',
+           validateStatus: (status) {
+             return status != null && status >= 200 && status < 300;
+           },
+         ),
+       );
 
   @override
   FutureOr<User> add(User item) {
@@ -432,9 +441,39 @@ class RestNowisUserApis implements UserApis {
   }
 
   @override
-  FutureOr<User?> get(String id) {
-    // TODO: implement get
-    throw UnimplementedError();
+  FutureOr<User?> get(String id) async {
+    try {
+      final response = await _dio.get('/users/$id');
+
+      final data = response.data as Map<String, dynamic>;
+      if (!data['success']) {
+        throw Failure(data['message'] ?? 'Failed to get user');
+      }
+
+      final userData = data['data'] as Map<String, dynamic>;
+      return User(
+        id: userData['id'],
+        username: userData['username'],
+        email: userData['email'],
+        displayName: userData['display_name'],
+        avatarUrl: userData['avatar_url'],
+        avatarHash: userData['avatar_hash'],
+        bio: userData['bio'],
+        createdAt: DateTime.fromMillisecondsSinceEpoch(
+          (userData['created_at'] as int).toInt(),
+        ),
+        updatedAt: DateTime.fromMillisecondsSinceEpoch(
+          (userData['updated_at'] as int).toInt(),
+        ),
+      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == HttpStatus.notFound) {
+        return null;
+      }
+      throw Failure('Failed to get user: ${e.message}');
+    } catch (e) {
+      throw Failure('Failed to get user: $e');
+    }
   }
 
   @override

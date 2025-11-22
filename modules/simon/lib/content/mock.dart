@@ -15,7 +15,6 @@ class MockUserApis implements UserApis {
       displayName: 'Simon',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      role: Role.admin,
     ),
     User(
       id: 'default-user',
@@ -24,7 +23,6 @@ class MockUserApis implements UserApis {
       displayName: 'Author',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      role: Role.admin,
     ),
   ];
 
@@ -49,7 +47,7 @@ class MockUserApis implements UserApis {
   }
 
   @override
-  FutureOr<User?> get(String id) {
+  FutureOr<User?> get(String id) async {
     return _user.firstWhereOrNull((user) => user.id == id);
   }
 

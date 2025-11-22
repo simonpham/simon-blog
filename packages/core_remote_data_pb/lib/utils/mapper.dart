@@ -2,6 +2,7 @@ import 'package:core/models/animals.dart';
 import 'package:core/models/comment.dart';
 import 'package:core/models/post.dart';
 import 'package:core/models/sidebar_post.dart';
+import 'package:core/models/user.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart' as pb;
 
 extension PostMapper on pb.Post {
@@ -69,6 +70,26 @@ extension CommentMapper on pb.Comment {
       backgroundColor: BackgroundColorType.fromString(backgroundColor),
       createdAt: DateTime.fromMillisecondsSinceEpoch(
         createdAt.toInt(),
+      ),
+    );
+  }
+}
+
+extension UserMapper on pb.User {
+  User toModel() {
+    return User(
+      id: id,
+      username: username,
+      email: email,
+      displayName: displayName,
+      avatarUrl: avatarUrl,
+      avatarHash: avatarHash,
+      bio: bio,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        createdAt.toInt(),
+      ),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        updatedAt.toInt(),
       ),
     );
   }

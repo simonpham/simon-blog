@@ -1,8 +1,3 @@
-enum Role {
-  admin,
-  anonymous,
-}
-
 class User {
   final String id;
   final String username;
@@ -13,7 +8,6 @@ class User {
   final String? bio;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final Role role;
 
   const User({
     required this.id,
@@ -25,6 +19,5 @@ class User {
     this.bio,
     required this.createdAt,
     required this.updatedAt,
-    this.role = Role.anonymous,
   });
 }
