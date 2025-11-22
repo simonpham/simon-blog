@@ -736,3 +736,70 @@ func (controller *NowisController) UpdatePost(ginContext *gin.Context) {
 		},
 	)
 }
+
+func (controller *NowisController) GetUser(ginContext *gin.Context) {
+	id := ginContext.Param("id")
+	if id == "" {
+		ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Invalid ID"})
+		return
+	}
+
+	conn, err := sfgrpc.CreateGrpcClientConnection(
+		context.Background(),
+		configs.GetConfig().NowisPublicAddress,
+	)
+	if err != nil {
+		log.Printf("[Nowis] Error when connecting to NowisService: %v", err)
+		ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+		return
+	}
+	defer conn.Close()
+
+	nowisService := nowispb.NewNowisServiceClient(conn)
+
+	response, err := nowisService.GetUser(context.Background(), &nowispb.GetUserRequest{
+		Id: id,
+	})
+
+	if err != nil {
+		log.Printf("error when calling NowisService GetUser: %v", err)
+		st, ok := status.FromError(err)
+		if ok {
+			switch st.Code() {
+			case codes.InvalidArgument:
+				ginContext.JSON(http.StatusBadRequest, gin.H{"success": false, "message": st.Message()})
+				return
+			case codes.NotFound:
+				ginContext.JSON(http.StatusNotFound, gin.H{"success": false, "message": st.Message()})
+				return
+			default:
+				ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+				return
+			}
+		}
+		ginContext.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Internal server error"})
+		return
+	}
+
+	user := response.User
+	userMap := map[string]interface{}{
+		"id":           user.Id,
+		"username":     user.Username,
+		"email":        user.Email,
+		"display_name": user.DisplayName,
+		"avatar_url":   user.AvatarUrl,
+		"avatar_hash":  user.AvatarHash,
+		"bio":          user.Bio,
+		"created_at":   user.CreatedAt,
+		"updated_at":   user.UpdatedAt,
+	}
+
+	ginContext.JSON(
+		http.StatusOK,
+		gin.H{
+			"success": true,
+			"data":    userMap,
+			"message": "Success",
+		},
+	)
+}

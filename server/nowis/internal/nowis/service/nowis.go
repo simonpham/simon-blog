@@ -340,3 +340,23 @@ func (h NowisService) HealthCheck(ctx context.Context, request *nowispb.HealthCh
 		AppVersionRef: config.NowisEncryptionStaticSaltHex,
 	}, nil
 }
+
+func (h NowisService) GetUser(ctx context.Context, request *nowispb.GetUserRequest) (*nowispb.GetUserResponse, error) {
+	id, err := uuid.Parse(request.Id)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid user ID format: %v", err)
+	}
+
+	user, err := h.repo.GetUser(ctx, id)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve user: %v", err)
+	}
+
+	if user == nil {
+		return nil, status.Errorf(codes.NotFound, "user with ID %s not found", request.Id)
+	}
+
+	return &nowispb.GetUserResponse{
+		User: user.ToPBUser(),
+	}, nil
+}

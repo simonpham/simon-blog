@@ -16,4 +16,5 @@ func SetupNowisRoutes(r *gin.RouterGroup, controller api.NowisController) {
 	r.POST("/comments", controller.CreateComment)
 	r.POST("/posts", controller.CreatePost)
 	r.PUT("/posts/:id", controller.UpdatePost)
+	r.GET("/users/:id", controller.GetUser)
 }

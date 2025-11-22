@@ -24,6 +24,7 @@ type NowisRepositoryHandler interface {
 	CreateComment(ctx context.Context, postId uuid.UUID, content string, animal string, backgroundColor string) (*model.Comment, error)
 	CreatePost(ctx context.Context, post *model.Post) (*model.Post, error)
 	UpdatePost(ctx context.Context, post *model.Post) (*model.Post, error)
+	GetUser(ctx context.Context, id uuid.UUID) (*model.User, error)
 }
 
 type NowisRepository struct {
@@ -530,4 +531,38 @@ func (r *NowisRepository) UpdatePost(ctx context.Context, post *model.Post) (*mo
 	}
 
 	return post, nil
+}
+
+func (r *NowisRepository) GetUser(ctx context.Context, id uuid.UUID) (*model.User, error) {
+	query := `
+		SELECT
+			id, username, email, display_name, avatar_url, avatar_hash, bio, created_at, updated_at
+		FROM
+			users
+		WHERE
+			id = $1
+	`
+
+	user := &model.User{}
+
+	err := r.db.QueryRowContext(ctx, query, id).Scan(
+		&user.ID,
+		&user.Username,
+		&user.Email,
+		&user.DisplayName,
+		&user.AvatarURL,
+		&user.AvatarHash,
+		&user.Bio,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, utils.WrapError("failed to get user from database", err)
+	}
+
+	return user, nil
 }
