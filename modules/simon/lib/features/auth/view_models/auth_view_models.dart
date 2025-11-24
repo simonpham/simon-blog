@@ -32,7 +32,7 @@ class AuthViewModel extends ChangeNotifier {
       }
 
       _isLoading = false;
-      _tokens = tokens;
+      _tokens = result;
       SettingsBox().tokens = tokens;
       notifyListeners();
       return null;
