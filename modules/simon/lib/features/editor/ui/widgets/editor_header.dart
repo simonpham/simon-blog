@@ -63,8 +63,23 @@ class EditorHeader extends StatelessWidget {
                     ),
                     child: Text.rich(
                       TextSpan(
-                        text: selectedPost.fileName,
                         children: [
+                          WidgetSpan(
+                            child: Container(
+                              width: Spacing.d16,
+                              height: Spacing.d16,
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(right: Spacing.d8),
+                              child: ImageView(
+                                Assets.bookOpen01,
+                                size: Spacing.d16,
+                                color: theme.primaryColor,
+                              ),
+                            ),
+                          ),
+                          TextSpan(
+                            text: selectedPost.fileName,
+                          ),
                           WidgetSpan(
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 200),

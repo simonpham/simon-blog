@@ -1,13 +1,12 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
-import 'package:flutter/material.dart' hide Padding;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:simon/simon.dart';
 import 'package:utils/utils.dart' hide Padding;
 import 'package:utils/utils.dart' as timeago;
 
-class PostStatus extends StatelessWidget {
-  const PostStatus({
+class PostStatusWidget extends StatelessWidget {
+  const PostStatusWidget({
     super.key,
   });
 
@@ -35,8 +34,8 @@ class PostStatus extends StatelessWidget {
     final createdAt = selectedPost.createdAt.toLocal();
     final offset = now.difference(createdAt);
     final dateText = switch (offset.inDays > 30) {
-      true => 'Posted on ${DateFormat.yMMMd().format(createdAt)}',
-      false => 'Posted ${timeago.format(createdAt)}',
+      true => 'posted on ${DateFormat.yMMMd().format(createdAt)}',
+      false => 'posted ${timeago.format(createdAt)}',
     };
 
     final updatedAt = selectedPost.updatedAt.toLocal();
@@ -44,13 +43,55 @@ class PostStatus extends StatelessWidget {
 
     return Tooltip(
       message: 'Last updated: $updatedDate',
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: Spacing.d8,
-        ),
-        child: Text(
-          [?readTimeText, dateText].join(' • '),
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Tooltip(
+            message: selectedPost.author.displayName,
+            child: Container(
+              width: Spacing.d16,
+              height: Spacing.d16,
+              alignment: Alignment.center,
+              child: ClipOval(
+                child: ImageView(
+                  selectedPost.author.avatarUrl,
+                  blurHash: selectedPost.author.avatarHash,
+                  size: Spacing.d16,
+                ),
+              ),
+            ),
+          ),
+          Spacing.h8,
+          ValueListenableBuilder(
+            valueListenable: [CoreSettings.screenSize].of(SettingsBox()),
+            builder: (context, _, _) {
+              if (SettingsBox().screenSize <= ScreenSize.normal) {
+                return const SizedBox();
+              }
+              return Flexible(
+                child: Padding(
+                  padding: EdgeInsets.only(right: Spacing.d8),
+                  child: Text(
+                    selectedPost.author.displayName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              );
+            },
+          ),
+          Flexible(
+            child: Text(
+              [dateText, ?readTimeText].join(' • '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Spacing.h8,
+        ],
       ),
     );
   }

@@ -19,10 +19,12 @@ class StatusBarRightContent extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: Spacing.d16),
       child: Row(
         children: [
-          const PostStatus(),
+          const PostStatusWidget(),
           Spacing.h16,
-          const FileFormat(),
-          Spacing.h16,
+          if (SettingsBox().screenSize > ScreenSize.normal) ...[
+            const FileFormat(),
+            Spacing.h16,
+          ],
           VerticalDivider(
             width: 1.0,
             color: context.theme.dividerColor,
