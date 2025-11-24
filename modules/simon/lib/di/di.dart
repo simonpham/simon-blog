@@ -11,7 +11,7 @@ class Injector {
       () => RestNowisAuthApis(host: host),
     );
     injector.registerLazySingleton<UserApis>(
-      () => MockUserApis(),
+      () => RestNowisUserApis(host: host),
     );
     injector.registerLazySingleton<CommentApis>(
       () => RestCommentNowisApis(host: host),

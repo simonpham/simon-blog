@@ -1,7 +1,8 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:simon/features/auth/view_models/auth_view_models.dart';
+import 'package:simon/simon.dart';
 
 class LoginFrame extends StatefulWidget {
   const LoginFrame({
@@ -20,6 +21,11 @@ class _LoginFrameState extends State<LoginFrame> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = context.select((AuthViewModel model) => model.isLoading);
+    final tokens = context.select((AuthViewModel model) => model.tokens);
+    if (tokens != null) {
+      return const UserInfo();
+    }
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: Spacing.d16,
@@ -33,6 +39,7 @@ class _LoginFrameState extends State<LoginFrame> {
             controller: _emailController,
             label: 'Username',
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
           ),
           Spacing.v16,
           ValueListenableBuilder<bool>(
@@ -42,6 +49,8 @@ class _LoginFrameState extends State<LoginFrame> {
                 controller: _passwordController,
                 label: 'Password',
                 obscureText: !isPasswordVisible,
+                onEditingComplete: () => _handleLogin(context),
+                textInputAction: TextInputAction.done,
               );
             },
           ),
@@ -49,6 +58,7 @@ class _LoginFrameState extends State<LoginFrame> {
           Button(
             variant: ButtonVariant.primary,
             label: 'Login',
+            enable: !isLoading,
             onPressed: () => _handleLogin(context),
           ),
         ],
