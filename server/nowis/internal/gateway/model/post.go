@@ -31,7 +31,7 @@ type Post struct {
 	Content          string         `json:"content"`
 	Summary          string         `json:"summary"`
 	FeaturedImageURL *string        `json:"featuredImageUrl,omitempty"`
-	AuthorID         uuid.UUID      `json:"authorId"`
+	Author           *User          `json:"author"`
 	Status           PostStatus     `json:"status"`
 	Visibility       PostVisibility `json:"visibility"`
 	CommentsCount    int32          `json:"commentsCount"`
@@ -72,9 +72,13 @@ func FromPBPost(pbPost *nowis.Post) (*Post, error) {
 	if err != nil {
 		return nil, err
 	}
-	authorID, err := uuid.Parse(pbPost.AuthorId)
-	if err != nil {
-		return nil, err
+
+	var author *User
+	if pbPost.Author != nil {
+		author, err = FromPBUser(pbPost.Author)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var featuredImageURL *string
@@ -90,7 +94,7 @@ func FromPBPost(pbPost *nowis.Post) (*Post, error) {
 		Content:          pbPost.Content,
 		Summary:          pbPost.Summary,
 		FeaturedImageURL: featuredImageURL,
-		AuthorID:         authorID,
+		Author:           author,
 		Status:           status,
 		Visibility:       visibility,
 		CommentsCount:    pbPost.CommentsCount,
@@ -110,7 +114,7 @@ func (p *Post) ToGinMap() map[string]interface{} {
 		"content":          p.Content,
 		"summary":          p.Summary,
 		"featuredImageUrl": p.FeaturedImageURL,
-		"authorId":         p.AuthorID.String(),
+		"author":           p.Author,
 		"status":           p.Status,
 		"visibility":       p.Visibility,
 		"commentsCount":    p.CommentsCount,
