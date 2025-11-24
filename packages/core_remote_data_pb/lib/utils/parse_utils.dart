@@ -9,7 +9,24 @@ class ParseUtils {
       content: decryptedContent,
       summary: data['summary'] as String,
       featuredImageUrl: data['featuredImageUrl'] as String?,
-      authorId: data['authorId'] as String,
+      author: User(
+        id: (data['author'] as Map<String, dynamic>)['id'] as String,
+        username: (data['author'] as Map<String, dynamic>)['username'] as String,
+        email: (data['author'] as Map<String, dynamic>)['email'] as String,
+        displayName:
+            (data['author'] as Map<String, dynamic>)['displayName'] as String,
+        avatarUrl:
+            (data['author'] as Map<String, dynamic>)['avatarUrl'] as String?,
+        avatarHash:
+            (data['author'] as Map<String, dynamic>)['avatarHash'] as String?,
+        bio: (data['author'] as Map<String, dynamic>)['bio'] as String?,
+        createdAt: DateTime.parse(
+          (data['author'] as Map<String, dynamic>)['createdAt'] as String,
+        ),
+        updatedAt: DateTime.parse(
+          (data['author'] as Map<String, dynamic>)['updatedAt'] as String,
+        ),
+      ),
       status: parsePostStatus(data['status'] as String),
       visibility: parsePostVisibility(data['visibility'] as String),
       commentsCount: data['commentsCount'] as int,

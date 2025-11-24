@@ -35,6 +35,7 @@ type Post struct {
 	Summary          string         `db:"summary" json:"summary"`
 	FeaturedImageURL *string        `db:"featured_image_url" json:"featuredImageUrl,omitempty"`
 	AuthorID         uuid.UUID      `db:"author_id" json:"authorId"`
+	Author           *User          `db:"-" json:"author,omitempty"` // Populated via JOIN
 	Status           PostStatus     `db:"status" json:"status"`
 	Visibility       PostVisibility `db:"visibility" json:"visibility"`
 	CommentsCount    int            `db:"comments_count" json:"commentsCount"`
@@ -83,6 +84,11 @@ func (p *Post) ToPBPost() *nowis.Post {
 		encodedPayload = p.Content // Fallback to sending plaintext (not ideal for obfuscation)
 	}
 
+	var authorPB *nowis.User
+	if p.Author != nil {
+		authorPB = p.Author.ToPBUser() // Assuming User model has a ToPBUser() method
+	}
+
 	pbPost := &nowis.Post{
 		Id:      p.ID.String(),
 		Title:   p.Title,
@@ -95,7 +101,7 @@ func (p *Post) ToPBPost() *nowis.Post {
 			}
 			return ""
 		}(),
-		AuthorId:        p.AuthorID.String(),
+		Author:          authorPB, // Changed from AuthorId to Author
 		Status:          status,
 		Visibility:      visibility,
 		CommentsCount:   int32(p.CommentsCount),

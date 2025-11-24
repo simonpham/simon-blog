@@ -13,7 +13,7 @@ extension PostMapper on pb.Post {
       slug: slug,
       content: decryptedContent,
       summary: summary,
-      authorId: authorId,
+      author: author.toModel(),
       tags: tags.toList(),
       featuredImageUrl: featuredImageUrl,
       status: switch (status) {

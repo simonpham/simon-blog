@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"nowis/pkg/utils"
 	"nowis/internal/nowis/model"
+	"nowis/pkg/utils"
 
 	"github.com/google/uuid"
 	pq "github.com/lib/pq"
@@ -42,16 +42,21 @@ func NewNowisRepository(db *sql.DB) *NowisRepository {
 func (r *NowisRepository) GetPostById(ctx context.Context, postID uuid.UUID, locale string) (*model.Post, error) {
 	query := `
         SELECT
-            id, title, slug, content, summary, featured_image_url, author_id,
-            status, visibility, comments_count, likes_count, read_time_minutes,
-            created_at, updated_at, tags
+            p.id, p.title, p.slug, p.content, p.summary, p.featured_image_url, p.author_id,
+            p.status, p.visibility, p.comments_count, p.likes_count, p.read_time_minutes,
+            p.created_at, p.updated_at, p.tags,
+            u.id AS author_uid, u.username, u.email, u.display_name, u.avatar, u.avatar_hash, u.bio, u.created_at AS author_created_at, u.updated_at AS author_updated_at
         FROM
-            published_public_posts
+            published_public_posts p
+        JOIN
+            users u ON p.author_id = u.id
         WHERE
-            id = $1 AND ($2 = '' OR $2 = ANY(tags))
+            p.id = $1 AND ($2 = '' OR $2 = ANY(p.tags))
     `
 
 	post := &model.Post{}
+	author := &model.User{}
+	var authorCreatedAt, authorUpdatedAt time.Time
 
 	err := r.db.QueryRowContext(ctx, query, postID, locale).Scan(
 		&post.ID,
@@ -69,6 +74,15 @@ func (r *NowisRepository) GetPostById(ctx context.Context, postID uuid.UUID, loc
 		&post.CreatedAt,
 		&post.UpdatedAt,
 		pq.Array(&post.Tags),
+		&author.ID,
+		&author.Username,
+		&author.Email,
+		&author.DisplayName,
+		&author.AvatarURL,
+		&author.AvatarHash,
+		&author.Bio,
+		&authorCreatedAt,
+		&authorUpdatedAt,
 	)
 
 	if err != nil {
@@ -78,6 +92,10 @@ func (r *NowisRepository) GetPostById(ctx context.Context, postID uuid.UUID, loc
 		return nil, utils.WrapError("failed to get post from database", err)
 	}
 
+	author.CreatedAt = authorCreatedAt.Unix()
+	author.UpdatedAt = authorUpdatedAt.Unix()
+	post.Author = author
+
 	return post, nil
 }
 
@@ -86,16 +104,21 @@ func (r *NowisRepository) GetPostById(ctx context.Context, postID uuid.UUID, loc
 func (r *NowisRepository) GetPostBySlug(ctx context.Context, postSlug string, locale string) (*model.Post, error) {
 	query := `
         SELECT
-            id, title, slug, content, summary, featured_image_url, author_id,
-            status, visibility, comments_count, likes_count, read_time_minutes,
-            created_at, updated_at, tags
+            p.id, p.title, p.slug, p.content, p.summary, p.featured_image_url, p.author_id,
+            p.status, p.visibility, p.comments_count, p.likes_count, p.read_time_minutes,
+            p.created_at, p.updated_at, p.tags,
+            u.id AS author_uid, u.username, u.email, u.display_name, u.avatar, u.avatar_hash, u.bio, u.created_at AS author_created_at, u.updated_at AS author_updated_at
         FROM
-            published_public_posts
+            published_public_posts p
+        JOIN
+            users u ON p.author_id = u.id
         WHERE
-            slug = $1 AND ($2 = '' OR $2 = ANY(tags))
+            p.slug = $1 AND ($2 = '' OR $2 = ANY(p.tags))
     `
 
 	post := &model.Post{}
+	author := &model.User{}
+	var authorCreatedAt, authorUpdatedAt time.Time
 
 	err := r.db.QueryRowContext(ctx, query, postSlug, locale).Scan(
 		&post.ID,
@@ -113,6 +136,15 @@ func (r *NowisRepository) GetPostBySlug(ctx context.Context, postSlug string, lo
 		&post.CreatedAt,
 		&post.UpdatedAt,
 		pq.Array(&post.Tags),
+		&author.ID,
+		&author.Username,
+		&author.Email,
+		&author.DisplayName,
+		&author.AvatarURL,
+		&author.AvatarHash,
+		&author.Bio,
+		&authorCreatedAt,
+		&authorUpdatedAt,
 	)
 
 	if err != nil {
@@ -121,6 +153,10 @@ func (r *NowisRepository) GetPostBySlug(ctx context.Context, postSlug string, lo
 		}
 		return nil, utils.WrapError("failed to get post from database", err)
 	}
+
+	author.CreatedAt = authorCreatedAt.Unix()
+	author.UpdatedAt = authorUpdatedAt.Unix()
+	post.Author = author
 
 	return post, nil
 }
@@ -162,6 +198,15 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 		"p.created_at",
 		"p.updated_at",
 		"p.tags",
+		"u.id AS author_uid",
+		"u.username",
+		"u.email",
+		"u.display_name",
+		"u.avatar",
+		"u.avatar_hash",
+		"u.bio",
+		"u.created_at AS author_created_at",
+		"u.updated_at AS author_updated_at",
 	}
 
 	orderByClause := " ORDER BY p.created_at DESC " // Default order
@@ -205,6 +250,8 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
             %s
         FROM
             published_public_posts p
+        JOIN
+            users u ON p.author_id = u.id
         %s
         %s
         %s
@@ -226,7 +273,10 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 	var posts []model.Post
 	for rows.Next() {
 		post := model.Post{}
+		author := model.User{}
+		var authorCreatedAt, authorUpdatedAt time.Time
 		var rankScore float64 // Variable to hold the rank score
+
 		err := rows.Scan(
 			&post.ID,
 			&post.Title,
@@ -243,13 +293,23 @@ func (r *NowisRepository) GetPosts(ctx context.Context, locale string, page int,
 			&post.CreatedAt,
 			&post.UpdatedAt,
 			pq.Array(&post.Tags),
+			&author.ID,
+			&author.Username,
+			&author.Email,
+			&author.DisplayName,
+			&author.AvatarURL,
+			&author.AvatarHash,
+			&author.Bio,
+			&authorCreatedAt,
+			&authorUpdatedAt,
 			&rankScore, // Scan the rank score
 		)
 		if err != nil {
 			return nil, utils.WrapError("failed to scan post row", err)
 		}
-		// You might want to store rankScore in the model.Post if it's relevant for the client,
-		// but for now, we just scan it to keep the row.Scan consistent.
+		author.CreatedAt = authorCreatedAt.Unix()
+		author.UpdatedAt = authorUpdatedAt.Unix()
+		post.Author = &author
 		posts = append(posts, post)
 	}
 

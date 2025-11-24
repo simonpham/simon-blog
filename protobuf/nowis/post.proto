@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package nowis;
 
+import "user.proto";
+
 option go_package = "protobuf/generated/nowis";
 
 message Post {
@@ -10,7 +12,7 @@ message Post {
   string slug = 3;
   string content = 4;
   string summary = 5;
-  string author_id = 6;
+  User author = 6;
   repeated string tags = 7;
   string featured_image_url = 8;
   PostStatus status = 9;

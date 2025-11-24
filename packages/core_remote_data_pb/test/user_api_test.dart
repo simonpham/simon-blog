@@ -22,7 +22,7 @@ void main() {
       );
 
       expect(posts, isNotEmpty);
-      authorId = posts.first.authorId;
+      authorId = posts.first.author.id;
       expect(authorId, isNotEmpty);
 
       // Now get the user

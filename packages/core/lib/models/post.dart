@@ -1,4 +1,5 @@
 import 'package:core/models/common/common.dart';
+import 'package:core/models/user.dart';
 
 enum PostVisibility { public, private, unlisted }
 
@@ -19,7 +20,7 @@ class Post {
   final String summary;
   final String? featuredImageUrl;
 
-  final String authorId;
+  final User author;
   final List<String> tags;
 
   final PostStatus status;
@@ -38,7 +39,7 @@ class Post {
     required this.slug,
     required this.content,
     required this.summary,
-    required this.authorId,
+    required this.author,
     required this.tags,
     this.featuredImageUrl,
     this.status = PostStatus.draft,
@@ -54,6 +55,7 @@ class Post {
     required String title,
     required String content,
     required String summary,
+    required User author,
     String? featuredImageUrl,
     PostStatus status = PostStatus.draft,
     required List<String> tags,
@@ -69,7 +71,7 @@ class Post {
       tags: tags,
       id: '',
       slug: '',
-      authorId: '',
+      author: author,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       commentsCount: 0,
@@ -84,7 +86,7 @@ class Post {
     String? content,
     String? summary,
     String? featuredImageUrl,
-    String? authorId,
+    User? author,
     List<String>? tags,
     PostStatus? status,
     PostVisibility? visibility,
@@ -101,7 +103,7 @@ class Post {
       content: content ?? this.content,
       summary: summary ?? this.summary,
       featuredImageUrl: featuredImageUrl ?? this.featuredImageUrl,
-      authorId: authorId ?? this.authorId,
+      author: author ?? this.author,
       tags: tags ?? this.tags,
       status: status ?? this.status,
       visibility: visibility ?? this.visibility,
