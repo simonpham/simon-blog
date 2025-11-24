@@ -84,6 +84,18 @@ class MarkdownContent extends StatelessWidget {
               theme: tomorrow.tomorrowTheme,
             ),
           },
+          switch (isDark) {
+            true => CodeConfig(
+              style: codeTextStyle.copyWith(
+                backgroundColor: context.theme.colorScheme.surfaceContainer,
+              ),
+            ),
+            false => CodeConfig(
+              style: codeTextStyle.copyWith(
+                backgroundColor: context.theme.colorScheme.surfaceContainer,
+              ),
+            ),
+          },
         ],
       ),
       padding: EdgeInsets.symmetric(
