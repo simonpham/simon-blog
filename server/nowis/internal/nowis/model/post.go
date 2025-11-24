@@ -86,7 +86,7 @@ func (p *Post) ToPBPost() *nowis.Post {
 
 	var authorPB *nowis.User
 	if p.Author != nil {
-		authorPB = p.Author.ToPBUser() // Assuming User model has a ToPBUser() method
+		authorPB = p.Author.ToPBUser()
 	}
 
 	pbPost := &nowis.Post{
@@ -101,7 +101,7 @@ func (p *Post) ToPBPost() *nowis.Post {
 			}
 			return ""
 		}(),
-		Author:          authorPB, // Changed from AuthorId to Author
+		Author:          authorPB,
 		Status:          status,
 		Visibility:      visibility,
 		CommentsCount:   int32(p.CommentsCount),
