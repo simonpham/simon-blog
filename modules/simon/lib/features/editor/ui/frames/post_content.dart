@@ -2,7 +2,6 @@ import 'package:core/core.dart';
 import 'package:design_system/components/logo.dart';
 import 'package:design_system/utils/extensions/build_context.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:simon/simon.dart';
 
 class PostContent extends StatelessWidget {
@@ -10,6 +9,34 @@ class PostContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = context.select<PostViewModel, bool>(
+      (viewModel) => viewModel.isEditing,
+    );
+
+    // Show editor when in edit mode
+    if (isEditing) {
+      return _buildEditorView(context);
+    }
+
+    // Show post content when viewing
+    return _buildContentView(context);
+  }
+
+  Widget _buildEditorView(BuildContext context) {
+    final editingPost = context.select<PostViewModel, Post?>(
+      (viewModel) => viewModel.editingPost,
+    );
+
+    return Title(
+      title: editingPost != null
+          ? 'Editing: ${editingPost.title} – SoFluffy'
+          : 'New Post – SoFluffy',
+      color: context.theme.primaryColor,
+      child: PostEditor(key: PostEditor.editorKey),
+    );
+  }
+
+  Widget _buildContentView(BuildContext context) {
     final selectedPost = context.select<PostViewModel, Post?>(
       (viewModel) => viewModel.selectedPost?.data,
     );
@@ -33,9 +60,7 @@ class PostContent extends StatelessWidget {
         children: [
           EditorHeader(selectedPost),
           Expanded(
-            child: PostContentView(
-              selectedPost,
-            ),
+            child: PostContentView(selectedPost),
           ),
         ],
       ),

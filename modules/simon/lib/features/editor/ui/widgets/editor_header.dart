@@ -23,127 +23,101 @@ class EditorHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Tappable(
-            enableHover: true,
-            enableAnimation: false,
-            tooltip: 'Copy link',
-            onTap: () {
-              final link = 'https://sofluffy.io/${selectedPost.slug}.md';
-              Clipboard.setData(
-                ClipboardData(text: link),
-              );
-              context.toast(
-                'Copied to clipboard',
-                type: MessageType.success,
-              );
-            },
-            builder: (context, state) {
-              final shouldShowIcon =
-                  state == TappableState.hover || state == TappableState.pressed || state == TappableState.focus;
-              return Container(
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  border: Border(
-                    right: BorderSide(
-                      color: theme.dividerColor,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-                padding: EdgeInsets.only(
-                  left: Spacing.d16,
-                ),
-                alignment: Alignment.center,
-                child: AnimatedSize(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      right: shouldShowIcon ? Spacing.d8 : Spacing.d16,
-                    ),
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          WidgetSpan(
-                            child: Container(
-                              width: Spacing.d16,
-                              height: Spacing.d16,
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.only(right: Spacing.d8),
-                              child: ImageView(
-                                Assets.bookOpen01,
-                                size: Spacing.d16,
-                                color: theme.primaryColor,
-                              ),
-                            ),
-                          ),
-                          TextSpan(
-                            text: selectedPost.fileName,
-                          ),
-                          WidgetSpan(
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: switch (shouldShowIcon) {
-                                true => Padding(
-                                  padding: EdgeInsets.only(
-                                    left: Spacing.d8,
-                                  ),
-                                  child: ImageView(
-                                    Assets.link04,
-                                    color: theme.colorScheme.onSurface,
-                                    size: Spacing.d16,
-                                  ),
-                                ),
-                                false => const SizedBox.shrink(),
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          // Edit button - visible when admin logged in
+          // Filename with hover-to-edit
           Builder(
             builder: (context) {
               final user = context.select((AuthViewModel model) => model.user);
-              if (user == null) {
-                return const SizedBox.shrink();
-              }
               return Tappable(
-                onTap: () async {
-                  await PostEditorDialog.show(
-                    context,
-                    post: selectedPost,
-                    author: user,
-                  );
+                enableHover: true,
+                enableAnimation: false,
+                tooltip: user != null ? 'Click to edit' : 'Copy link',
+                onTap: () {
+                  if (user != null) {
+                    // Start editing when logged in
+                    context.read<PostViewModel>().startEditing(
+                          post: selectedPost,
+                          author: user,
+                        );
+                  } else {
+                    // Copy link when not logged in
+                    _copyLink(context);
+                  }
                 },
-                tooltip: 'Edit Post',
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: Spacing.d12),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(
-                        color: theme.dividerColor,
-                        width: 1.0,
+                builder: (context, state) {
+                  final isHovering = state == TappableState.hover ||
+                      state == TappableState.pressed ||
+                      state == TappableState.focus;
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      border: Border(
+                        right: BorderSide(
+                          color: theme.dividerColor,
+                          width: 1.0,
+                        ),
                       ),
                     ),
-                  ),
-                  child: ImageView(
-                    Assets.copy01,
-                    size: Spacing.d16,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
+                    padding: EdgeInsets.only(
+                      left: Spacing.d16,
+                    ),
+                    alignment: Alignment.center,
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          right: isHovering ? Spacing.d8 : Spacing.d16,
+                        ),
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              WidgetSpan(
+                                child: Container(
+                                  width: Spacing.d16,
+                                  height: Spacing.d16,
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(right: Spacing.d8),
+                                  child: ImageView(
+                                    Assets.bookOpen01,
+                                    size: Spacing.d16,
+                                    color: theme.primaryColor,
+                                  ),
+                                ),
+                              ),
+                              TextSpan(
+                                text: selectedPost.fileName,
+                              ),
+                              WidgetSpan(
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 200),
+                                  child: isHovering
+                                      ? Padding(
+                                          padding: EdgeInsets.only(
+                                            left: Spacing.d8,
+                                          ),
+                                          child: ImageView(
+                                            user != null
+                                                ? Assets.pencilEdit02
+                                                : Assets.link04,
+                                            color: theme.colorScheme.onSurface,
+                                            size: Spacing.d16,
+                                          ),
+                                        )
+                                      : const SizedBox.shrink(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -160,4 +134,14 @@ class EditorHeader extends StatelessWidget {
       ),
     );
   }
+
+  void _copyLink(BuildContext context) {
+    final link = 'https://sofluffy.io/${selectedPost.slug}.md';
+    Clipboard.setData(ClipboardData(text: link));
+    context.toast(
+      'Copied to clipboard',
+      type: MessageType.success,
+    );
+  }
 }
+

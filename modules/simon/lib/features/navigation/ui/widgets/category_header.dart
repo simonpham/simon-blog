@@ -33,11 +33,11 @@ class CategoryHeader extends StatelessWidget {
                 return const SizedBox.shrink();
               }
               return Tappable(
-                onTap: () async {
-                  await PostEditorDialog.show(
-                    context,
-                    author: user,
-                  );
+                onTap: () {
+                  // Start editing a new post
+                  context.read<PostViewModel>().startEditing(
+                        author: user,
+                      );
                 },
                 tooltip: 'New Post',
                 child: ImageView(
@@ -53,3 +53,4 @@ class CategoryHeader extends StatelessWidget {
     );
   }
 }
+

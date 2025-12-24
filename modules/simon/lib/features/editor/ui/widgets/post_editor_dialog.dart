@@ -23,12 +23,16 @@ class PostEditorDialog extends StatefulWidget {
     Post? post,
     required User author,
   }) async {
+    final model = context.read<PostViewModel>();
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => PostEditorDialog(
-        post: post,
-        author: author,
+      builder: (context) => ChangeNotifierProvider.value(
+        value: model,
+        child: PostEditorDialog(
+          post: post,
+          author: author,
+        ),
       ),
     );
     return result ?? false;

@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     super.initState();
     _listenable.addListener(_handleSizeChanged);
     _postViewModel.loadPosts();
+    _postViewModel.addListener(_handleEditingChanged);
     _chatViewModel.init();
 
     // Set initial visibility states
@@ -93,9 +94,18 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     _handleSizeChanged();
   }
 
+  /// Auto-show right pane when entering edit mode
+  void _handleEditingChanged() {
+    if (_postViewModel.isEditing) {
+      _controller.rootController.show(IdePane.right.id);
+      _isRightPanelExpandedNotifier.value = true;
+    }
+  }
+
   @override
   void dispose() {
     _listenable.removeListener(_handleSizeChanged);
+    _postViewModel.removeListener(_handleEditingChanged);
     _postViewModel.dispose();
     _chatViewModel.dispose();
     _authViewModel.dispose();
@@ -192,9 +202,10 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
             Expanded(
               child: PaneTheme(
                 data: PaneThemeData(
-                  resizerColor: Colors.transparent,
+                  resizerColor: context.theme.dividerColor,
                   resizerHoverColor: context.theme.colorScheme.primary,
                   resizerThickness: 1.0,
+                  resizerHitTestThickness: 1.0,
                 ),
                 child: IdeLayout(
                   controller: _controller,
@@ -206,9 +217,12 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
                   );
                 },
                 rightPanelBuilder: (context) {
-                  return ChangeNotifierProvider.value(
-                    value: _chatViewModel,
-                    builder: (context, _) => const ChatPanel(),
+                  return MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider.value(value: _postViewModel),
+                      ChangeNotifierProvider.value(value: _chatViewModel),
+                    ],
+                    child: const _RightPanelContent(),
                   );
                 },
                 bottomPanelBuilder: (context) {
@@ -270,6 +284,64 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Right panel content that shows metadata + chat when editing,
+/// or just chat when viewing.
+class _RightPanelContent extends StatefulWidget {
+  const _RightPanelContent();
+
+  @override
+  State<_RightPanelContent> createState() => _RightPanelContentState();
+}
+
+class _RightPanelContentState extends State<_RightPanelContent> {
+  static const _metadataPaneId = 'metadata';
+  static const _chatPaneId = 'chat';
+
+  late final PaneController _paneController;
+
+  @override
+  void initState() {
+    super.initState();
+    _paneController = PaneController(
+      entries: [
+        PaneEntry(id: _metadataPaneId, initialSize: PaneSize.fraction(0.4)),
+        PaneEntry(id: _chatPaneId, initialSize: PaneSize.fraction(0.6)),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _paneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isEditing = context.select<PostViewModel, bool>(
+      (vm) => vm.isEditing,
+    );
+
+    // When not editing, just show the chat panel
+    if (!isEditing) {
+      return const ChatPanel();
+    }
+
+    // When editing, split between metadata and chat
+    return MultiPane(
+      direction: Axis.vertical,
+      controller: _paneController,
+      paneBuilder: (context, paneId) {
+        return switch (paneId) {
+          _metadataPaneId => const PostMetadataPanel(),
+          _chatPaneId => const ChatPanel(),
+          _ => const SizedBox.shrink(),
+        };
+      },
     );
   }
 }
