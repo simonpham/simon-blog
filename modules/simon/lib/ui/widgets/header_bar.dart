@@ -2,11 +2,13 @@ import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:icons/icons.dart';
-import 'package:ide_layout/ide_layout.dart';
 import 'package:simon/simon.dart';
 
 class HeaderBar extends StatelessWidget {
   final VoidCallback onSearchTap;
+
+  /// Maximum width for the left panel search box
+  static const double _maxSearchWidth = 300.0;
 
   const HeaderBar({
     super.key,
@@ -90,7 +92,7 @@ class HeaderBar extends StatelessWidget {
                   constraints: BoxConstraints(
                     minHeight: Spacing.d32,
                     maxWidth: SettingsBox().screenSize > ScreenSize.normal
-                        ? LeftPanel.maxWidth
+                        ? _maxSearchWidth
                         : Spacing.d40,
                   ),
                   decoration: ShapeDecoration(

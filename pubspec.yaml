@@ -9,7 +9,6 @@ workspace:
   - packages/core_remote_data
   - packages/core_remote_data_pb
   - packages/icons
-  - packages/ide_layout
   - packages/l10n
   - packages/platform_utils
   - packages/ui_file_tree

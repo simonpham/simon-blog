@@ -21,8 +21,6 @@ dependencies:
     path: ../../packages/design_system
   icons:
     path: ../../packages/icons
-  ide_layout:
-    path: ../../packages/ide_layout
   l10n:
     path: ../../packages/l10n
   platform_utils:
@@ -33,6 +31,8 @@ dependencies:
     path: ../../packages/ui_markdown
   utils:
     path: ../../packages/utils
+
+  panes: ^1.0.0
 
 flutter:
   uses-material-design: true

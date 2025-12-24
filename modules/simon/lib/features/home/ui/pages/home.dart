@@ -1,7 +1,7 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:ide_layout/ide_layout.dart';
+import 'package:panes/panes.dart';
 import 'package:simon/simon.dart';
 
 class HomePage extends StatefulWidget {
@@ -55,48 +55,10 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
         false,
       );
 
-  late final IdeLayoutController controller = IdeLayoutController.create(
-    onPanelStateChanged: (IdePanel panel, bool isExpanded) {
-      switch (panel) {
-        case IdePanel.leftPanel:
-          _isLeftPanelExpandedNotifier.value = isExpanded;
-          break;
-        case IdePanel.rightPanel:
-          _isRightPanelExpandedNotifier.value = isExpanded;
-          break;
-        case IdePanel.bottomPanel:
-          _isBottomPanelExpandedNotifier.value = isExpanded;
-          break;
-      }
-    },
-    leftPanel: (BuildContext context) {
-      return ChangeNotifierProvider.value(
-        value: _postViewModel,
-        child: const PostBrowser(),
-      );
-    },
-    rightPanel: (BuildContext context) {
-      return ChangeNotifierProvider.value(
-        value: _chatViewModel,
-        builder: (context, _) => const ChatPanel(),
-      );
-    },
-    bottomPanel: (BuildContext context) {
-      return ChangeNotifierProvider.value(
-        value: _postViewModel,
-        builder: (context, _) => CommentPanel(
-          post: context.select<PostViewModel, Post?>(
-            (viewModel) => viewModel.selectedPost?.data,
-          ),
-        ),
-      );
-    },
-    content: (BuildContext context) {
-      return ChangeNotifierProvider.value(
-        value: _postViewModel,
-        child: const PostContent(),
-      );
-    },
+  late final IdeController _controller = IdeController(
+    leftSize: PaneSize.pixel(250),
+    rightSize: PaneSize.pixel(250),
+    bottomSize: PaneSize.pixel(150),
   );
 
   Listenable get _listenable => [CoreSettings.screenSize].of(SettingsBox());
@@ -107,6 +69,11 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     _listenable.addListener(_handleSizeChanged);
     _postViewModel.loadPosts();
     _chatViewModel.init();
+
+    // Set initial visibility states
+    _isLeftPanelExpandedNotifier.value = true;
+    _isRightPanelExpandedNotifier.value = false;
+    _isBottomPanelExpandedNotifier.value = false;
 
     final currentPostId = widget.postId;
     if (currentPostId != null && currentPostId.isNotEmpty) {
@@ -132,6 +99,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     _postViewModel.dispose();
     _chatViewModel.dispose();
     _authViewModel.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -167,16 +135,53 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
       return;
     }
     final screenSize = MediaQuery.sizeOf(context);
-    controller.handleWindowSizedChanged(screenSize);
+
+    // The panes package handles visibility via callbacks, 
+    // we just need to respond to window size changes appropriately
+    if (screenSize.width < 800) {
+      _controller.rootController.hide(IdePane.left.id);
+      _isLeftPanelExpandedNotifier.value = false;
+    } else if (!_isLeftPanelExpandedNotifier.value) {
+      _controller.rootController.show(IdePane.left.id);
+      _isLeftPanelExpandedNotifier.value = true;
+    }
+
+    if (screenSize.width < 600) {
+      _controller.rootController.hide(IdePane.right.id);
+      _isRightPanelExpandedNotifier.value = false;
+    }
+  }
+
+  void _handlePaneStateChanged(IdePane pane, bool isVisible) {
+    switch (pane) {
+      case IdePane.left:
+        _isLeftPanelExpandedNotifier.value = isVisible;
+        break;
+      case IdePane.right:
+        _isRightPanelExpandedNotifier.value = isVisible;
+        break;
+      case IdePane.bottom:
+        _isBottomPanelExpandedNotifier.value = isVisible;
+        break;
+      default:
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    const dividerThickness = 1.0;
+    final dividerColor = context.theme.dividerColor;
+    final divider = Container(
+      color: dividerColor,
+      height: dividerThickness,
+      width: double.infinity,
+    );
+
     return Scaffold(
-      body: IdeLayout(
-        controller: controller,
-        topBar: (BuildContext context) {
-          return ChangeNotifierProvider.value(
+      body: Column(
+        children: [
+          ChangeNotifierProvider.value(
             value: _authViewModel,
             builder: (context, model) {
               return HeaderBar(
@@ -185,10 +190,51 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
                 },
               );
             },
-          );
-        },
-        bottomBar: (BuildContext context) {
-          return ChangeNotifierProvider.value(
+          ),
+          divider,
+          Expanded(
+            child: PaneTheme(
+              data: PaneThemeData(
+                resizerColor: Colors.transparent,
+                resizerHoverColor: context.theme.colorScheme.primary,
+                resizerThickness: 1.0,
+              ),
+              child: IdeLayout(
+                controller: _controller,
+                onPaneStateChanged: _handlePaneStateChanged,
+              leftPanelBuilder: (context) {
+                return ChangeNotifierProvider.value(
+                  value: _postViewModel,
+                  child: const PostBrowser(),
+                );
+              },
+              rightPanelBuilder: (context) {
+                return ChangeNotifierProvider.value(
+                  value: _chatViewModel,
+                  builder: (context, _) => const ChatPanel(),
+                );
+              },
+              bottomPanelBuilder: (context) {
+                return ChangeNotifierProvider.value(
+                  value: _postViewModel,
+                  builder: (context, _) => CommentPanel(
+                    post: context.select<PostViewModel, Post?>(
+                      (viewModel) => viewModel.selectedPost?.data,
+                    ),
+                  ),
+                );
+              },
+              centerBuilder: (context) {
+                return ChangeNotifierProvider.value(
+                  value: _postViewModel,
+                  child: const PostContent(),
+                );
+              },
+            ),
+          ),
+        ),
+          divider,
+          ChangeNotifierProvider.value(
             value: _postViewModel,
             builder: (context, model) {
               final currentMessage = context.select(
@@ -209,13 +255,13 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
                     onAction: (action) {
                       switch (action) {
                         case StatusBarAction.toggleLeftPanel:
-                          controller.toggle(IdePanel.leftPanel);
+                          _controller.toggleLeft();
                           break;
                         case StatusBarAction.toggleRightPanel:
-                          controller.toggle(IdePanel.rightPanel);
+                          _controller.toggleRight();
                           break;
                         case StatusBarAction.toggleBottomPanel:
-                          controller.toggle(IdePanel.bottomPanel);
+                          _controller.toggleBottom();
                           break;
                       }
                     },
@@ -223,8 +269,8 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
                 },
               );
             },
-          );
-        },
+          ),
+        ],
       ),
     );
   }
