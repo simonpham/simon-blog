@@ -360,6 +360,12 @@ class RestNowisPostApis implements PostApis {
     throw UnimplementedError();
   }
 
+  @override
+  FutureOr<Post> createPost(Post post) => add(post);
+
+  @override
+  FutureOr<Post> updatePost(Post post) => update(post);
+
   Future<void> _healthCheck() async {
     if (_localAppId.isNotEmpty && _localAppVersionRef.isNotEmpty) {
       return;

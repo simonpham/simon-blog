@@ -132,4 +132,105 @@ class PostViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// Creates a new post (admin only).
+  Future<Failure?> createPost({
+    required String title,
+    required String content,
+    required User author,
+    String summary = '',
+    List<String> tags = const [],
+    PostVisibility visibility = PostVisibility.private,
+    PostStatus status = PostStatus.draft,
+  }) async {
+    _statusBarMessage = const StatusBarMessage(
+      type: MessageType.info,
+      message: 'Creating post...',
+    );
+    notifyListeners();
+
+    try {
+      final newPost = Post.newPost(
+        title: title,
+        content: content,
+        summary: summary,
+        author: author,
+        tags: tags,
+        visibility: visibility,
+        status: status,
+      );
+
+      final createdPost = await _postApis.createPost(newPost);
+      _statusBarMessage = const StatusBarMessage(
+        type: MessageType.success,
+        message: 'Post created successfully',
+      );
+      _selectedPost = RxStatus.data(createdPost);
+      notifyListeners();
+
+      // Refresh posts list
+      refresh();
+      return null;
+    } catch (err, trace) {
+      printError(err, trace);
+      _statusBarMessage = const StatusBarMessage(
+        type: MessageType.error,
+        message: 'Failed to create post',
+      );
+      notifyListeners();
+      return Failure('Failed to create post: $err');
+    }
+  }
+
+  /// Updates an existing post (admin only).
+  Future<Failure?> updateCurrentPost({
+    String? title,
+    String? content,
+    String? summary,
+    List<String>? tags,
+    PostVisibility? visibility,
+    PostStatus? status,
+  }) async {
+    final currentPost = _selectedPost?.data;
+    if (currentPost == null) {
+      return const Failure('No post selected');
+    }
+
+    _statusBarMessage = const StatusBarMessage(
+      type: MessageType.info,
+      message: 'Saving post...',
+    );
+    notifyListeners();
+
+    try {
+      final updatedPost = currentPost.copyWith(
+        title: title,
+        content: content,
+        summary: summary,
+        tags: tags,
+        visibility: visibility,
+        status: status,
+      );
+
+      final savedPost = await _postApis.updatePost(updatedPost);
+      _statusBarMessage = const StatusBarMessage(
+        type: MessageType.success,
+        message: 'Post saved successfully',
+      );
+      _selectedPost = RxStatus.data(savedPost);
+      notifyListeners();
+
+      // Refresh posts list
+      refresh();
+      return null;
+    } catch (err, trace) {
+      printError(err, trace);
+      _statusBarMessage = const StatusBarMessage(
+        type: MessageType.error,
+        message: 'Failed to save post',
+      );
+      notifyListeners();
+      return Failure('Failed to save post: $err');
+    }
+  }
 }

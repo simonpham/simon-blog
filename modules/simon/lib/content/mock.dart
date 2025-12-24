@@ -200,6 +200,12 @@ class MockPostApis implements PostApis {
   }) {
     return [];
   }
+
+  @override
+  FutureOr<Post> createPost(Post post) => add(post);
+
+  @override
+  FutureOr<Post> updatePost(Post post) => update(post);
 }
 
 class MockCommentApis implements CommentApis {

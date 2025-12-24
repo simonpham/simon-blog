@@ -1,8 +1,9 @@
-import 'package:core/models/post.dart';
+import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icons/icons.dart';
+import 'package:simon/simon.dart';
 
 class EditorHeader extends StatelessWidget {
   final Post selectedPost;
@@ -38,7 +39,7 @@ class EditorHeader extends StatelessWidget {
             },
             builder: (context, state) {
               final shouldShowIcon =
-                  state == .hover || state == .pressed || state == .focus;
+                  state == TappableState.hover || state == TappableState.pressed || state == TappableState.focus;
               return Container(
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
@@ -105,6 +106,42 @@ class EditorHeader extends StatelessWidget {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
+                  ),
+                ),
+              );
+            },
+          ),
+          // Edit button - visible when admin logged in
+          Builder(
+            builder: (context) {
+              final user = context.select((AuthViewModel model) => model.user);
+              if (user == null) {
+                return const SizedBox.shrink();
+              }
+              return Tappable(
+                onTap: () async {
+                  await PostEditorDialog.show(
+                    context,
+                    post: selectedPost,
+                    author: user,
+                  );
+                },
+                tooltip: 'Edit Post',
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: Spacing.d12),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: BorderSide(
+                        color: theme.dividerColor,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  child: ImageView(
+                    Assets.copy01,
+                    size: Spacing.d16,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
               );

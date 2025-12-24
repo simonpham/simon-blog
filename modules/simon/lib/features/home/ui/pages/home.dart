@@ -178,99 +178,97 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
       width: double.infinity,
     );
 
-    return Scaffold(
-      body: Column(
-        children: [
-          ChangeNotifierProvider.value(
-            value: _authViewModel,
-            builder: (context, model) {
-              return HeaderBar(
-                onSearchTap: () {
-                  // Implement search functionality here
+    return ChangeNotifierProvider.value(
+      value: _authViewModel,
+      child: Scaffold(
+        body: Column(
+          children: [
+            HeaderBar(
+              onSearchTap: () {
+                // Implement search functionality here
+              },
+            ),
+            divider,
+            Expanded(
+              child: PaneTheme(
+                data: PaneThemeData(
+                  resizerColor: Colors.transparent,
+                  resizerHoverColor: context.theme.colorScheme.primary,
+                  resizerThickness: 1.0,
+                ),
+                child: IdeLayout(
+                  controller: _controller,
+                  onPaneStateChanged: _handlePaneStateChanged,
+                leftPanelBuilder: (context) {
+                  return ChangeNotifierProvider.value(
+                    value: _postViewModel,
+                    child: const PostBrowser(),
+                  );
                 },
-              );
-            },
-          ),
-          divider,
-          Expanded(
-            child: PaneTheme(
-              data: PaneThemeData(
-                resizerColor: Colors.transparent,
-                resizerHoverColor: context.theme.colorScheme.primary,
-                resizerThickness: 1.0,
-              ),
-              child: IdeLayout(
-                controller: _controller,
-                onPaneStateChanged: _handlePaneStateChanged,
-              leftPanelBuilder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: _postViewModel,
-                  child: const PostBrowser(),
-                );
-              },
-              rightPanelBuilder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: _chatViewModel,
-                  builder: (context, _) => const ChatPanel(),
-                );
-              },
-              bottomPanelBuilder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: _postViewModel,
-                  builder: (context, _) => CommentPanel(
-                    post: context.select<PostViewModel, Post?>(
-                      (viewModel) => viewModel.selectedPost?.data,
+                rightPanelBuilder: (context) {
+                  return ChangeNotifierProvider.value(
+                    value: _chatViewModel,
+                    builder: (context, _) => const ChatPanel(),
+                  );
+                },
+                bottomPanelBuilder: (context) {
+                  return ChangeNotifierProvider.value(
+                    value: _postViewModel,
+                    builder: (context, _) => CommentPanel(
+                      post: context.select<PostViewModel, Post?>(
+                        (viewModel) => viewModel.selectedPost?.data,
+                      ),
                     ),
-                  ),
+                  );
+                },
+                centerBuilder: (context) {
+                  return ChangeNotifierProvider.value(
+                    value: _postViewModel,
+                    child: const PostContent(),
+                  );
+                },
+              ),
+            ),
+          ),
+            divider,
+            ChangeNotifierProvider.value(
+              value: _postViewModel,
+              builder: (context, model) {
+                final currentMessage = context.select(
+                  (PostViewModel model) => model.statusBarMessage,
                 );
-              },
-              centerBuilder: (context) {
-                return ChangeNotifierProvider.value(
-                  value: _postViewModel,
-                  child: const PostContent(),
+                return MultiValueListenableBuilder(
+                  listenables: [
+                    _isLeftPanelExpandedNotifier,
+                    _isRightPanelExpandedNotifier,
+                    _isBottomPanelExpandedNotifier,
+                  ],
+                  builder: (context) {
+                    return StatusBar(
+                      isLeftPanelOpen: _isLeftPanelExpandedNotifier.value,
+                      isRightPanelOpen: _isRightPanelExpandedNotifier.value,
+                      isBottomPanelOpen: _isBottomPanelExpandedNotifier.value,
+                      message: currentMessage,
+                      onAction: (action) {
+                        switch (action) {
+                          case StatusBarAction.toggleLeftPanel:
+                            _controller.toggleLeft();
+                            break;
+                          case StatusBarAction.toggleRightPanel:
+                            _controller.toggleRight();
+                            break;
+                          case StatusBarAction.toggleBottomPanel:
+                            _controller.toggleBottom();
+                            break;
+                        }
+                      },
+                    );
+                  },
                 );
               },
             ),
-          ),
+          ],
         ),
-          divider,
-          ChangeNotifierProvider.value(
-            value: _postViewModel,
-            builder: (context, model) {
-              final currentMessage = context.select(
-                (PostViewModel model) => model.statusBarMessage,
-              );
-              return MultiValueListenableBuilder(
-                listenables: [
-                  _isLeftPanelExpandedNotifier,
-                  _isRightPanelExpandedNotifier,
-                  _isBottomPanelExpandedNotifier,
-                ],
-                builder: (context) {
-                  return StatusBar(
-                    isLeftPanelOpen: _isLeftPanelExpandedNotifier.value,
-                    isRightPanelOpen: _isRightPanelExpandedNotifier.value,
-                    isBottomPanelOpen: _isBottomPanelExpandedNotifier.value,
-                    message: currentMessage,
-                    onAction: (action) {
-                      switch (action) {
-                        case StatusBarAction.toggleLeftPanel:
-                          _controller.toggleLeft();
-                          break;
-                        case StatusBarAction.toggleRightPanel:
-                          _controller.toggleRight();
-                          break;
-                        case StatusBarAction.toggleBottomPanel:
-                          _controller.toggleBottom();
-                          break;
-                      }
-                    },
-                  );
-                },
-              );
-            },
-          ),
-        ],
       ),
     );
   }

@@ -8,4 +8,10 @@ abstract interface class PostApis implements BaseRepository<Post> {
   FutureOr<List<TagSidebar>> getSidebarPostsByTags({
     String? tagNameFilter,
   });
+
+  /// Creates a new post (admin only).
+  FutureOr<Post> createPost(Post post);
+
+  /// Updates an existing post (admin only).
+  FutureOr<Post> updatePost(Post post);
 }
