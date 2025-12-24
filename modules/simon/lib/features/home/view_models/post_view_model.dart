@@ -31,6 +31,33 @@ class PostViewModel extends ChangeNotifier {
 
   StatusBarMessage? get statusBarMessage => _statusBarMessage;
 
+  // Edit mode state
+  bool _isEditing = false;
+  bool get isEditing => _isEditing;
+
+  Post? _editingPost;
+  Post? get editingPost => _editingPost;
+
+  User? _editingAuthor;
+  User? get editingAuthor => _editingAuthor;
+
+  /// Starts editing a post. If post is null, creates a new post.
+  void startEditing({Post? post, required User author}) {
+    _isEditing = true;
+    _editingPost = post;
+    _editingAuthor = author;
+    notifyListeners();
+  }
+
+  /// Cancels editing mode without saving.
+  void cancelEditing() {
+    _isEditing = false;
+    _editingPost = null;
+    _editingAuthor = null;
+    notifyListeners();
+  }
+
+
   void refresh() {
     _nextPage = OffsetLimitPagination.initial();
     loadPosts();
