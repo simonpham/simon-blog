@@ -12,8 +12,13 @@ import 'package:markdown_widget/markdown_widget.dart';
 
 class MarkdownContent extends StatelessWidget {
   final String content;
+  final bool shrinkWrap;
 
-  const MarkdownContent(this.content);
+  const MarkdownContent(
+    this.content, {
+    super.key,
+    this.shrinkWrap = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +107,7 @@ class MarkdownContent extends StatelessWidget {
         vertical: Spacing.d16,
         horizontal: Spacing.d24,
       ),
+      shrinkWrap: shrinkWrap,
       data: content,
     );
   }
