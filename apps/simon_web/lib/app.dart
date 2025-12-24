@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:simon_web/router.dart';
 
 class SimonWeb extends StatelessWidget {
-  const SimonWeb({super.key});
+  final AppTheme appTheme;
+
+  const SimonWeb({super.key, required this.appTheme});
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +21,11 @@ class SimonWeb extends StatelessWidget {
         builder: (context, _, _) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            theme: ThemeConfigs().theme.getTheme(
+            theme: appTheme.getTheme(
               isDark: false,
               fontFamily: kAppFontFamily,
             ),
-            darkTheme: ThemeConfigs().theme.getTheme(
+            darkTheme: appTheme.getTheme(
               isDark: true,
               fontFamily: kAppFontFamily,
             ),

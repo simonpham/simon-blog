@@ -13,7 +13,7 @@ Future<void> main() async {
 
   usePathUrlStrategy();
 
-  await ThemeConfigs().init();
+  final appTheme = await ThemeLoader.loadDefault();
 
   await injector.reset();
   await Injector.init();
@@ -23,6 +23,6 @@ Future<void> main() async {
   await SettingsBox().init();
 
   runApp(
-    const SimonWeb(),
+    SimonWeb(appTheme: appTheme),
   );
 }
