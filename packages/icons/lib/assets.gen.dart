@@ -26,6 +26,7 @@ class Assets {
   static const String informationSquare = 'assets/information-square.svg';
   static const String link04 = 'assets/link-04.svg';
   static const String messageProgramming = 'assets/message-programming.svg';
+  static const String pencilEdit02 = 'assets/pencil-edit-02.svg';
   static const String search = 'assets/search.svg';
   static const String sent = 'assets/sent.svg';
   static const String share05 = 'assets/share-05.svg';
@@ -48,6 +49,7 @@ class Assets {
     informationSquare,
     link04,
     messageProgramming,
+    pencilEdit02,
     search,
     sent,
     share05,
