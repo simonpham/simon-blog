@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/services.dart';
@@ -87,6 +89,8 @@ class _LoginFrameState extends State<LoginFrame> {
       context.toastError(failure.message);
       return;
     }
+
+    unawaited(model.loadUser());
 
     context.toast('Login successful', type: MessageType.success);
     context.navigator.pop();
