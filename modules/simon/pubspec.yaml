@@ -32,7 +32,7 @@ dependencies:
   utils:
     path: ../../packages/utils
 
-  panes: ^1.0.0
+  panes: ^1.1.0
 
 flutter:
   uses-material-design: true
