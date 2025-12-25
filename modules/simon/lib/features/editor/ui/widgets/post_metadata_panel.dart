@@ -252,7 +252,9 @@ class _PostMetadataPanelState extends State<PostMetadataPanel> {
                           )
                         : Text(
                             isEditing ? 'Save' : 'Create',
-                            style: TextStyle(color: theme.colorScheme.onPrimary),
+                            style: TextStyle(
+                              color: theme.colorScheme.onPrimary,
+                            ),
                           ),
                   ),
                 ),

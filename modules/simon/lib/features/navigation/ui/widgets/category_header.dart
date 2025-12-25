@@ -36,8 +36,8 @@ class CategoryHeader extends StatelessWidget {
                 onTap: () {
                   // Start editing a new post
                   context.read<PostViewModel>().startEditing(
-                        author: user,
-                      );
+                    author: user,
+                  );
                 },
                 tooltip: 'New Post',
                 child: ImageView(
@@ -53,4 +53,3 @@ class CategoryHeader extends StatelessWidget {
     );
   }
 }
-

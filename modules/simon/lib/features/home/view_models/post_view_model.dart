@@ -57,7 +57,6 @@ class PostViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-
   void refresh() {
     _nextPage = OffsetLimitPagination.initial();
     loadPosts();

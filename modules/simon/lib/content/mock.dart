@@ -72,7 +72,7 @@ class MockAuthApis implements AuthApis {
     required String password,
   }) {
     if (username == 'simon' && password == 'password') {
-      return AuthTokens(
+      return const AuthTokens(
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
       );

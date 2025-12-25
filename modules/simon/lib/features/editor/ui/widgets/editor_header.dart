@@ -35,16 +35,17 @@ class EditorHeader extends StatelessWidget {
                   if (user != null) {
                     // Start editing when logged in
                     context.read<PostViewModel>().startEditing(
-                          post: selectedPost,
-                          author: user,
-                        );
+                      post: selectedPost,
+                      author: user,
+                    );
                   } else {
                     // Copy link when not logged in
                     _copyLink(context);
                   }
                 },
                 builder: (context, state) {
-                  final isHovering = state == TappableState.hover ||
+                  final isHovering =
+                      state == TappableState.hover ||
                       state == TappableState.pressed ||
                       state == TappableState.focus;
                   return Container(
@@ -144,4 +145,3 @@ class EditorHeader extends StatelessWidget {
     );
   }
 }
-

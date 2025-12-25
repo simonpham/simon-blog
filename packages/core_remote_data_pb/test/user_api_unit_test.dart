@@ -19,8 +19,10 @@ class FakeResponseFuture<T> implements ResponseFuture<T> {
       _future.catchError(onError, test: test);
 
   @override
-  Future<S> then<S>(FutureOr<S> Function(T value) onValue, {Function? onError}) =>
-      _future.then(onValue, onError: onError);
+  Future<S> then<S>(
+    FutureOr<S> Function(T value) onValue, {
+    Function? onError,
+  }) => _future.then(onValue, onError: onError);
 
   @override
   Future<T> whenComplete(FutureOr<void> Function() action) =>
@@ -42,42 +44,66 @@ class FakeResponseFuture<T> implements ResponseFuture<T> {
 
 class MockNowisServiceClient implements pb.NowisServiceClient {
   @override
-  ResponseFuture<pb.CreateCommentResponse> createComment(pb.CreateCommentRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.CreateCommentResponse> createComment(
+    pb.CreateCommentRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.CreatePostResponse> createPost(pb.CreatePostRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.CreatePostResponse> createPost(
+    pb.CreatePostRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.GetPostCommentsResponse> getPostComments(pb.GetPostCommentsRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.GetPostCommentsResponse> getPostComments(
+    pb.GetPostCommentsRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.GetPostByIdResponse> getPostById(pb.GetPostByIdRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.GetPostByIdResponse> getPostById(
+    pb.GetPostByIdRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.GetPostBySlugResponse> getPostBySlug(pb.GetPostBySlugRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.GetPostBySlugResponse> getPostBySlug(
+    pb.GetPostBySlugRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.GetPostsResponse> getPosts(pb.GetPostsRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.GetPostsResponse> getPosts(
+    pb.GetPostsRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.GetSidebarPostsByTagsResponse> getSidebarPostsByTags(pb.GetSidebarPostsByTagsRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.GetSidebarPostsByTagsResponse> getSidebarPostsByTags(
+    pb.GetSidebarPostsByTagsRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.GetUserResponse> getUser(pb.GetUserRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.GetUserResponse> getUser(
+    pb.GetUserRequest request, {
+    CallOptions? options,
+  }) {
     final user = pb.User(
       id: request.id,
       username: 'testuser',
@@ -90,27 +116,45 @@ class MockNowisServiceClient implements pb.NowisServiceClient {
   }
 
   @override
-  ResponseFuture<pb.HealthCheckResponse> healthCheck(pb.HealthCheckRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.HealthCheckResponse> healthCheck(
+    pb.HealthCheckRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<pb.UpdatePostResponse> updatePost(pb.UpdatePostRequest request, {CallOptions? options}) {
+  ResponseFuture<pb.UpdatePostResponse> updatePost(
+    pb.UpdatePostRequest request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ClientCall<Q, R> $createCall<Q, R>(ClientMethod<Q, R> method, Stream<Q> requests, {CallOptions? options}) {
+  ClientCall<Q, R> $createCall<Q, R>(
+    ClientMethod<Q, R> method,
+    Stream<Q> requests, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseFuture<R> $createUnaryCall<Q, R>(ClientMethod<Q, R> method, Q request, {CallOptions? options}) {
+  ResponseFuture<R> $createUnaryCall<Q, R>(
+    ClientMethod<Q, R> method,
+    Q request, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  ResponseStream<R> $createStreamingCall<Q, R>(ClientMethod<Q, R> method, Stream<Q> requests, {CallOptions? options}) {
+  ResponseStream<R> $createStreamingCall<Q, R>(
+    ClientMethod<Q, R> method,
+    Stream<Q> requests, {
+    CallOptions? options,
+  }) {
     throw UnimplementedError();
   }
 }

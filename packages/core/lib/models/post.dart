@@ -79,6 +79,7 @@ class Post {
       readTimeMinutes: 0,
     );
   }
+
   Post copyWith({
     String? id,
     String? title,

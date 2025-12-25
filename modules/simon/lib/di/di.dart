@@ -1,7 +1,6 @@
 import 'package:core/core.dart';
 import 'package:core_remote_data/core_remote_data.dart';
 import 'package:core_remote_data_pb/core_remote_data_pb.dart';
-import 'package:simon/content/content.dart';
 
 class Injector {
   static Future<void> init() async {

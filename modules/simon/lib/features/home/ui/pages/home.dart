@@ -216,40 +216,40 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
                 child: IdeLayout(
                   controller: _controller,
                   onPaneStateChanged: _handlePaneStateChanged,
-                leftPanelBuilder: (context) {
-                  return ChangeNotifierProvider.value(
-                    value: _postViewModel,
-                    child: const PostBrowser(),
-                  );
-                },
-                rightPanelBuilder: (context) {
-                  return MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider.value(value: _postViewModel),
-                      ChangeNotifierProvider.value(value: _chatViewModel),
-                    ],
-                    child: const _RightPanelContent(),
-                  );
-                },
-                bottomPanelBuilder: (context) {
-                  return ChangeNotifierProvider.value(
-                    value: _postViewModel,
-                    builder: (context, _) => CommentPanel(
-                      post: context.select<PostViewModel, Post?>(
-                        (viewModel) => viewModel.selectedPost?.data,
+                  leftPanelBuilder: (context) {
+                    return ChangeNotifierProvider.value(
+                      value: _postViewModel,
+                      child: const PostBrowser(),
+                    );
+                  },
+                  rightPanelBuilder: (context) {
+                    return MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider.value(value: _postViewModel),
+                        ChangeNotifierProvider.value(value: _chatViewModel),
+                      ],
+                      child: const _RightPanelContent(),
+                    );
+                  },
+                  bottomPanelBuilder: (context) {
+                    return ChangeNotifierProvider.value(
+                      value: _postViewModel,
+                      builder: (context, _) => CommentPanel(
+                        post: context.select<PostViewModel, Post?>(
+                          (viewModel) => viewModel.selectedPost?.data,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                centerBuilder: (context) {
-                  return ChangeNotifierProvider.value(
-                    value: _postViewModel,
-                    child: const PostContent(),
-                  );
-                },
+                    );
+                  },
+                  centerBuilder: (context) {
+                    return ChangeNotifierProvider.value(
+                      value: _postViewModel,
+                      child: const PostContent(),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
             divider,
             ChangeNotifierProvider.value(
               value: _postViewModel,

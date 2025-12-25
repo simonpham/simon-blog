@@ -247,4 +247,3 @@ class PostEditorData {
     required this.content,
   });
 }
-

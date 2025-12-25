@@ -94,7 +94,7 @@ void main() {
       expect(result, isA<List<Comment>>());
     });
 
-    String _accessToken = '';
+    String accessToken = '';
     test('login', () async {
       final result = await nowisAuthApis.login(
         username: 'test@sofluffy.io',
@@ -103,14 +103,14 @@ void main() {
       expect(result, isA<AuthTokens>());
       expect(result!.accessToken, isNotEmpty);
       expect(result.refreshToken, isNotEmpty);
-      _accessToken = result.accessToken;
+      accessToken = result.accessToken;
     });
 
     String createdPostId = '';
 
     test('addPost', () async {
       if (nowisPostApis is NowisPostApis) {
-        nowisPostApis.setAccessToken(_accessToken);
+        nowisPostApis.setAccessToken(accessToken);
       }
       final result = await nowisPostApis.add(
         Post.newPost(
@@ -136,13 +136,13 @@ void main() {
 
     test('updatePost', () async {
       if (nowisPostApis is NowisPostApis) {
-        nowisPostApis.setAccessToken(_accessToken);
+        nowisPostApis.setAccessToken(accessToken);
       }
-      
+
       expect(createdPostId, isNotEmpty);
       final postToUpdate = await nowisPostApis.get(createdPostId);
       expect(postToUpdate, isNotNull);
-      
+
       final updatedPost = postToUpdate!.copyWith(
         title: 'updated test post',
         content: 'updated test content',
@@ -151,7 +151,7 @@ void main() {
       final result = await nowisPostApis.update(updatedPost);
       expect(result, isA<Post>());
       expect(result.title, 'updated test post');
-      
+
       // Verify update
       final fetchedPost = await nowisPostApis.get(postToUpdate.id);
       expect(fetchedPost, isNotNull);
