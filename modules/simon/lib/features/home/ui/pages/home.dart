@@ -57,8 +57,14 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
 
   late final IdeController _controller = IdeController(
     leftSize: PaneSize.pixel(250),
-    rightSize: PaneSize.pixel(250),
-    bottomSize: PaneSize.pixel(150),
+    leftMinSize: PaneSize.pixel(150),
+    leftMaxSize: PaneSize.pixel(500),
+    rightSize: PaneSize.pixel(300),
+    rightMinSize: PaneSize.pixel(150),
+    rightMaxSize: PaneSize.pixel(500),
+    bottomSize: PaneSize.pixel(240),
+    bottomMinSize: PaneSize.pixel(38),
+    bottomMaxSize: PaneSize.pixel(480),
   );
 
   Listenable get _listenable => [CoreSettings.screenSize].of(SettingsBox());
@@ -146,7 +152,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     }
     final screenSize = MediaQuery.sizeOf(context);
 
-    // The panes package handles visibility via callbacks, 
+    // The panes package handles visibility via callbacks,
     // we just need to respond to window size changes appropriately
     if (screenSize.width < 800) {
       _controller.rootController.hide(IdePane.left.id);
