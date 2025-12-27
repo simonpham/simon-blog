@@ -1,7 +1,9 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:icons/icons.dart';
 import 'package:panes/panes.dart';
+import 'package:simon/features/search/view_models/search_view_model.dart';
 import 'package:simon/simon.dart';
 
 class HomePage extends StatefulWidget {
@@ -43,6 +45,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
   final AuthViewModel _authViewModel = AuthViewModel();
   final PostViewModel _postViewModel = PostViewModel();
   final ChatViewModel _chatViewModel = ChatViewModel();
+  final SearchViewModel _searchViewModel = SearchViewModel();
 
   final ValueNotifier<bool> _isLeftPanelExpandedNotifier = ValueNotifier<bool>(
     true,
@@ -115,6 +118,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     _postViewModel.dispose();
     _chatViewModel.dispose();
     _authViewModel.dispose();
+    _searchViewModel.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -184,6 +188,84 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     }
   }
 
+  void _handleSearch() {
+    SearchDialog.show<Post>(
+      context,
+      searchIcon: Assets.search,
+      hintText: 'Sniffing out files and content...',
+      onSearch: _searchViewModel.search,
+      onItemSelected: (post) {
+        HomePage.goToPost(context, identifier: post.fileName);
+      },
+      itemBuilder: (context, post, isSelected) {
+        final theme = context.themeConfigs;
+        final isDark = context.theme.brightness == Brightness.dark;
+
+        return Row(
+          children: [
+            Container(
+              width: Spacing.d40,
+              height: Spacing.d40,
+              decoration: BoxDecoration(
+                color: isDark ? theme.colors.neutral2 : theme.colors.neutral6,
+                borderRadius: Spacing.smoothR8,
+              ),
+              alignment: Alignment.center,
+              child: ImageView(
+                Assets.bookOpen01,
+                size: Spacing.d24,
+                color: isDark ? theme.colors.neutral5 : theme.colors.neutral3,
+              ),
+            ),
+            Spacing.horizontal(Spacing.d12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    post.title,
+                    style: theme.typography.base1.copyWith(
+                      color: isSelected
+                          ? theme.colors.primary
+                          : (isDark
+                                ? theme.colors.neutral1
+                                : theme.colors.neutral7),
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (post.summary.isNotEmpty) ...[
+                    Spacing.v4,
+                    Text(
+                      post.summary,
+                      style: theme.typography.caption1.copyWith(
+                        color: theme.colors.neutral4,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Spacing.h8,
+            if (isSelected) ...[
+              ImageView(
+                Assets.link04,
+                size: Spacing.d16,
+                color: theme.colors.primary,
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const dividerThickness = 1.0;
@@ -200,9 +282,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
         body: Column(
           children: [
             HeaderBar(
-              onSearchTap: () {
-                // Implement search functionality here
-              },
+              onSearchTap: _handleSearch,
             ),
             divider,
             Expanded(
