@@ -120,6 +120,11 @@ class RestNowisPostApis implements PostApis {
   final Completer<void> _healthCheckCompleter = Completer<void>();
   String _localAppId = '';
   String _localAppVersionRef = '';
+  String _accessToken = '';
+
+  void setAccessToken(String value) {
+    _accessToken = value;
+  }
 
   RestNowisPostApis({
     required String host,
@@ -150,6 +155,9 @@ class RestNowisPostApis implements PostApis {
           'visibility': item.visibility.name,
           'tags': item.tags,
         },
+        options: Options(
+          headers: {'Authorization': 'Bearer $_accessToken'},
+        ),
       );
 
       final data = response.data as Map<String, dynamic>;
@@ -157,25 +165,14 @@ class RestNowisPostApis implements PostApis {
         throw Failure(data['message'] ?? 'Failed to create post');
       }
 
-      // TODO: Parse and return the created post from response
-      // For now, we just return the item as if it was created successfully,
-      // but ideally the server should return the created post.
-      // Assuming the server returns the created post in 'data' field.
-      // But the current implementation of add in grpc returns void (or null failure).
-      // Wait, I updated grpc to return Post.
-      // The REST implementation should also return Post.
-      // If the server response doesn't contain the full post, we might need to fetch it or construct it.
-      // Let's assume for now we throw UnimplementedError or try to parse if available.
-      // The current REST implementation was returning null (success).
-
-      // Since I don't have the full REST response structure verified,
-      // and this file seems to be less used (grpc is primary?),
-      // I will update the signature but throw UnimplementedError for now
-      // or just return the item passed in (which is wrong because ID is missing).
-
-      throw UnimplementedError(
-        'REST add post not fully implemented to return Post',
+      final postMap = data['data'] as Map<String, dynamic>;
+      final decryptedContent = await decryptor.decryptAsync(
+        postMap['content'],
+        appId: _localAppId,
+        appVersionRef: _localAppVersionRef,
       );
+
+      return ParseUtils.parsePost(postMap, decryptedContent);
     } on DioException catch (e) {
       throw Failure('Failed to create post: ${e.message}');
     } catch (e) {
@@ -355,9 +352,44 @@ class RestNowisPostApis implements PostApis {
   }
 
   @override
-  FutureOr<Post> update(Post item) {
-    // TODO: implement update
-    throw UnimplementedError();
+  FutureOr<Post> update(Post item) async {
+    await _waitForHealthCheck();
+
+    try {
+      final response = await _dio.put(
+        '/posts/${item.id}',
+        data: {
+          'title': item.title,
+          'content': item.content,
+          'summary': item.summary,
+          'featuredImageUrl': item.featuredImageUrl,
+          'status': item.status.name,
+          'visibility': item.visibility.name,
+          'tags': item.tags,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $_accessToken'},
+        ),
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      if (!data['success']) {
+        throw Failure(data['message'] ?? 'Failed to update post');
+      }
+
+      final postMap = data['data'] as Map<String, dynamic>;
+      final decryptedContent = await decryptor.decryptAsync(
+        postMap['content'],
+        appId: _localAppId,
+        appVersionRef: _localAppVersionRef,
+      );
+
+      return ParseUtils.parsePost(postMap, decryptedContent);
+    } on DioException catch (e) {
+      throw Failure('Failed to update post: ${e.message}');
+    } catch (e) {
+      throw Failure('Failed to update post: $e');
+    }
   }
 
   @override
