@@ -321,67 +321,6 @@ func (controller *NowisController) GetPostSummaryJsonBySlug(ginContext *gin.Cont
 	)
 }
 
-func (controller *NowisController) GetPostSummaryPageBySlug(ginContext *gin.Context) {
-	ginContext.Writer.Header().Set("Content-Type", "text/html; charset=utf-8") // Set Content-Type header
-
-	slug := ginContext.Param("slug")
-	lang := ginContext.GetHeader("lang")
-
-	if slug == "" {
-		controller.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found."})
-		return
-	}
-
-	conn, err := sfgrpc.CreateGrpcClientConnection(
-		context.Background(),
-		configs.GetConfig().NowisPublicAddress,
-	)
-
-	if err != nil {
-		log.Printf("[Nowis] Error when connecting to NowisService: %v", err)
-		controller.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Error", "Summary": "Internal server error."})
-		return
-	}
-
-	defer conn.Close()
-
-	nowisService := nowispb.NewNowisServiceClient(conn)
-
-	response, err := nowisService.GetPostBySlug(context.Background(), &nowispb.GetPostBySlugRequest{
-		Slug: slug,
-		Locale: &nowispb.Locale{
-			Lang: lang,
-		},
-	})
-
-	if err != nil {
-		log.Printf("error when calling NowisService GetPostBySlug for summary page: %v", err)
-		controller.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found or an error occurred."})
-		return
-	}
-
-	post, err := model.FromPBPost(response.Post)
-	if err != nil {
-		log.Printf("error when converting post for summary page: %v", err)
-		controller.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Error", "Summary": "Internal server error."})
-		return
-	}
-
-	summaryPost := model.SummaryPost{
-		ID:               post.ID,
-		Title:            post.Title,
-		Slug:             post.Slug,
-		Summary:          post.Summary,
-		FeaturedImageURL: post.FeaturedImageURL,
-		Author:           post.Author,
-		CreatedAt:        post.CreatedAt,
-		UpdatedAt:        post.UpdatedAt,
-		Tags:             post.Tags,
-	}
-
-	controller.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", summaryPost)
-}
-
 func (controller *NowisController) GetPosts(ginContext *gin.Context) {
 	lang := ginContext.GetHeader("lang")
 	pageStr := ginContext.DefaultQuery("page", "1")
