@@ -126,6 +126,32 @@ func (p *Post) ToGinMap() map[string]interface{} {
 	}
 }
 
+type SummaryPost struct {
+	ID               uuid.UUID `json:"id"`
+	Title            string    `json:"title"`
+	Slug             string    `json:"slug"`
+	Summary          string    `json:"summary"`
+	FeaturedImageURL *string   `json:"featuredImageUrl,omitempty"`
+	Author           *User     `json:"author"`
+	CreatedAt        time.Time `json:"createdAt"`
+	UpdatedAt        time.Time `json:"updatedAt"`
+	Tags             []string  `json:"tags"`
+}
+
+func (p *SummaryPost) ToGinMap() map[string]interface{} {
+	return map[string]interface{}{
+		"id":               p.ID.String(),
+		"title":            p.Title,
+		"slug":             p.Slug,
+		"summary":          p.Summary,
+		"featuredImageUrl": p.FeaturedImageURL,
+		"author":           p.Author,
+		"createdAt":        p.CreatedAt,
+		"updatedAt":        p.UpdatedAt,
+		"tags":             p.Tags,
+	}
+}
+
 type CreatePostRequestBody struct {
 	Title            string         `json:"title" binding:"required"`
 	Content          string         `json:"content" binding:"required"`
