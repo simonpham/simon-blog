@@ -52,3 +52,8 @@ This document outlines the architectural decisions, conventions, and guidelines 
 3.  **Implement Server**: Update Go server (`internal/nowis` and `internal/gateway`).
 4.  **Implement Client**: Update Dart interfaces (`core_remote_data`) and implementations (`core_remote_data_pb`).
 5.  **Verify**: Run tests and `dart analyze`.
+
+## Version Control (Git)
+- **Commit Style**: Use emoji prefixes for commit messages (e.g., ✨ for features, 🐛 for fixes, ♻️ for refactoring, 🔥 for removals).
+- **Consistency**: Check previous commits (`git log`) to match the existing style.
+- **Granularity**: Keep commits separate and atomic; avoid `git add .`.
