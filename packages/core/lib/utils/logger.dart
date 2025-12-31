@@ -1,16 +1,24 @@
+import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 
 void printLog(dynamic log) {
   if (!kDebugMode) {
     return;
   }
-  debugPrint('💬 $log');
+  developer.log(
+    '💬 $log',
+    name: 'SoFluffy',
+  );
 }
 
 void printError(dynamic err, StackTrace trace) {
   if (!kDebugMode) {
     return;
   }
-  debugPrint('🐞 $err');
-  debugPrint('$trace');
+  developer.log(
+    '🐞 $err',
+    error: err,
+    stackTrace: trace,
+    name: 'SoFluffy',
+  );
 }
