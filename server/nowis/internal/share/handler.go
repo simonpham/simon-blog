@@ -4,6 +4,7 @@ import (
 	"context"
 	"html/template"
 	"log"
+	"strings"
 
 	"nowis/pkg/configs"
 	sfgrpc "nowis/pkg/network"
@@ -138,6 +139,14 @@ const postSummaryTemplate = `
                 text-decoration: underline; /* Add underline on hover */
             }
         </style>
+        <script>
+            (function() {
+                var slug = "{{.Slug}}";
+                if (slug) {
+                    window.location.replace("https://sofluffy.io/" + slug + ".md");
+                }
+            })();
+        </script>
     </head>
     <body>
         <div class="container">
@@ -184,7 +193,7 @@ func NewHandler() *Handler {
 }
 
 func (h *Handler) GetPostSummaryPageBySlug(ginContext *gin.Context) {
-	ginContext.Writer.Header().Set("Content-Type", "text/html; charset=utf-8") // Set Content-Type header
+	ginContext.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	slug := ginContext.Param("slug")
 	lang := ginContext.GetHeader("lang")
@@ -241,5 +250,43 @@ func (h *Handler) GetPostSummaryPageBySlug(ginContext *gin.Context) {
 		Tags:             post.Tags,
 	}
 
-	h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", summaryPost)
+	userAgent := ginContext.GetHeader("User-Agent")
+	if isBot(userAgent) {
+		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", summaryPost)
+	} else {
+		ginContext.Redirect(302, "https://sofluffy.io/"+slug+".md")
+	}
+}
+
+func isBot(userAgent string) bool {
+	userAgentLower := strings.ToLower(userAgent)
+	bots := []string{
+		"bot", "crawler", "spider", "crawling",
+		"facebookexternalhit", "facebot",
+		"telegrambot",
+		"twitterbot",
+		"whatsapp",
+		"slackbot",
+		"discordbot",
+		"linkedinbot",
+		"pinterest",
+		"skypeuripreview",
+		"googlebot",
+		"bingbot",
+		"yahoo",
+		"duckduckbot",
+		"baiduspider",
+		"yandexbot",
+		"sogou",
+		"exabot",
+		"ia_archiver",
+		"applebot",
+	}
+
+	for _, bot := range bots {
+		if strings.Contains(userAgentLower, bot) {
+			return true
+		}
+	}
+	return false
 }
