@@ -26,4 +26,3 @@ fly.toml
 !*/**/fly.toml
 
 bin
-protobuf/generated
