@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"log"
 	"os"
 
@@ -17,10 +18,7 @@ func main() {
 	// Register route
 	r.GET("/s/:slug", handler.GetPostSummaryPageBySlug)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8086"
-	}
+	port := cmp.Or(os.Getenv("PORT"), "3000")
 
 	log.Printf("Share service starting on port %s...", port)
 	if err := r.Run(":" + port); err != nil {
