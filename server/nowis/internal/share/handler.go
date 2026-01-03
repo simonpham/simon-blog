@@ -197,6 +197,9 @@ func (h *Handler) GetPostSummaryPageBySlug(ginContext *gin.Context) {
 
 	slug := ginContext.Param("slug")
 	lang := ginContext.GetHeader("lang")
+	if lang == "" {
+		lang = "en"
+	}
 
 	if slug == "" {
 		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found."})
