@@ -6,10 +6,6 @@ import (
 	"log"
 	"strings"
 
-	"nowis/pkg/configs"
-	sfgrpc "nowis/pkg/network"
-	nowispb "nowis/protobuf/generated/nowis"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -181,15 +177,16 @@ const postSummaryTemplate = `
 `
 
 type Handler struct {
-	Templates *template.Template
+	Templates  *template.Template
+	Repository *Repository
 }
 
-func NewHandler() *Handler {
+func NewHandler(repo *Repository) *Handler {
 	tmpl, err := template.New("post_summary.html").Parse(postSummaryTemplate)
 	if err != nil {
 		log.Fatalf("Error parsing template: %v", err)
 	}
-	return &Handler{Templates: tmpl}
+	return &Handler{Templates: tmpl, Repository: repo}
 }
 
 func (h *Handler) GetPostSummaryPageBySlug(ginContext *gin.Context) {
@@ -197,47 +194,21 @@ func (h *Handler) GetPostSummaryPageBySlug(ginContext *gin.Context) {
 
 	slug := ginContext.Param("slug")
 	lang := ginContext.GetHeader("lang")
-	if lang == "" {
-		lang = "en"
-	}
 
 	if slug == "" {
 		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found."})
 		return
 	}
 
-	conn, err := sfgrpc.CreateGrpcClientConnection(
-		context.Background(),
-		configs.GetConfig().NowisPublicAddress,
-	)
-
+	post, err := h.Repository.GetPostBySlug(context.Background(), slug, lang)
 	if err != nil {
-		log.Printf("[Nowis] Error when connecting to NowisService: %v", err)
+		log.Printf("error when fetching post by slug for summary page: %v", err)
 		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Error", "Summary": "Internal server error."})
 		return
 	}
 
-	defer conn.Close()
-
-	nowisService := nowispb.NewNowisServiceClient(conn)
-
-	response, err := nowisService.GetPostBySlug(context.Background(), &nowispb.GetPostBySlugRequest{
-		Slug: slug,
-		Locale: &nowispb.Locale{
-			Lang: lang,
-		},
-	})
-
-	if err != nil {
-		log.Printf("error when calling NowisService GetPostBySlug for summary page: %v", err)
-		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found or an error occurred."})
-		return
-	}
-
-	post, err := FromPBPost(response.Post)
-	if err != nil {
-		log.Printf("error when converting post for summary page: %v", err)
-		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Error", "Summary": "Internal server error."})
+	if post == nil {
+		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found."})
 		return
 	}
 

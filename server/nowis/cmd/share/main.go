@@ -1,27 +1,40 @@
 package main
 
 import (
-	"cmp"
 	"log"
-	"os"
 
 	"nowis/internal/share"
+	"nowis/pkg/configs"
+	"nowis/pkg/db"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	config := configs.GetConfig()
+
+	// Initialize database connection
+	authDb, err := db.OpenAuthDatabase()
+	if err != nil {
+		log.Fatalf("[Share] Error opening database: %v", err)
+	}
+	defer authDb.Close()
+
+	// Initialize repository and handler
+	repo := share.NewRepository(authDb)
+	handler := share.NewHandler(repo)
+
 	r := gin.Default()
 
-	handler := share.NewHandler()
+	// Health check endpoint
+	r.GET("/api/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
 
 	// Register route
 	r.GET("/s/:slug", handler.GetPostSummaryPageBySlug)
 
-	port := cmp.Or(os.Getenv("PORT"), "3000")
-
-	log.Printf("Share service starting on port %s...", port)
-	if err := r.Run(":" + port); err != nil {
+	if err := r.Run(config.ShareInternalAddress); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }

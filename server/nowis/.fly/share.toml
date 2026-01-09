@@ -1,0 +1,46 @@
+app = "share-api"
+primary_region = "sin"
+
+[processes]
+  share = "share"
+
+[build]
+  builder = "paketobuildpacks/builder-jammy-base"
+  buildpacks = ["paketo-buildpacks/go"]
+  [build.args]
+    BP_GO_TARGETS = "./cmd/share"
+
+[env]
+  ENV = "production"
+  SF_SHARE_INTERNAL_ADDRESS = ":25399"
+
+[[services]]
+  auto_start_machines = true
+  auto_stop_machines = true
+  internal_port = 25399
+  processes = ["share"]
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [[services.http_checks]]
+    interval = "10s"
+    timeout = "5s"
+    grace_period = "10s"
+    path = "/api/health"
+
+  [[services.tcp_checks]]
+    interval = "10s"
+    timeout = "5s"
+    grace_period = "10s"
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"

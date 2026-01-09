@@ -1,8 +1,9 @@
 package configs
 
 import (
-	"github.com/caarlos0/env/v8"
 	"log"
+
+	"github.com/caarlos0/env/v8"
 )
 
 type Config struct {
@@ -22,10 +23,14 @@ type Config struct {
 	// ================================================================================= //
 
 	// ================================ NOWIS SETTINGS ================================= //
-	NowisPublicAddress        string `env:"SF_NOWIS_PUBLIC_ADDRESS" envDefault:"localhost:8085"`
-	NowisInternalAddress      string `env:"SF_NOWIS_INTERNAL_ADDRESS" envDefault:"localhost:8085"`
-	NowisEncryptionPassphrase string `env:"SF_NOWIS_ENCRYPTION_PASSPHRASE" envDefault:"ThisIsMySuperSecretPublicPassphraseThatEveryoneKnows"`
+	NowisPublicAddress           string `env:"SF_NOWIS_PUBLIC_ADDRESS" envDefault:"localhost:8085"`
+	NowisInternalAddress         string `env:"SF_NOWIS_INTERNAL_ADDRESS" envDefault:"localhost:8085"`
+	NowisEncryptionPassphrase    string `env:"SF_NOWIS_ENCRYPTION_PASSPHRASE" envDefault:"ThisIsMySuperSecretPublicPassphraseThatEveryoneKnows"`
 	NowisEncryptionStaticSaltHex string `env:"SF_NOWIS_ENCRYPTION_STATIC_SALT_HEX" envDefault:"a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2"`
+	// ================================================================================= //
+
+	// ================================ SHARE SETTINGS ================================= //
+	ShareInternalAddress string `env:"SF_SHARE_INTERNAL_ADDRESS" envDefault:"localhost:8085"`
 	// ================================================================================= //
 }
 
