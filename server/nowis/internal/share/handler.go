@@ -195,19 +195,19 @@ func (h *Handler) GetPostSummaryPageBySlug(ginContext *gin.Context) {
 	lang := ginContext.GetHeader("lang")
 
 	if slug == "" {
-		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found."})
+		ginContext.Redirect(302, "https://sofluffy.io")
 		return
 	}
 
 	post, err := h.Repository.GetPostBySlug(context.Background(), slug, lang)
 	if err != nil {
 		log.Printf("error when fetching post by slug for summary page: %v", err)
-		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Error", "Summary": "Internal server error."})
+		ginContext.Redirect(302, "https://sofluffy.io")
 		return
 	}
 
 	if post == nil {
-		h.Templates.ExecuteTemplate(ginContext.Writer, "post_summary.html", gin.H{"Title": "Post Not Found", "Summary": "The requested post could not be found."})
+		ginContext.Redirect(302, "https://sofluffy.io")
 		return
 	}
 
