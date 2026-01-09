@@ -137,7 +137,7 @@ class EditorHeader extends StatelessWidget {
   }
 
   void _copyLink(BuildContext context) {
-    final link = 'https://sofluffy.io/${selectedPost.slug}.md';
+    final link = 'https://share.sofluffy.io/s/${selectedPost.slug}';
     Clipboard.setData(ClipboardData(text: link));
     context.toast(
       'Copied to clipboard',
