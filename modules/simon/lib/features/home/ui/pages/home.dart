@@ -67,8 +67,9 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
     rightMinSize: PaneSize.pixel(150),
     rightMaxSize: PaneSize.pixel(500),
     bottomSize: PaneSize.pixel(240),
-    bottomMinSize: PaneSize.pixel(38),
+    bottomMinSize: PaneSize.pixel(50),
     bottomMaxSize: PaneSize.pixel(480),
+    bottomAutoHideThreshold: PaneSize.fraction(0.5),
   );
 
   Listenable get _listenable => [CoreSettings.screenSize].of(SettingsBox());
@@ -269,14 +270,6 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
 
   @override
   Widget build(BuildContext context) {
-    const dividerThickness = 1.0;
-    final dividerColor = context.theme.dividerColor;
-    final divider = Container(
-      color: dividerColor,
-      height: dividerThickness,
-      width: double.infinity,
-    );
-
     return CallbackShortcuts(
       bindings: <ShortcutActivator, VoidCallback>{
         const SingleActivator(LogicalKeyboardKey.keyF, control: true): () {
@@ -290,54 +283,95 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
             children: [
               HeaderBar(
                 onSearchTap: _handleSearch,
+                isPaneVisible: (pane) {
+                  return switch (pane) {
+                    IdePane.left => _isLeftPanelExpandedNotifier.value,
+                    IdePane.right => _isRightPanelExpandedNotifier.value,
+                    IdePane.bottom => _isBottomPanelExpandedNotifier.value,
+                    IdePane.center || IdePane.centerContainer => false,
+                  };
+                },
+                onTogglePane: (pane) {
+                  switch (pane) {
+                    case IdePane.left:
+                      _controller.toggleLeft();
+                      break;
+                    case IdePane.right:
+                      _controller.toggleRight();
+                      break;
+                    case IdePane.bottom:
+                      _controller.toggleBottom();
+                      break;
+                    case IdePane.center:
+                    case IdePane.centerContainer:
+                      return;
+                  }
+                },
               ),
-              divider,
               Expanded(
-                child: PaneTheme(
-                  data: PaneThemeData(
-                    resizerColor: context.theme.dividerColor,
-                    resizerHoverColor: context.theme.colorScheme.primary,
-                    resizerThickness: 1.0,
-                    resizerHitTestThickness: 1.0,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: Spacing.d8,
+                    right: Spacing.d8,
+                    bottom: Spacing.d8,
                   ),
-                  child: IdeLayout(
-                    controller: _controller,
-                    onPaneStateChanged: _handlePaneStateChanged,
-                    leftPanelBuilder: (context) {
-                      return ChangeNotifierProvider.value(
-                        value: _postViewModel,
-                        child: const PostBrowser(),
-                      );
-                    },
-                    rightPanelBuilder: (context) {
-                      return MultiProvider(
-                        providers: [
-                          ChangeNotifierProvider.value(value: _postViewModel),
-                          ChangeNotifierProvider.value(value: _chatViewModel),
-                        ],
-                        child: const _RightPanelContent(),
-                      );
-                    },
-                    bottomPanelBuilder: (context) {
-                      return ChangeNotifierProvider.value(
-                        value: _postViewModel,
-                        builder: (context, _) => CommentPanel(
-                          post: context.select<PostViewModel, Post?>(
-                            (viewModel) => viewModel.selectedPost?.data,
+                  child: PaneTheme(
+                    data: PaneThemeData(
+                      resizerColor: Colors.transparent,
+                      resizerHoverColor: context.theme.colorScheme.primary,
+                      resizerThickness: Spacing.d8,
+                      resizerHitTestThickness: Spacing.d8,
+                    ),
+                    child: IdeLayout(
+                      controller: _controller,
+                      onPaneStateChanged: _handlePaneStateChanged,
+                      leftPanelBuilder: (context, animationProgress) {
+                        return ChangeNotifierProvider.value(
+                          value: _postViewModel,
+                          child: const PanelContainer(
+                            child: PostBrowser(),
                           ),
-                        ),
-                      );
-                    },
-                    centerBuilder: (context) {
-                      return ChangeNotifierProvider.value(
-                        value: _postViewModel,
-                        child: const PostContent(),
-                      );
-                    },
+                        );
+                      },
+                      rightPanelBuilder: (context, animationProgress) {
+                        return PanelContainer(
+                          child: MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider.value(
+                                value: _postViewModel,
+                              ),
+                              ChangeNotifierProvider.value(
+                                value: _chatViewModel,
+                              ),
+                            ],
+                            child: const _RightPanelContent(),
+                          ),
+                        );
+                      },
+                      bottomPanelBuilder: (context, animationProgress) {
+                        return ChangeNotifierProvider.value(
+                          value: _postViewModel,
+                          builder: (context, _) => PanelContainer(
+                            child: CommentPanel(
+                              post: context.select<PostViewModel, Post?>(
+                                (viewModel) => viewModel.selectedPost?.data,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      centerBuilder: (context, animationProgress) {
+                        return ChangeNotifierProvider.value(
+                          value: _postViewModel,
+                          child: const PanelContainer(
+                            child: PostContent(),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-              divider,
               ChangeNotifierProvider.value(
                 value: _postViewModel,
                 builder: (context, model) {
@@ -352,23 +386,7 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
                     ],
                     builder: (context) {
                       return StatusBar(
-                        isLeftPanelOpen: _isLeftPanelExpandedNotifier.value,
-                        isRightPanelOpen: _isRightPanelExpandedNotifier.value,
-                        isBottomPanelOpen: _isBottomPanelExpandedNotifier.value,
                         message: currentMessage,
-                        onAction: (action) {
-                          switch (action) {
-                            case StatusBarAction.toggleLeftPanel:
-                              _controller.toggleLeft();
-                              break;
-                            case StatusBarAction.toggleRightPanel:
-                              _controller.toggleRight();
-                              break;
-                            case StatusBarAction.toggleBottomPanel:
-                              _controller.toggleBottom();
-                              break;
-                          }
-                        },
                       );
                     },
                   );
@@ -429,7 +447,7 @@ class _RightPanelContentState extends State<_RightPanelContent> {
     return MultiPane(
       direction: Axis.vertical,
       controller: _paneController,
-      paneBuilder: (context, paneId) {
+      paneBuilder: (context, paneId, animationProgress) {
         return switch (paneId) {
           _metadataPaneId => const PostMetadataPanel(),
           _chatPaneId => const ChatPanel(),

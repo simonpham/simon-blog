@@ -25,45 +25,42 @@ class CommentInput extends StatelessWidget {
     final textStyle = theme.textTheme.bodySmall;
     final animal = user.animal;
     final backgroundColor = user.backgroundColor;
-    return ColoredBox(
-      color: theme.colorScheme.surface,
-      child: Row(
-        children: [
-          AnimalAvatar(
-            animal: user.animal,
-            background: backgroundColor,
-            size: textStyle?.fontSize ?? Spacing.d24,
+    return Row(
+      children: [
+        AnimalAvatar(
+          animal: user.animal,
+          background: backgroundColor,
+          size: textStyle?.fontSize ?? Spacing.d24,
+        ),
+        Spacing.h8,
+        Text(
+          '@${backgroundColor.name}_${animal.name} \$ ',
+          style: textStyle?.copyWith(
+            color: theme.primaryColor,
+            fontWeight: FontWeight.bold,
           ),
-          Spacing.h8,
-          Text(
-            '@${backgroundColor.name}_${animal.name} \$ ',
-            style: textStyle?.copyWith(
-              color: theme.primaryColor,
-              fontWeight: FontWeight.bold,
+        ),
+        Expanded(
+          child: SizedBox(
+            height: Spacing.d18,
+            child: InputText(
+              focusNode: focusNode,
+              controller: controller,
+              onEditingComplete: () {
+                onEnter(controller.text);
+                controller.clear();
+              },
+              textInputAction: TextInputAction.send,
+              decorationBuilder: (_, _, _, _) => const BoxDecoration(),
+              textStyle: textStyle,
+              hintText: 'Whisper your questions...',
+              inputPadding: EdgeInsets.zero,
+              cursorHeight: Spacing.d14,
+              cursorWidth: Spacing.d4,
             ),
           ),
-          Expanded(
-            child: SizedBox(
-              height: Spacing.d18,
-              child: InputText(
-                focusNode: focusNode,
-                controller: controller,
-                onEditingComplete: () {
-                  onEnter(controller.text);
-                  controller.clear();
-                },
-                textInputAction: TextInputAction.send,
-                decorationBuilder: (_, _, _, _) => const BoxDecoration(),
-                textStyle: textStyle,
-                hintText: 'Whisper your questions...',
-                inputPadding: EdgeInsets.zero,
-                cursorHeight: Spacing.d14,
-                cursorWidth: Spacing.d4,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

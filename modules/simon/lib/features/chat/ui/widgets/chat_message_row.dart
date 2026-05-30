@@ -21,6 +21,7 @@ class ChatMessageRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final isDark = theme.brightness == Brightness.dark;
     final textStyle = theme.textTheme.bodySmall;
     final avatarWidget = AnimalAvatar(
       animal: message.avatarName,
@@ -75,8 +76,11 @@ class ChatMessageRow extends StatelessWidget {
               ),
               decoration: ShapeDecoration(
                 color: switch (isSame) {
-                  false => theme.colorScheme.surface,
-                  true => theme.primaryColor.withValues(alpha: 0.25),
+                  false =>
+                    isDark
+                        ? theme.colorScheme.surfaceContainer
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                  true => theme.primaryColor.withValues(alpha: 0.18),
                 },
                 shape: SmoothRectangleBorder(
                   borderRadius: SmoothBorderRadius.only(

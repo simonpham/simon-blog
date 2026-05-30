@@ -23,4 +23,7 @@ dependencies:
   utils:
     path: ../utils
 
-  markdown_widget: ^2.3.2+8
+  flutter_highlight: ^0.7.0
+  highlight: ^0.7.0
+  html: ^0.15.5
+  markdown: ^7.3.0

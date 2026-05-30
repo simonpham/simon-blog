@@ -1,0 +1,17 @@
+{
+  "colors": {
+    "primary": "#D65D2E",
+    "secondary": "#6CA1B8",
+    "neutral1": "#E4E1DB",
+    "neutral2": "#F3F5F7",
+    "neutral3": "#E8ECEF",
+    "neutral4": "#6C7275",
+    "neutral5": "#343839",
+    "neutral6": "#171B1E",
+    "neutral7": "#0B0B0B"
+  },
+  "typography": {
+    "fontFamily": "Nunito",
+    "bodyFontFamily": "Iosevka"
+  }
+}

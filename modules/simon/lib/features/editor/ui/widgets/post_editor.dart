@@ -96,7 +96,7 @@ class _PostEditorState extends State<PostEditor> {
     return MultiPane(
       direction: Axis.horizontal,
       controller: _paneController,
-      paneBuilder: (context, paneId) {
+      paneBuilder: (context, paneId, animationProgress) {
         return switch (paneId) {
           _editorPaneId => _buildEditorPane(theme),
           _previewPaneId => _buildPreviewPane(theme),
@@ -107,132 +107,78 @@ class _PostEditorState extends State<PostEditor> {
   }
 
   Widget _buildEditorPane(ThemeData theme) {
-    return Container(
-      color: theme.colorScheme.surface,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeader(theme, 'Editor', Assets.pencilEdit02),
-          // Title field
-          Padding(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildHeader('Editor', Assets.pencilEdit02),
+        // Title field
+        Padding(
+          padding: EdgeInsets.all(Spacing.d16),
+          child: InputText(
+            controller: _titleController,
+            hintText: 'Post title...',
+            textStyle: theme.textTheme.headlineSmall,
+            maxLines: 1,
+            decorationBuilder: (context, state, hasFocus, error) =>
+                const BoxDecoration(),
+            inputPadding: EdgeInsets.zero,
+          ),
+        ),
+        Divider(height: 1, color: theme.dividerColor),
+        // Content editor with scrolling
+        Expanded(
+          child: SingleChildScrollView(
+            controller: _editorScrollController,
             padding: EdgeInsets.all(Spacing.d16),
-            child: InputText(
-              controller: _titleController,
-              hintText: 'Post title...',
-              textStyle: theme.textTheme.headlineSmall,
-              maxLines: 1,
-              decorationBuilder: (_, __, ___, ____) => const BoxDecoration(),
-              inputPadding: EdgeInsets.zero,
-            ),
-          ),
-          Divider(height: 1, color: theme.dividerColor),
-          // Content editor with scrolling
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _editorScrollController,
-              padding: EdgeInsets.all(Spacing.d16),
-              child: TextField(
-                controller: _contentController,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontFamily: kCodeFontFamily,
-                  height: 1.6,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Write your content in Markdown...',
-                  hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant.withValues(
-                      alpha: 0.5,
-                    ),
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                maxLines: null,
+            child: TextField(
+              controller: _contentController,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontFamily: kCodeFontFamily,
+                height: 1.6,
               ),
+              decoration: InputDecoration(
+                hintText: 'Write your content in Markdown...',
+                hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.5,
+                  ),
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+              ),
+              maxLines: null,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildPreviewPane(ThemeData theme) {
-    return Container(
-      color: theme.colorScheme.surface,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeader(theme, 'Preview', Assets.bookOpen01),
-          // Markdown preview
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _previewScrollController,
-              child: MarkdownContent(_previewContent, shrinkWrap: true),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildHeader('Preview', Assets.bookOpen01),
+        // Markdown preview
+        Expanded(
+          child: SingleChildScrollView(
+            controller: _previewScrollController,
+            padding: EdgeInsets.all(Spacing.d24),
+            child: MarkdownPreview(data: _previewContent),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildHeader(ThemeData theme, String title, String icon) {
-    return Container(
-      height: Spacing.d32,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-      ),
-      child: Row(
-        children: [
-          // Tab-style header like EditorHeader
-          Container(
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              border: Border(
-                right: BorderSide(
-                  color: theme.dividerColor,
-                  width: 1.0,
-                ),
-              ),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: Spacing.d16),
-            alignment: Alignment.center,
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  WidgetSpan(
-                    child: Container(
-                      width: Spacing.d16,
-                      height: Spacing.d16,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(right: Spacing.d8),
-                      child: ImageView(
-                        icon,
-                        size: Spacing.d16,
-                        color: theme.primaryColor,
-                      ),
-                    ),
-                  ),
-                  TextSpan(text: title),
-                ],
-              ),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-          // Fill remaining space with border
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 1.0,
-                color: theme.dividerColor,
-              ),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildHeader(String title, String icon) {
+    return PaneTabBar(
+      children: [
+        PaneTabItem(
+          label: title,
+          icon: icon,
+        ),
+      ],
     );
   }
 }

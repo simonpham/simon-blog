@@ -1,3 +1,4 @@
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 class FileFormat extends StatelessWidget {
@@ -7,8 +8,11 @@ class FileFormat extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: Implement file format widget.
     const format = 'Markdown';
-    return const Text(
+    return Text(
       format,
+      style: TextStyle(
+        color: context.theme.colorScheme.onSurface.withValues(alpha: 0.5),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+// import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:platform_utils/platform_utils.dart';
 import 'package:simon/simon.dart' as simon;
 import 'package:simon_web/app.dart';
@@ -11,9 +11,10 @@ export 'app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  usePathUrlStrategy();
+  // usePathUrlStrategy();
 
-  final appTheme = await ThemeLoader.loadDefault();
+  final lightTheme = await ThemeLoader.load('ailurus-light');
+  final darkTheme = await ThemeLoader.load('ailurus-dark');
 
   await injector.reset();
   await Injector.init();
@@ -23,6 +24,9 @@ Future<void> main() async {
   await SettingsBox().init();
 
   runApp(
-    SimonWeb(appTheme: appTheme),
+    SimonWeb(
+      lightTheme: lightTheme,
+      darkTheme: darkTheme,
+    ),
   );
 }

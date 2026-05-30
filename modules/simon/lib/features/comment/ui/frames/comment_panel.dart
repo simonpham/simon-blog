@@ -55,17 +55,21 @@ class _CommentPanelState extends State<CommentPanel> {
         value: _viewModel,
         child: Consumer<CommentViewModel>(
           builder: (context, viewModel, child) {
-            final theme = context.theme;
             final comments = viewModel.comments;
-            return Container(
-              color: theme.colorScheme.surface,
+            final theme = context.theme;
+            return Theme(
+              data: theme.copyWith(
+                textTheme: theme.textTheme.apply(
+                  fontFamily: kCommentFontFamily,
+                ),
+                primaryTextTheme: theme.primaryTextTheme.apply(
+                  fontFamily: kCommentFontFamily,
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ColoredBox(
-                    color: theme.colorScheme.surfaceContainer,
-                    child: const CommentHeader(),
-                  ),
+                  const CommentHeader(),
                   const Divider(height: 1.0),
                   Flexible(
                     child: ListView.builder(

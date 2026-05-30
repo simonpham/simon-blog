@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:simon_web/router.dart';
 
 class SimonWeb extends StatelessWidget {
-  final AppTheme appTheme;
+  final AppTheme lightTheme;
+  final AppTheme darkTheme;
 
-  const SimonWeb({super.key, required this.appTheme});
+  const SimonWeb({
+    super.key,
+    required this.lightTheme,
+    required this.darkTheme,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +24,13 @@ class SimonWeb extends StatelessWidget {
           CoreSettings.enableTransparency,
         ].of(SettingsBox()),
         builder: (context, _, _) {
+          final lightThemeData = _getThemeData(lightTheme, isDark: false);
+          final darkThemeData = _getThemeData(darkTheme, isDark: true);
+
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            theme: appTheme.getTheme(
-              isDark: false,
-              fontFamily: kAppFontFamily,
-            ),
-            darkTheme: appTheme.getTheme(
-              isDark: true,
-              fontFamily: kAppFontFamily,
-            ),
+            theme: lightThemeData,
+            darkTheme: darkThemeData,
             themeMode: SettingsBox().appTheme,
             routerConfig: kAppRouter,
             locale: Locale(SettingsBox().language),
@@ -47,6 +49,22 @@ class SimonWeb extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
           );
         },
+      ),
+    );
+  }
+
+  ThemeData _getThemeData(AppTheme appTheme, {required bool isDark}) {
+    final themeData = appTheme.getTheme(
+      isDark: isDark,
+      fontFamily: kAppFontFamily,
+    );
+    final surface = isDark
+        ? appTheme.colors.neutral6
+        : appTheme.colors.neutral2;
+
+    return themeData.copyWith(
+      colorScheme: themeData.colorScheme.copyWith(
+        surface: surface,
       ),
     );
   }

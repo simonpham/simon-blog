@@ -31,7 +31,6 @@ class ChatInput extends StatelessWidget {
         vertical: Spacing.d8,
       ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
         border: Border(
           top: BorderSide(
             color: theme.dividerColor,

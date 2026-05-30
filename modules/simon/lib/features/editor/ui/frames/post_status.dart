@@ -73,7 +73,10 @@ class PostStatusWidget extends StatelessWidget {
                   padding: EdgeInsets.only(right: Spacing.d8),
                   child: Text(
                     selectedPost.author.displayName,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: context.theme.colorScheme.onSurface.withValues(
+                        alpha: 0.5,
+                      ),
                       fontWeight: FontWeight.bold,
                     ),
                     maxLines: 1,
@@ -86,6 +89,11 @@ class PostStatusWidget extends StatelessWidget {
           Flexible(
             child: Text(
               [dateText, ?readTimeText].join(' • '),
+              style: TextStyle(
+                color: context.theme.colorScheme.onSurface.withValues(
+                  alpha: 0.5,
+                ),
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

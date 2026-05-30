@@ -96,8 +96,11 @@ class RestCommentNowisApis implements CommentApis {
         throw const Failure('Failed to fetch comments');
       }
 
-      final comments = data['data'] as List<dynamic>;
-      return comments.map((e) => ParseUtils.parseComment(e)).toList();
+      final comments = switch (data['data']) {
+        List<dynamic> comments => comments.map((e) => ParseUtils.parseComment(e)).toList(),
+        _ => <Comment>[],
+      };
+      return comments;
     } catch (err, trace) {
       printError(err, trace);
       throw const Failure('Failed to fetch comments');
@@ -328,7 +331,10 @@ class RestNowisPostApis implements PostApis {
         throw Failure(data['message'] ?? 'Failed to list posts');
       }
 
-      final List<dynamic> postsJson = data['data'] as List<dynamic>;
+      final List<dynamic> postsJson = switch (data['data']) {
+        List<dynamic> posts => posts,
+        _ => <dynamic>[],
+      };
       final List<Post> posts = [];
       for (final postJson in postsJson) {
         final decryptedContent = await decryptor.decryptAsync(

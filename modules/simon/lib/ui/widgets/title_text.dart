@@ -16,9 +16,9 @@ class TitleText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: context.theme.textTheme.titleSmall?.copyWith(
-        color: context.theme.colorScheme.primary,
-        fontWeight: FontWeight.bold,
+      style: context.theme.textTheme.labelSmall?.copyWith(
+        color: context.theme.colorScheme.onSurface.withValues(alpha: 0.54),
+        fontWeight: FontWeight.w700,
       ),
     );
   }

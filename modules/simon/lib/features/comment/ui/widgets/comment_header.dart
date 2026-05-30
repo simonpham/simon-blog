@@ -1,5 +1,5 @@
-import 'package:design_system/design_system.dart';
 import 'package:flutter/widgets.dart';
+import 'package:icons/icons.dart';
 import 'package:simon/simon.dart';
 
 class CommentHeader extends StatelessWidget {
@@ -9,20 +9,13 @@ class CommentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: Spacing.d16,
-        vertical: Spacing.d8,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TitleText(
-              '💬 Comment nest'.toUpperCase(),
-            ),
-          ),
-        ],
-      ),
+    return const PaneTabBar(
+      children: [
+        PaneTabItem(
+          label: 'Comment nest',
+          icon: Assets.terminal,
+        ),
+      ],
     );
   }
 }

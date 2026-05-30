@@ -8,12 +8,6 @@ part 'status_bar/left.dart';
 part 'status_bar/center.dart';
 part 'status_bar/right.dart';
 
-enum StatusBarAction {
-  toggleLeftPanel,
-  toggleRightPanel,
-  toggleBottomPanel,
-}
-
 class StatusBarMessage {
   final MessageType type;
   final String message;
@@ -27,51 +21,51 @@ class StatusBarMessage {
 }
 
 class StatusBar extends StatelessWidget {
-  final bool isLeftPanelOpen;
-  final bool isRightPanelOpen;
-  final bool isBottomPanelOpen;
-
-  final ValueChanged<StatusBarAction> onAction;
-
   final StatusBarMessage? message;
 
   const StatusBar({
     super.key,
-    required this.isLeftPanelOpen,
-    required this.isRightPanelOpen,
-    required this.isBottomPanelOpen,
-    required this.onAction,
     this.message,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final foreground = theme.colorScheme.onSurface.withValues(alpha: 0.5);
     return Container(
-      height: Spacing.d32,
+      height: Spacing.d24,
+      padding: EdgeInsets.symmetric(horizontal: Spacing.d12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
+        color: theme.colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: theme.dividerColor,
+            color: theme.dividerTheme.color ?? Colors.transparent,
+            width: 1,
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          StatusBarLeftContent(
-            isLeftPanelOpen: isLeftPanelOpen,
-            onAction: onAction,
-            message: message,
+      child: DefaultTextStyle.merge(
+        style: TextStyle(
+          color: foreground,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+        ),
+        child: IconTheme.merge(
+          data: IconThemeData(
+            color: foreground,
+            size: Spacing.d14,
           ),
-          StatusBarCenterContent(onAction: onAction),
-          StatusBarRightContent(
-            isRightPanelOpen: isRightPanelOpen,
-            isBottomPanelOpen: isBottomPanelOpen,
-            onAction: onAction,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              StatusBarLeftContent(
+                message: message,
+              ),
+              const StatusBarCenterContent(),
+              const StatusBarRightContent(),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

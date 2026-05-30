@@ -11,45 +11,40 @@ class CategoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.theme;
-
-    return Container(
-      height: Spacing.d32,
-      padding: EdgeInsets.symmetric(
-        horizontal: Spacing.d16,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TitleText(
-              'Burrow files'.toUpperCase(),
-            ),
-          ),
-          // New Post button - visible when admin logged in
-          Builder(
-            builder: (context) {
-              final user = context.select((AuthViewModel model) => model.user);
-              if (user == null) {
-                return const SizedBox.shrink();
-              }
-              return Tappable(
-                onTap: () {
-                  // Start editing a new post
-                  context.read<PostViewModel>().startEditing(
-                    author: user,
-                  );
-                },
-                tooltip: 'New Post',
+    return PaneTabBar(
+      children: [
+        const PaneTabItem(
+          label: 'Burrow files',
+          icon: Assets.hierarchyFiles,
+        ),
+        Builder(
+          builder: (context) {
+            final user = context.select((AuthViewModel model) => model.user);
+            if (user == null) {
+              return const SizedBox.shrink();
+            }
+            return Tappable(
+              onTap: () {
+                context.read<PostViewModel>().startEditing(
+                  author: user,
+                );
+              },
+              tooltip: 'New Post',
+              child: Padding(
+                padding: EdgeInsets.all(Spacing.d8),
                 child: ImageView(
                   Assets.bookOpen02,
-                  size: Spacing.d16,
-                  color: theme.primaryColor,
+                  size: Spacing.d14,
+                  color: context.theme.colorScheme.onSurface.withValues(
+                    alpha: 0.7,
+                  ),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+        Spacing.h8,
+      ],
     );
   }
 }
