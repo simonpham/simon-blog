@@ -110,9 +110,11 @@ Important dimensions:
 - Main layout island gap: `8px`
 - Pane resizer visual gap: `8px`
 
-## Radius
+## Corners: Continuous Rounded Rectangles / Squircles
 
-Use soft rounded rectangles, similar to Flutter smooth corners.
+The rounded borders are not regular CSS rounded rectangles. Lumide uses Flutter smooth corners, visually closer to Apple-style continuous rounded rectangles / squircles.
+
+Use regular `border-radius` only as a fallback. For a closer web match, use a squircle/continuous-corner implementation.
 
 - Main island panels: `12px`
 - Pane tab items: `8px`
@@ -120,7 +122,27 @@ Use soft rounded rectangles, similar to Flutter smooth corners.
 - Search/dialog shell: `12px`
 - Small logo mark: `6px`
 
-Tailwind approximation:
+### Preferred Web Options
+
+Option A: CSS `clip-path` / SVG squircle mask for key containers.
+
+Use this for:
+
+- Main island panels
+- Dialog shell
+- Active/hover tab items
+- File tree selected rows
+- Search/result rows if they have visible rounded fill
+
+Option B: Use a squircle utility/plugin.
+
+Good implementation targets:
+
+- `corner-smoothing: 1.0` equivalent if using a design-token/plugin system.
+- Figma squircle/continuous corner approximation.
+- Superellipse/squircle mask with radius token.
+
+Option C: Plain Tailwind fallback.
 
 ```html
 rounded-xl  /* 12px */
@@ -128,7 +150,26 @@ rounded-lg  /* 8px */
 rounded-md  /* 6px */
 ```
 
-Do not over-round controls. Avoid pill-shaped tabs/buttons unless they are very small icon controls.
+Plain `border-radius` is acceptable for first pass, but the final visual target should be continuous corners. Do not use pill-shaped tabs/buttons unless they are very small icon controls.
+
+### CSS Example
+
+A practical fallback-friendly approach:
+
+```css
+.squircle-panel {
+  border-radius: 12px;
+}
+
+@supports (clip-path: path("M 0 0")) {
+  .squircle-panel {
+    border-radius: 0;
+    clip-path: path("M 12 0 H calc(100% - 12px) C calc(100% - 5px) 0 100% 5px 100% 12px V calc(100% - 12px) C 100% calc(100% - 5px) calc(100% - 5px) 100% calc(100% - 12px) 100% H 12px C 5px 100% 0 calc(100% - 5px) 0 calc(100% - 12px) V 12px C 0 5px 5px 0 12px 0 Z");
+  }
+}
+```
+
+If this is too brittle for responsive containers, use SVG masks or a small squircle React/Tailwind utility instead. The important visual rule is: corners should feel continuous and Apple-like, not circular arcs.
 
 ## App Layout
 
@@ -154,8 +195,8 @@ Tailwind sketch:
   <header class="h-9"></header>
   <main class="h-[calc(100vh-60px)] px-2 pb-2">
     <div class="grid h-full gap-2">
-      <section class="rounded-xl bg-[var(--panel-bg)]"></section>
-      <section class="rounded-xl bg-[var(--panel-bg)]"></section>
+      <section class="squircle-panel bg-[var(--panel-bg)]"></section>
+      <section class="squircle-panel bg-[var(--panel-bg)]"></section>
     </div>
   </main>
   <footer class="h-6"></footer>
@@ -223,7 +264,7 @@ Panel container:
 Do:
 
 ```html
-<section class="rounded-xl bg-[var(--panel-bg)] overflow-hidden">
+<section class="squircle-panel bg-[var(--panel-bg)] overflow-hidden">
   ...
 </section>
 ```
@@ -356,8 +397,154 @@ Use subtle states:
 - Selected row: primary at `15%` alpha.
 - Disabled/inactive text: text at `50%` opacity.
 - Secondary/metadata text: text at `50%-72%` opacity depending on importance.
+- File tree normal foreground: text at `87%` opacity.
+- Section/header labels inside utility panes: text at `40%-50%` opacity, `11px`.
 
 Avoid strong shadows, dark overlays, or high-saturation hover fills.
+
+## Motion And Hover Overlay
+
+Lumide interactions are fast and quiet. Use short transitions and avoid bouncy motion.
+
+Recommended defaults:
+
+- Hover/press transition duration: `75ms`.
+- Hover overlay uses primary color at `10%` alpha.
+- Focus overlay can be primary at `20%` alpha or a thin focus border.
+- Pressed state can scale down very slightly, around `0.975`.
+- Hover scale, if used, should be very slight, around `1.025`.
+
+For web, it is acceptable to skip scale animation on dense lists and keep only color transitions:
+
+```html
+transition-colors duration-75
+hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]
+```
+
+Use hover overlays for toolbar buttons and small icon buttons. For file tree rows and tabs, use direct background color changes instead of separate visible button chrome.
+
+## Icons
+
+Use Lucide-style line icons or similarly thin, rounded stroke icons. The exact icon set matters less than consistency.
+
+Sizing:
+
+- Toolbar icons: `16px`
+- Pane tab icons: `14px`
+- Status bar icons: `14px`
+- File tree icons: `16px`
+- Copy/close micro icons: `12px`
+
+Color:
+
+- Default toolbar icons: full text color.
+- File tree icons: text color at `87%` opacity.
+- Pane tab icons: text color at `70%` opacity.
+- Metadata/status icons: text color at `50%` opacity.
+
+Avoid mixing filled emoji-style icons with outline toolbar icons. If the web version cannot use Lumide's exact icons, use Lucide equivalents and keep stroke width consistent.
+
+## Dividers
+
+Dividers are intentionally quiet.
+
+- Top bar section dividers: `0.25px`, `20px` tall, text/onSurfaceVariant at `50%` opacity.
+- Status bar top divider: `1px`, normal divider color.
+- Panel internal dividers: `1px`, normal divider color.
+- File tree indent guides: `1px`, divider color at `20%` opacity.
+
+Do not add a divider directly below the top bar.
+
+## Scrollbars
+
+Scrollbars should feel native or very quiet.
+
+For file tree horizontal overflow:
+
+- Only allow horizontal scrolling when the content is wider than the panel.
+- Do not create a large empty horizontal scroll area.
+- Keep long names single-line with `white-space: nowrap`.
+- Prefer hidden/fading scrollbars until active.
+
+If custom scrollbars are used:
+
+- Thumb idle alpha around `25%`.
+- Thumb hover/active alpha around `50%`.
+- No bright track.
+
+## Drag Feedback
+
+If the web version adds drag interactions later, match Lumide's feedback:
+
+- Drag preview background: panel muted/surface container.
+- Radius: `8px` continuous corner.
+- Padding: `12px` horizontal.
+- Shadow: small, soft, black at about `20%`, blur `8px`, y-offset `4px`.
+- Original row opacity while dragging: `50%`.
+
+Do not add drag styling to the blog tree unless drag is actually implemented.
+
+## Empty States
+
+Empty states should still feel like an app panel, not a marketing hero.
+
+Use:
+
+- Centered content.
+- Icon size around `32px-48px`.
+- Accent tint around `5%-10%`.
+- Body text at `50%` opacity.
+- Compact action tiles, not big cards.
+
+Avoid illustration-heavy or gradient empty states.
+
+## Tailwind Component Recipes
+
+### Toolbar Icon Button
+
+```html
+<button
+  class="grid size-6 place-items-center text-[var(--text)] transition-colors duration-75 hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
+>
+  <Icon class="size-4" />
+</button>
+```
+
+Use a squircle/continuous-corner utility for the hover background if the button has a visible fill.
+
+### Pane Island
+
+```html
+<section class="squircle-panel bg-[var(--panel-bg)] overflow-hidden">
+  <div class="h-12 flex items-center gap-2 pl-2">
+    ...
+  </div>
+  <div class="min-h-0 flex-1 overflow-auto">
+    ...
+  </div>
+</section>
+```
+
+### File Tree Row
+
+```html
+<button
+  class="h-6 w-full whitespace-nowrap text-left transition-colors duration-75 hover:bg-[color-mix(in_srgb,var(--accent)_15%,transparent)]"
+>
+  <span class="ml-2 inline-flex items-center gap-1 text-[color-mix(in_srgb,var(--text)_87%,transparent)]">
+    <Icon class="size-4" />
+    <span>post-name.md</span>
+  </span>
+</button>
+```
+
+### Status Bar Item
+
+```html
+<span class="inline-flex h-6 items-center gap-1 px-1.5 text-[11px] font-medium text-[color-mix(in_srgb,var(--text)_50%,transparent)]">
+  Markdown
+</span>
+```
 
 ## Tailwind Theme Starter
 
@@ -397,3 +584,7 @@ Prefer CSS variables for colors so light/dark theme switching stays simple.
 - File tree rows are compact and horizontally scrollable only when content needs it.
 - Markdown code blocks use a visibly distinct background.
 - Comments retain Iosevka, article content retains Lora, code retains JetBrains Mono.
+- Hover transitions feel immediate, around `75ms`.
+- Icons use consistent thin-line styling and the correct size for their area.
+- Dividers are subtle; top-bar dividers are thinner than panel/status dividers.
+- Horizontal scrolling appears only when content requires it.
