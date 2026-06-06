@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:platform_utils/platform_utils.dart';
 import 'package:ui_markdown/ui/markdown_preview/markdown_factory.dart';
 import 'package:ui_markdown/ui/markdown_preview/markdown_preview_style.dart';
 
@@ -44,7 +45,23 @@ class MarkdownPreview extends StatelessWidget {
       factoryBuilder: () => MarkdownFactory(effectiveStyle, baseUrl: baseUrl),
       customStylesBuilder: buildCustomStylesBuilder(effectiveStyle),
       customWidgetBuilder: customWidgetBuilder,
-      onTapUrl: onLinkTap,
+      onTapUrl: (url) async {
+        if (onLinkTap != null) {
+          final handled = await onLinkTap!(url);
+          if (handled) return true;
+        }
+
+        final uri = Uri.tryParse(url);
+        if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+          try {
+            return await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } catch (_) {
+            return false;
+          }
+        }
+
+        return false;
+      },
       textStyle: TextStyle(
         color: effectiveStyle.textColor,
         fontSize: 14,
